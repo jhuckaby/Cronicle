@@ -1,0 +1,35 @@
+To: [/notify_success]
+From: [/config/email_from]
+Subject: ✅ Cronicle Job Completed Successfully: [/event_title]
+
+Date/Time: [/nice_date_time]
+Event Title: [/event_title]
+Category: [/category_title]
+Server Target: [/nice_target]
+Plugin: [/plugin_title]
+
+Job ID: [/id]
+Hostname: [/hostname]
+PID: [/pid]
+Elapsed Time: [/nice_elapsed]
+Performance Metrics: [/perf]
+Avg. Memory Usage: [/nice_mem]
+Avg. CPU Usage: [/nice_cpu]
+
+Job Details:
+[/job_details_url]
+
+Job Debug Log ([/nice_log_size]):
+[/job_log_url]
+
+Edit Event:
+[/edit_event_url]
+
+Description:
+[/description]
+
+Event Notes:
+[/notes]
+
+Regards,
+The Cronicle Team

@@ -1,0 +1,154 @@
+{
+	"storage": [
+		[ "put", "users/admin", {
+			"username": "admin",
+			"password": "156834400da0de912ad70e67e4e72465a638e1db891b258c8ec7d38f4423dc52",
+			"full_name": "Administrator",
+			"email": "admin@cronicle.com",
+			"active": 1,
+			"modified": 1434125333,
+			"created": 1434125333,
+			"salt": "salty",
+			"privileges": {
+				"admin": 1
+			}
+		} ],
+		[ "listCreate", "global/users", { "page_size": 100 } ],
+		[ "listPush", "global/users", { "username": "admin" } ],
+		[ "listCreate", "global/plugins", {} ],
+		[ "listPush", "global/plugins", {
+			"id": "testplug",
+			"title": "Test Plugin",
+			"enabled": 1,
+			"command": "bin/test-plugin.js",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333,
+			"params": [
+				{ "id":"duration", "type":"text", "size":10, "title":"Test Duration (seconds)", "value": 60 },
+				{ "id":"progress", "type":"checkbox", "title":"Report Progress", "value": 1 },
+				{ "id":"action", "type":"select", "title":"Simulate Action", "items":["Success","Failure","Crash"], "value": "Success" },
+				{ "id":"secret", "type":"hidden", "value":"Will not be shown in Event UI" }
+			]
+		} ],
+		[ "listPush", "global/plugins", {
+			"id": "shellplug",
+			"title": "Shell Script",
+			"enabled": 1,
+			"command": "bin/shell-plugin.js",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333,
+			"params": [
+				{ "id":"script", "type":"textarea", "rows":10, "title":"Script Source", "value": "#!/bin/sh\n\n# Enter your shell script code here" }
+			]
+		} ],
+		[ "listCreate", "global/categories", {} ],
+		[ "listPush", "global/categories", {
+			"id": "general",
+			"title": "General",
+			"enabled": 1,
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333,
+			"description": "For events that don't fit anywhere else.",
+			"max_children": 0
+		} ],
+		[ "listCreate", "global/server_groups", {} ],
+		[ "listPush", "global/server_groups", {
+			"id": "maingrp",
+			"title": "Master Group",
+			"regexp": "_HOSTNAME_",
+			"master": 1
+		} ],
+		[ "listPush", "global/server_groups", {
+			"id": "allgrp",
+			"title": "All Servers",
+			"regexp": ".+",
+			"master": 0
+		} ],
+		[ "listCreate", "global/servers", {} ],
+		[ "listPush", "global/servers", {
+			"hostname": "_HOSTNAME_",
+			"ip": "_IP_"
+		} ],
+		[ "listCreate", "global/schedule", {} ],
+		[ "listCreate", "global/api_keys", {} ]
+	],
+	
+	"build": {
+		"common": [
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.map", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js.map", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/chart.js/Chart.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkCompress", "node_modules/c3/c3.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/c3/c3.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/d3/d3.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/font-awesome/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/mdi/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkCompress", "node_modules/moment/min/moment.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/moment-timezone/builds/moment-timezone-with-data.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/jstimezonedetect/dist/jstz.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkFile", "node_modules/pixl-webapp/js", "htdocs/js/common" ],
+			[ "symlinkFile", "node_modules/pixl-webapp/css/base.css", "htdocs/css/" ],
+			
+			[ "chmodFiles", "755", "bin/*" ]
+		],
+		"dev": [
+			[ "deleteFiles", "htdocs/css/_combo*" ],
+			[ "deleteFiles", "htdocs/js/_combo*" ],
+			[ "deleteFile", "htdocs/index.html" ],
+			[ "deleteFile", "htdocs/index.html.gz" ],
+			[ "symlinkFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			[ "symlinkFile", "sample_conf", "conf" ]
+		],
+		"dist": [
+			{
+				"action": "generateSecretKey",
+				"file": "sample_conf/config.json",
+				"key": "secret_key"
+			},
+			[ "copyDir", "sample_conf", "conf", true ],
+			[ "copyFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			{
+				"action": "bundleCompress",
+				"uglify": true,
+				"header": "/* Copyright (c) PixlCore.com, MIT License. https://github.com/jhuckaby/Cronicle */",
+				"dest_bundle": "htdocs/js/_combo.js",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_SCRIPT",
+				"dest_bundle_tag": "<script src=\"js/_combo.js\"></script>"
+			},
+			{
+				"action": "bundleCompress",
+				"strip_source_maps": true,
+				"dest_bundle": "htdocs/css/_combo.css",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_STYLE",
+				"dest_bundle_tag": "<link rel=\"stylesheet\" href=\"css/_combo.css\">"
+			},
+			{
+				"action": "printMessage",
+				"lines": [
+					"Welcome to Cronicle!",
+					"First time installing?  You should configure your settings in '/opt/cronicle/conf/config.json'.",
+					"Next, if this is a master server, type: '/opt/cronicle/bin/control.sh setup' to init storage.",
+					"Then, to start the service, type: '/opt/cronicle/bin/control.sh start'.",
+					"For full docs, please visit: http://github.com/jhuckaby/Cronicle",
+					"Enjoy!"
+				]
+			}
+		]
+	}
+}

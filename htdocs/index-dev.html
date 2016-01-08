@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Loading...</title>
+	<meta name="description" content="A simple distributed task scheduler and runner.">
+	<meta name="author" content="Joseph Huckaby">
+	<link rel="shortcut icon" href="/favicon.ico">
+	
+	<!-- BUILD: COMBINE_STYLE_START -->
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/materialdesignicons.min.css">
+	<link rel="stylesheet" href="css/c3.min.css">
+	<!-- BUILD: COMBINE_STYLE_END -->
+</head>
+
+<body>
+	<div id="d_message" class="message" style="display:none" onMouseUp="app.hideMessage(250)">
+		<div id="d_message_inner" class="message_inner"></div>
+	</div>
+	
+	<div id="d_scroll_time" style="opacity:0"><i class="fa fa-clock-o">&nbsp;</i><span></span></div>
+	
+	<div id="d_header">
+		<div class="container">
+			<div id="d_header_logo" class="left">
+				<div class="header_clock_layer" id="d_header_clock_hour"></div>
+				<div class="header_clock_layer" id="d_header_clock_minute"></div>
+				<div class="header_clock_layer" id="d_header_clock_second"></div>
+			</div>
+			<div id="d_header_title" class="left"></div>
+			<div id="d_header_user_container" style="right"></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div class="container">
+				
+		<div class="master_content_container">
+			<!-- Main Content Area -->
+			<div class="tab_bar" style="display:none">
+				<div id="tab_Login" class="tab inactive" style="display:none"><span class="content"></span></div>
+				<div id="tab_Home" class="tab inactive"><span class="content"><i class="mdi mdi-home-variant mdi-lg">&nbsp;</i>Home</span></div>
+				<div id="tab_Schedule" class="tab inactive"><span class="content"><i class="mdi mdi-calendar-clock mdi-lg">&nbsp;</i>Schedule</span></div>
+				<div id="tab_History" class="tab inactive"><span class="content"><i class="fa fa-history">&nbsp;</i>Completed</span></div>
+				<div id="tab_JobDetails" class="tab inactive" style="display:none"><span class="content"><i class="fa fa-pie-chart">&nbsp;</i>Job Details</span></div>
+				<div id="tab_MyAccount" class="tab inactive"><span class="content"><i class="mdi mdi-account mdi-lg">&nbsp;</i>My Account</span></div>
+				<div id="tab_Admin" class="tab inactive" style="display:none"><span class="content"><i class="mdi mdi-lock mdi-lg">&nbsp;</i>Admin</span></div>
+				
+				<div id="d_tab_master" class="tab_widget" onMouseUp="app.toggleMasterSwitch()"></div>
+				<div id="d_tab_time" class="tab_widget"></div>
+				<div class="clear"></div>
+			</div>
+			
+			<div id="main" class="main">
+				<div id="page_Home" style="display:none"></div>
+				<div id="page_Schedule" style="display:none"></div>
+				<div id="page_History" style="display:none"></div>
+				<div id="page_JobDetails" style="display:none"></div>
+				<div id="page_MyAccount" style="display:none"></div>
+				<div id="page_Admin" style="display:none"></div>
+				<div id="page_Login" style="display:none"></div>
+			</div>
+			
+		</div>
+		
+		<div id="d_footer">
+			<div class="left">
+				Cronicle &copy; 2016 <a href="http://pixlcore.com" target="_blank">PixlCore.com</a>. Released under the MIT License.
+			</div>
+			<div id="d_footer_version" class="right">
+				
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+	</div>
+	
+	<script src="js/external/jquery.min.js"></script>
+	<script src="js/external/Chart.min.js"></script>
+	<script src="js/external/d3.min.js"></script>
+	<script src="js/external/c3.min.js"></script>
+	<script src="js/external/moment.min.js"></script>
+	<script src="js/external/moment-timezone-with-data.min.js"></script>
+	<script src="js/external/jstz.min.js"></script>
+	
+	<!-- BUILD: COMBINE_SCRIPT_START -->
+	<script src="js/common/md5.js"></script>
+	<script src="js/common/oop.js"></script>
+	<script src="js/common/xml.js"></script>
+	<script src="js/common/tools.js"></script>
+	<script src="js/common/datetime.js"></script>
+	<script src="js/common/page.js"></script>
+	<script src="js/common/dialog.js"></script>
+	<script src="js/common/base.js"></script>
+	
+	<script src="js/app.js"></script>
+	<script src="js/pages/Base.class.js"></script>
+	<script src="js/pages/Home.class.js"></script>
+	<script src="js/pages/Login.class.js"></script>
+	<script src="js/pages/Schedule.class.js"></script>
+	<script src="js/pages/History.class.js"></script>
+	<script src="js/pages/JobDetails.class.js"></script>
+	<script src="js/pages/MyAccount.class.js"></script>
+	<script src="js/pages/Admin.class.js"></script>
+	<script src="js/pages/admin/Categories.js"></script>
+	<script src="js/pages/admin/Servers.js"></script>
+	<script src="js/pages/admin/Users.js"></script>
+	<script src="js/pages/admin/Plugins.js"></script>
+	<script src="js/pages/admin/Activity.js"></script>
+	<script src="js/pages/admin/APIKeys.js"></script>
+	<!-- BUILD: COMBINE_SCRIPT_END -->
+	
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/api/app/config?callback=app.receiveConfig"></script>
+
+</body>
+</html>

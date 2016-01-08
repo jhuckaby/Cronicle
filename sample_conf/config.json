@@ -1,0 +1,103 @@
+{
+	"base_app_url": "http://local.cronicle.com:3012",
+	"email_from": "jhuckaby@local.cronicle.com",
+	"smtp_hostname": "127.0.0.1",
+	"smtp_port": 25,
+	"secret_key": "CHANGE_ME",
+	
+	"log_dir": "logs",
+	"log_filename": "[component].log",
+	"log_columns": ["hires_epoch", "date", "hostname", "component", "category", "code", "msg", "data"],
+	"log_archive_path": "logs/archives/[yyyy]/[mm]/[dd]/[filename]-[yyyy]-[mm]-[dd].log.gz",
+	"copy_job_logs_to": "",
+	"queue_dir": "queue",
+	"pid_file": "logs/cronicled.pid",
+	"debug_level": 9,
+	"maintenance": "04:00",
+	"list_row_max": 10000,
+	"job_data_expire_days": 180,
+	"child_kill_timeout": 10,
+	"dead_job_timeout": 30,
+	"master_ping_freq": 20,
+	"master_ping_timeout": 60,
+	"udp_broadcast_port": 3014,
+	"scheduler_startup_grace": 10,
+	"universal_web_hook": "",
+	
+	"job_memory_max": 1073741824,
+	"job_memory_sustain": 0,
+	"job_cpu_max": 0,
+	"job_cpu_sustain": 0,
+	
+	"client": {
+		"name": "Cronicle",
+		"debug": 1,
+		"privilege_list": [
+			{ "id": "admin", "title": "Administrator" },
+			{ "id": "create_events", "title": "Create Events" },
+			{ "id": "edit_events", "title": "Edit Events" },
+			{ "id": "delete_events", "title": "Delete Events" },
+			{ "id": "run_events", "title": "Run Events" },
+			{ "id": "abort_events", "title": "Abort Events" },
+			{ "id": "state_update", "title": "Toggle Scheduler" }
+		]
+	},
+	
+	"Storage": {
+		"engine": "Filesystem",
+		"list_page_size": 50,
+		"concurrency": 4,
+		
+		"Filesystem": {
+			"base_dir": "data",
+			"key_namespaces": 1
+		}
+	},
+	
+	"WebServer": {
+		"http_port": 3012,
+		"http_htdocs_dir": "htdocs",
+		"http_max_upload_size": 104857600,
+		"http_static_ttl": 3600,
+		"http_static_index": "index.html",
+		"http_server_signature": "Cronicle 1.0",
+		"http_gzip_text": 1,
+		"http_timeout": 30,
+		"http_regex_json": "(text|javascript|js|json)",
+		"http_response_headers": {
+			"Access-Control-Allow-Origin": "*"
+		},
+		
+		"https": 0,
+		"https_port": 3013,
+		"https_cert_file": "conf/ssl.crt",
+		"https_key_file": "conf/ssl.key",
+		"https_force": 0,
+		"https_timeout": 30
+	},
+	
+	"User": {
+		"session_expire_days": 30,
+		"max_failed_logins_per_hour": 5,
+		"max_forgot_passwords_per_hour": 3,
+		"free_accounts": 0,
+		"sort_global_users": 1,
+		
+		"email_templates": {
+			"welcome_new_user": "conf/emails/welcome_new_user.txt",
+			"changed_password": "conf/emails/changed_password.txt",
+			"recover_password": "conf/emails/recover_password.txt"
+		},
+		
+		"default_privileges": {
+			"admin": 0,
+			"create_events": 1,
+			"edit_events": 1,
+			"delete_events": 1,
+			"run_events": 0,
+			"abort_events": 0,
+			"state_update": 0
+		}
+	}
+	
+}

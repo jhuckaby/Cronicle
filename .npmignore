@@ -1,0 +1,7 @@
+.gitignore
+/node_modules
+/work
+/logs
+/queue
+/data
+/conf

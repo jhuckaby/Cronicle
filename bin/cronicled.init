@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# init.d script for Cronicle Scheduler
+#
+# chkconfig: 345 90 10
+# description: Cronicle Scheduler
+
+### BEGIN INIT INFO
+# Provides:          cronicled
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: Start/Stop Cronicle Scheduler
+### END INIT INFO
+
+PATH=/sbin:/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
+
+/opt/cronicle/bin/control.sh $1
