@@ -39,17 +39,17 @@ A quick introduction to some common terms used in Cronicle:
 
 | Term | Description |
 |------|-------------|
-| Master Server | The primary server which keeps time and runs the scheduler, assigning jobs to other servers, and/or itself. |
-| Backup Server | A slave server which will automatically become master and take over duties if the current master dies. |
-| Slave Server | A server which sits idle until it is assigned jobs by the master server. |
-| Server Group | A named group of servers which can be targeted by events, and tagged as "master eligible", or "slave only". |
-| API Key | A special key that can be used by external apps to send API requests into Cronicle.  Remotely trigger jobs, etc. |
-| User | A human user account, which has a username and a password.  Passwords are salted and hashed with SHA256. |
-| Plugin | Any executable script in any language, which runs a job and reads/writes JSON to communicate with Cronicle. |
-| Schedule | The master list of events, which are scheduled to run at particular times, on particular servers. |
-| Category | Events can be assigned to categories which define defaults and optionally a color highlight in the UI. |
-| Event | An entry in the schedule, which may run once or many times at any interval.  Each event points to a Plugin, and a server or group to run it. |
-| Job | A running instance of an event.  If an event is set to run hourly, then a new job will be created every hour. |
+| **Master Server** | The primary server which keeps time and runs the scheduler, assigning jobs to other servers, and/or itself. |
+| **Backup Server** | A slave server which will automatically become master and take over duties if the current master dies. |
+| **Slave Server** | A server which sits idle until it is assigned jobs by the master server. |
+| **Server Group** | A named group of servers which can be targeted by events, and tagged as "master eligible", or "slave only". |
+| **API Key** | A special key that can be used by external apps to send API requests into Cronicle.  Remotely trigger jobs, etc. |
+| **User** | A human user account, which has a username and a password.  Passwords are salted and hashed with SHA256. |
+| **Plugin** | Any executable script in any language, which runs a job and reads/writes JSON to communicate with Cronicle. |
+| **Schedule** | The master list of events, which are scheduled to run at particular times, on particular servers. |
+| **Category** | Events can be assigned to categories which define defaults and optionally a color highlight in the UI. |
+| **Event** | An entry in the schedule, which may run once or many times at any interval.  Each event points to a Plugin, and a server or group to run it. |
+| **Job** | A running instance of an event.  If an event is set to run hourly, then a new job will be created every hour. |
 
 # Installation
 
