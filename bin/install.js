@@ -180,8 +180,8 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 				}
 				
 				// Success!
-				if (is_preinstalled) print("\nUpgrade complete.\n\n"); 
-				else print("\nInstallation complete.\n\n");
+				if (is_preinstalled) print("Upgrade complete.\n\n"); 
+				else print("Installation complete.\n\n");
 				
 				logonly( "Completed install run: " + (new Date()).toString() + "\n" );
 				
