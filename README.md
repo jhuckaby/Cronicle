@@ -2464,6 +2464,7 @@ In addition, Cronicle uses the following standalone PixlCore utility modules:
 | [pixl-json-stream](https://www.npmjs.com/package/pixl-json-stream) | Provides an easy API for sending and receiving JSON records over standard streams (pipes or sockets). | MIT |
 | [pixl-logger](https://www.npmjs.com/package/pixl-logger) | A simple logging class which generates bracket delimited log columns. | MIT |
 | [pixl-mail](https://www.npmjs.com/package/pixl-mail) | A very simple class for sending e-mail via SMTP. | MIT |
+| [pixl-perf](https://www.npmjs.com/package/pixl-perf) | A simple, high precision performance tracking system. | MIT |
 | [pixl-request](https://www.npmjs.com/package/pixl-request) | A very simple module for making HTTP requests. | MIT |
 | [pixl-tools](https://www.npmjs.com/package/pixl-tools) | A set of miscellaneous utility functions for Node.js. | MIT |
 | [pixl-webapp](https://www.npmjs.com/package/pixl-webapp) | A client-side JavaScript framework, designed to be a base for web applications. | MIT |

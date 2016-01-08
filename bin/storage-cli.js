@@ -127,7 +127,7 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 						print( "\nSetup completed successfully!\n" );
 						print( "This server ("+hostname+") has been added as the single primary master server.\n" );
 						print( "An administrator account has been created with username 'admin' and password 'admin'.\n" );
-						print( "You should now be able to start the service by typing: 'bin/control.sh start'\n" );
+						print( "You should now be able to start the service by typing: '/opt/cronicle/bin/control.sh start'\n" );
 						print( "Then, the web interface should be available at: http://"+hostname+":"+config.WebServer.http_port+"/\n" );
 						print( "Please allow for up to 60 seconds for the server to become master.\n\n" );
 					}
