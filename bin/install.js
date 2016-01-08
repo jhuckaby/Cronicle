@@ -28,7 +28,7 @@ var warn = function(msg) {
 	if (log_file) fs.appendFile(log_file, msg);
 };
 var die = function(msg) {
-	warn "\nERROR: " + msg.trim() + "\n\n";
+	warn( "\nERROR: " + msg.trim() + "\n\n" );
 	process.exit(1);
 }
 var logonly = function(msg) {
