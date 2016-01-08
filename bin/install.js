@@ -172,16 +172,29 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 			
 			// finally, run postinstall script
 			cp.exec('node bin/build.js dist', function (err, stdout, stderr) {
-				print( stdout.toString() );
-				warn( stderr.toString() );
-				
-				if (err) {
-					die("Failed to run post-install: " + err);
-				}
-				
-				// Success!
-				if (is_preinstalled) print("Upgrade complete.\n\n"); 
-				else print("Installation complete.\n\n");
+				if (is_preinstalled) {
+					// for upgrades only print output on error
+					if (err) {
+						print( stdout.toString() );
+						warn( stderr.toString() );
+						die("Failed to run post-install: " + err);
+					}
+					else {
+						print("Upgrade complete.\n\n");
+					}
+				} // upgrade
+				else {
+					// first time install, always print output
+					print( stdout.toString() );
+					warn( stderr.toString() );
+					
+					if (err) {
+						die("Failed to run post-install: " + err);
+					}
+					else {
+						print("Installation complete.\n\n");
+					}
+				} // first install
 				
 				logonly( "Completed install run: " + (new Date()).toString() + "\n" );
 				

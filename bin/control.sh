@@ -107,7 +107,7 @@ do
 	;;
 	upgrade)
 		$0 stop
-		node $HOMEDIR/bin/install.js $1
+		node $HOMEDIR/bin/install.js $2
 		$0 start
 	;;
     *)
