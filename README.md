@@ -1720,6 +1720,7 @@ By default, logging consists of several different files, each for a specific com
 | `User.log` | The user component log will contain user related information such as logins and logouts. |
 | `WebServer.log` | The web server component log will contain information about HTTP requests and connections. |
 | `crash.log` | If Cronicle crashed for any reason, you should find a date/time and stack trace in this log. |
+| `install.log` | Contains detailed installation notes from npm, and the build script. |
 
 The [log_filename](#log_filename) configuration property controls this, and by default it is set to the following:
 
