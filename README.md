@@ -21,17 +21,53 @@
 
 ## Table of Contents
 
-* [Installation](#installation)
-* [Setup](#setup)
-* [Configuration](#configuration)
-* [Web UI](#web-ui)
-* [Plugins](#plugins)
-* [Command Line](#command-line)
-* [Inner Workings](#inner-workings)
-* [API Reference](#api-reference)
-* [Development](#development)
-* [Colophon](#colophon)
-* [License](#license)
+- **[Installation](#installation)**
+- **[Setup](#setup)**
+	- [Single Server](#single-server)
+	- [Single Master with Slaves](#single-master-with-slaves)
+	- [Multi-Server Cluster](#multi-server-cluster)
+- **[Configuration](#configuration)**
+	- [Basics](#basics)
+	- [Storage Configuration](#storage-configuration)
+	- [Web Server Configuration](#web-server-configuration)
+	- [User Configuration](#user-configuration)
+	- [Email Configuration](#email-configuration)
+- **[Web UI](#web-ui)**
+	- [Home Tab](#home-tab)
+	- [Schedule Tab](#schedule-tab)
+	- [Completed Jobs Tab](#completed-jobs-tab)
+	- [Job Details Tab](#job-details-tab)
+	- [My Account Tab](#my-account-tab)
+	- [Administration Tab](#administration-tab)
+- **[Plugins](#plugins)**
+	- [Writing Plugins](#writing-plugins)
+	- [Sample Node Plugin](#sample-node-plugin)
+	- [Sample Perl Plugin](#sample-perl-plugin)
+	- [Sample PHP Plugin](#sample-php-plugin)
+	- [Shell Plugin](#shell-plugin)
+- **[Command Line](#command-line)**
+	- [Starting and Stopping](#starting-and-stopping)
+	- [Storage Maintenance](#storage-maintenance)
+	- [Recover Admin Access](#recover-admin-access)
+	- [Server Startup](#server-startup)
+	- [Upgrading Cronicle](#upgrading-cronicle)
+- **[Inner Workings](#inner-workings)**
+	- [Storage](#storage)
+	- [Logs](#logs)
+	- [Keeping Time](#keeping-time)
+	- [Master Server Failover](#master-server-failover)
+- **[API Reference](#api-reference)**
+	- [JSON REST API](#json-rest-api)
+	- [API Keys](#api-keys)
+	- [Standard Response Format](#standard-response-format)
+	- [API Calls](#api-calls)
+	- [Event Data Format](#event-data-format)
+- **[Development](#development)**
+	- [Installing Dev Tools](#installing-dev-tools)
+	- [Manual Installation](#manual-installation)
+	- [Starting in Debug Mode](#starting-in-debug-mode)
+- **[Colophon](#colophon)**
+- **[License](#license)**
 
 ## Glossary
 
@@ -116,11 +152,15 @@ You only need to include the port number in the URL if you are using a non-stand
 
 See the [Web UI](#web-ui) section below for instructions on using the Cronicle web interface.
 
+## Single Server
+
+For a single server installation, there is nothing more you need to do.  After installing the package, running the `bin/control.sh setup` script and starting the service, Cronicle should be 100% ready to go.  You can always add more servers later (see below).
+
 ## Single Master with Slaves
 
-The easiest Cronicle setup is a single "master" server with zero or more slaves.  This means that one server is the scheduler, so it keeps track of time, and assigns jobs for execution.  Jobs may be assigned to any number of slave servers, and even the master itself.  Slave servers simply sit idle and wait for jobs to be assigned by the master server.  Slaves never take over master scheduling duties, even if the master server goes down.
+The easiest multi-server Cronicle setup is a single "master" server with one or more slaves.  This means that one server is the scheduler, so it keeps track of time, and assigns jobs for execution.  Jobs may be assigned to any number of slave servers, and even the master itself.  Slave servers simply sit idle and wait for jobs to be assigned by the master server.  Slaves never take over master scheduling duties, even if the master server goes down.
 
-This is the simplest setup because the master server can use local disk for all its storage.  Slaves do not need access to the file storage.  This is the default configuration, so you don't have to change anything at all.  What it means is, all the scheduling data, event categories, user accounts, sessions, plugins, job logs and other data is stored as plain JSON files on local disk.  Cronicle can also be configured to use a NoSQL database such as [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/), but this is not required.
+This is the simplest multi-server setup because the master server can use local disk for all its storage.  Slaves do not need access to the file storage.  This is the default configuration, so you don't have to change anything at all.  What it means is, all the scheduling data, event categories, user accounts, sessions, plugins, job logs and other data is stored as plain JSON files on local disk.  Cronicle can also be configured to use a NoSQL database such as [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/), but this is not required.
 
 So by default, when you run the setup script above, the current server is placed into a "Master Group", meaning it is the only server that is eligible to become master.  If you then install Cronicle on additional servers, they will become slaves only.  You can change all this from the UI, but please read the next section before running multiple master backup servers.
 
@@ -1620,7 +1660,7 @@ Or, if you have Debian-style Linux (i.e. Ubuntu), type this:
 
 For multi-server clusters, you'll need to repeat these steps on each server.
 
-## Upgrade
+## Upgrading Cronicle
 
 To upgrade Cronicle, you can use the built-in `upgrade` command:
 
