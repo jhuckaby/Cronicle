@@ -1798,7 +1798,7 @@ Cronicle is designed to handle server failures.  If a slave server goes down for
 
 If a master server goes down, one of the backups will take over within 60 seconds (see [master_ping_timeout](#master_ping_timeout)).  The same rules apply for any jobs that were running on the master server.  They'll be failed and retried as needed by the new master server, with one exception: unclean shutdown.
 
-When a master server experiences a catastrophic failure such as a daemon crash, kernel panic or power loss, it has no time to do anything, so any active jobs on the server are instantly dead.  The jobs will eventually be logged as failures, and the logs recovered when the server comes back online.  However, if the events had [Run All Mode](#run-all-mode) enabled, they won't be auto-retried when the new master takes over, because it has no way of knowing a job was even running.  And by the time the old master server is brought back online, days or weeks may have past, so it would be wrong to blindly rewind the event clock to before the event ran.
+When a master server experiences a catastrophic failure such as a daemon crash, kernel panic or power loss, it has no time to do anything, so any active jobs on the server are instantly dead.  The jobs will eventually be logged as failures, and the logs recovered when the server comes back online.  However, if the events had [Run All Mode](#run-all-mode) enabled, they won't be auto-retried when the new master takes over, because it has no way of knowing a job was even running.  And by the time the old master server is brought back online, days or weeks may have passed, so it would be wrong to blindly rewind the event clock to before the event ran.
 
 So in summary, the only time human intervention may be required is if a master server dies unexpectedly due to an unclean shutdown, and it had active jobs running on it, and those jobs had [Run All Mode](#run-all-mode) set.  In that case, you may want to use the [Time Machine](#event-time-machine) feature to reset the event clock, to re-run any missed jobs.
 
@@ -2559,9 +2559,9 @@ Do not use the `--master` switch on multiple servers in a cluster.  For multi-se
 
 # Colophon
 
-We stand on the shoulders of giants.  Cronicle is based heavily on a PHP application called **Ubercron** designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
+We stand on the shoulders of giants.  Cronicle is based heavily on a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
 
-Cronicle was built on top of the following awesome Node modules:
+Cronicle was built on top of these awesome Node modules:
 
 | Module Name | Description | License |
 |-------------|-------------|---------|
