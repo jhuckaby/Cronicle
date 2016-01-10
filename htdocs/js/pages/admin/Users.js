@@ -101,6 +101,9 @@ Class.add( Page.Admin, {
 	edit_user: function(idx) {
 		// jump to edit sub
 		if (idx > -1) Nav.go( '#Admin?sub=edit_user&username=' + this.users[idx].username );
+		else if (app.config.external_users) {
+			app.doError("Users are managed by an external system, so you cannot add users from here.");
+		}
 		else Nav.go( '#Admin?sub=new_user' );
 	},
 	
@@ -300,6 +303,11 @@ Class.add( Page.Admin, {
 		
 		setTimeout( function() {
 			$('#fe_eu_username').attr('disabled', true);
+			
+			if (app.config.external_users) {
+				app.showMessage('warning', "Users are managed by an external system, so making changes here may have little effect.");
+				// self.div.find('input').prop('disabled', true);
+			}
 		}, 1 );
 	},
 	
@@ -339,7 +347,15 @@ Class.add( Page.Admin, {
 	show_delete_account_dialog: function() {
 		// show dialog confirming account delete action
 		var self = this;
-		app.confirm( '<span style="color:red">Delete Account</span>', "Are you sure you want to <b>permanently delete</b> the user account \""+this.user.username+"\"?  There is no way to undo this action, and no way to recover the data.", 'Delete', function(result) {
+		
+		var msg = "Are you sure you want to <b>permanently delete</b> the user account \""+this.user.username+"\"?  There is no way to undo this action, and no way to recover the data.";
+		
+		if (app.config.external_users) {
+			msg = "Are you sure you want to delete the user account \""+this.user.username+"\"?  Users are managed by an external system, so this will have little effect here.";
+			// return app.doError("Users are managed by an external system, so you cannot make changes here.");
+		}
+		
+		app.confirm( '<span style="color:red">Delete Account</span>', msg, 'Delete', function(result) {
 			if (result) {
 				app.showProgress( 1.0, "Deleting Account..." );
 				app.api.post( 'user/admin_delete', {

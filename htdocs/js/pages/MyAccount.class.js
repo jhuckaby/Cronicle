@@ -22,6 +22,7 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 	},
 	
 	receive_user: function(resp, tx) {
+		var self = this;
 		var html = '';
 		var user = resp.user;
 				
@@ -76,9 +77,14 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 			html += '<td valign="top" align="left" style="vertical-align:top; text-align:left;">';
 				// gravar profile image and edit button
 				html += '<fieldset style="width:150px; margin-left:40px; background:white; border:1px solid #ddd; box-shadow:none;"><legend>Profile Picture</legend>';
-				html += '<div id="d_ma_image" style="width:128px; height:128px; margin:5px auto 0 auto; background-image:url('+app.getUserAvatarURL(128)+'); cursor:pointer;" onMouseUp="$P().edit_gravatar()"></div>';
-				html += '<div class="button mini" style="margin:10px auto 5px auto;" onMouseUp="$P().edit_gravatar()">Edit Image...</div>';
-				html += '<div style="font-size:11px; color:#888; text-align:center; margin-bottom:5px;">Image services provided by <a href="https://en.gravatar.com/connect/" target="_blank">Gravatar.com</a>.</div>';
+				if (app.config.external_users) {
+					html += '<div id="d_ma_image" style="width:128px; height:128px; margin:5px auto 0 auto; background-image:url('+app.getUserAvatarURL(128)+'); cursor:default;"></div>';
+				}
+				else {
+					html += '<div id="d_ma_image" style="width:128px; height:128px; margin:5px auto 0 auto; background-image:url('+app.getUserAvatarURL(128)+'); cursor:pointer;" onMouseUp="$P().edit_gravatar()"></div>';
+					html += '<div class="button mini" style="margin:10px auto 5px auto;" onMouseUp="$P().edit_gravatar()">Edit Image...</div>';
+					html += '<div style="font-size:11px; color:#888; text-align:center; margin-bottom:5px;">Image services provided by <a href="https://en.gravatar.com/connect/" target="_blank">Gravatar.com</a>.</div>';
+				}
 				html += '</fieldset>';
 			html += '</td>';
 		html += '</tr></table>';
@@ -89,6 +95,11 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 		
 		setTimeout( function() {
 			app.password_strengthify( '#fe_ma_new_password' );
+			
+			if (app.config.external_users) {
+				app.showMessage('warning', "Users are managed by an external system, so you cannot make changes here.");
+				self.div.find('input').prop('disabled', true);
+			}
 		}, 1 );
 	},
 	
@@ -100,6 +111,9 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 	save_changes: function(force) {
 		// save changes to user info
 		app.clearError();
+		if (app.config.external_users) {
+			return app.doError("Users are managed by an external system, so you cannot make changes here.");
+		}
 		if (!$('#fe_ma_old_password').val()) return app.badField('#fe_ma_old_password', "Please enter your current account password to make changes.");
 		
 		if ($('#fe_ma_new_password').val() && !force && (app.last_password_strength.score < 3)) {
@@ -138,6 +152,9 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 		var self = this;
 		
 		app.clearError();
+		if (app.config.external_users) {
+			return app.doError("Users are managed by an external system, so you cannot make changes here.");
+		}
 		if (!$('#fe_ma_old_password').val()) return app.badField('#fe_ma_old_password', "Please enter your current account password.");
 		
 		app.confirm( "Delete My Account", "Are you sure you want to <b>permanently delete</b> your user account?  There is no way to undo this action, and no way to recover your data.", "Delete", function(result) {

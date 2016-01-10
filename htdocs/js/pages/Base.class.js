@@ -4,6 +4,8 @@ Class.subclass( Page, "Page.Base", {
 	
 	requireLogin: function(args) {
 		// user must be logged into to continue
+		var self = this;
+		
 		if (!app.user) {
 			// require login
 			app.navAfterLogin = this.ID;
@@ -14,7 +16,7 @@ Class.subclass( Page, "Page.Base", {
 			var session_id = app.getPref('session_id') || '';
 			if (session_id) {
 				Debug.trace("User has cookie, recovering session: " + session_id);
-				// app.showProgress(1.0, "Logging in...");
+				
 				app.api.post( 'user/resume_session', {
 					session_id: session_id
 				}, 
@@ -23,15 +25,19 @@ Class.subclass( Page, "Page.Base", {
 						Debug.trace("User Session Resume: " + resp.username + ": " + resp.session_id);
 						app.hideProgress();
 						app.doUserLogin( resp );
-						
-						// Nav.go( app.navAfterLogin || config.DefaultPage );
 						Nav.refresh();
 					}
 					else {
 						Debug.trace("User cookie is invalid, redirecting to login page");
-						Nav.go('Login');
+						// Nav.go('Login');
+						self.setPref('session_id', '');
+						self.requireLogin(args);
 					}
 				} );
+			}
+			else if (app.config.external_users) {
+				Debug.trace("User is not logged in, querying external user API");
+				app.doExternalLogin();
 			}
 			else {
 				Debug.trace("User is not logged in, redirecting to login page (will return to " + this.ID + ")");

@@ -153,8 +153,6 @@ app.extend({
 			session_id: this.getPref('session_id')
 		}, 
 		function(resp, tx) {
-			self.hideProgress();
-			
 			delete self.user;
 			delete self.username;
 			delete self.user_info;
@@ -171,12 +169,25 @@ app.extend({
 			self.clock_visible = false;
 			self.checkScrollTime();
 			
-			Debug.trace("User session cookie was deleted, redirecting to login page");
-			Nav.go('Login');
+			if (app.config.external_users) {
+				// external user api
+				Debug.trace("User session cookie was deleted, querying external user API");
+				setTimeout( function() {
+					if (bad_cookie) app.doExternalLogin(); 
+					else app.doExternalLogout(); 
+				}, 250 );
+			}
+			else {
+				Debug.trace("User session cookie was deleted, redirecting to login page");
+				self.hideProgress();
+				Nav.go('Login');
+			}
 			
 			setTimeout( function() {
-				if (bad_cookie) self.showMessage('error', "Your session has expired.  Please log in again.");
-				else self.showMessage('success', "You were logged out successfully.");
+				if (!app.config.external_users) {
+					if (bad_cookie) self.showMessage('error', "Your session has expired.  Please log in again.");
+					else self.showMessage('success', "You were logged out successfully.");
+				}
 				
 				self.activeJobs = {};
 				delete self.servers;
@@ -190,6 +201,34 @@ app.extend({
 			
 			$('#tab_Admin').hide();
 		} );
+	},
+	
+	doExternalLogin: function() {
+		// login using external user management system
+		app.api.post( 'user/external_login', { cookie: document.cookie }, function(resp) {
+			if (resp.user) {
+				Debug.trace("User Session Resume: " + resp.username + ": " + resp.session_id);
+				app.hideProgress();
+				app.doUserLogin( resp );
+				Nav.refresh();
+			}
+			else if (resp.location) {
+				Debug.trace("External User API requires redirect");
+				app.showProgress(1.0, "Logging in...");
+				setTimeout( function() { window.location = resp.location; }, 250 );
+			}
+			else app.doError(resp.description || "Unknown login error.");
+		} );
+	},
+	
+	doExternalLogout: function() {
+		// redirect to external user management system for logout
+		var url = app.config.external_user_api;
+		url += (url.match(/\?/) ? '&' : '?') + 'logout=1';
+		
+		Debug.trace("External User API requires redirect");
+		app.showProgress(1.0, "Logging out...");
+		setTimeout( function() { window.location = url; }, 250 );
 	},
 	
 	socketConnect: function() {
