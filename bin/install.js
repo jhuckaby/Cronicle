@@ -154,11 +154,13 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 			die("Failed to download package: " + tarball_url + ": " + err);
 		}
 		
-		print("Installing dependencies...\n");
-		logonly( "Executing command: npm install\n" );
+		print( is_preinstalled ? "Updating dependencies...\n" : "Installing dependencies...\n");
+		
+		var npm_cmd = is_preinstalled ? "npm update --unsafe-perm" : "npm install --unsafe-perm";
+		logonly( "Executing command: " + npm_cmd + "\n" );
 		
 		// install dependencies via npm
-		cp.exec('npm install --unsafe-perm', function (err, stdout, stderr) {
+		cp.exec(npm_cmd, function (err, stdout, stderr) {
 			if (err) {
 				print( stdout.toString() );
 				warn( stderr.toString() );

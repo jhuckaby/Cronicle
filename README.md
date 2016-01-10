@@ -2495,7 +2495,7 @@ Cronicle runs as a component in the [pixl-server](https://www.npmjs.com/package/
 | [pixl-server-user](https://www.npmjs.com/package/pixl-server-user) | A basic user login system for the pixl-server framework. | MIT |
 | [pixl-server-web](https://www.npmjs.com/package/pixl-server-web) | A web server component for the pixl-server framework. | MIT |
 
-In addition, Cronicle uses the following standalone PixlCore utility modules:
+In addition, Cronicle uses the following server-side PixlCore utility modules:
 
 | Module Name | Description | License |
 |-------------|-------------|---------|
@@ -2508,6 +2508,11 @@ In addition, Cronicle uses the following standalone PixlCore utility modules:
 | [pixl-perf](https://www.npmjs.com/package/pixl-perf) | A simple, high precision performance tracking system. | MIT |
 | [pixl-request](https://www.npmjs.com/package/pixl-request) | A very simple module for making HTTP requests. | MIT |
 | [pixl-tools](https://www.npmjs.com/package/pixl-tools) | A set of miscellaneous utility functions for Node.js. | MIT |
+
+For the client-side, the Cronicle web application is built on the [pixl-webapp](https://www.npmjs.com/package/pixl-webapp) HTML5/CSS/JavaScript framework:
+
+| Module Name | Description | License |
+|-------------|-------------|---------|
 | [pixl-webapp](https://www.npmjs.com/package/pixl-webapp) | A client-side JavaScript framework, designed to be a base for web applications. | MIT |
 
 ## Installing Dev Tools
