@@ -129,8 +129,8 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 	}
 	
 	// proceed with installation
-	if (is_preinstalled) print("Upgrading from version "+cur_version+" to "+new_version+"...\n");
-	else print("Installing version "+new_version+"...\n");
+	if (is_preinstalled) print("Upgrading Cronicle from v"+cur_version+" to v"+new_version+"...\n");
+	else print("Installing Cronicle v"+new_version+"...\n");
 	
 	// download tarball and expand into current directory
 	var tarball_url = release.tarball_url;
