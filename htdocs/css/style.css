@@ -58,7 +58,7 @@
 #d_scroll_time {
 	position: fixed;
 	box-sizing: border-box;
-	top: 0;
+	top: -30px;
 	left: 100%;
 	margin-left: -175px;
 	width: 175px;
