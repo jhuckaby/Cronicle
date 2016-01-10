@@ -21,18 +21,18 @@ var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.t
 
 var print = function(msg) { 
 	process.stdout.write(msg); 
-	if (log_file) fs.appendFile(log_file, msg);
+	if (log_file) fs.appendFileSync(log_file, msg);
 };
 var warn = function(msg) { 
 	process.stderr.write(msg); 
-	if (log_file) fs.appendFile(log_file, msg);
+	if (log_file) fs.appendFileSync(log_file, msg);
 };
 var die = function(msg) {
 	warn( "\nERROR: " + msg.trim() + "\n\n" );
 	process.exit(1);
 }
 var logonly = function(msg) {
-	if (log_file) fs.appendFile(log_file, msg);
+	if (log_file) fs.appendFileSync(log_file, msg);
 };
 
 if (process.getuid() != 0) {
