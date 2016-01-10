@@ -20,7 +20,7 @@ process.chdir( path.dirname( __dirname ) );
 // load app's config file
 var config = require('../conf/config.json');
 
-// shift files off beginning of arg array
+// shift commands off beginning of arg array
 var argv = JSON.parse( JSON.stringify(process.argv.slice(2)) );
 var commands = [];
 while (argv.length && !argv[0].match(/^\-/)) {
@@ -98,13 +98,13 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			// make sure this is only run once
 			storage.get( 'global/users', function(err) {
 				if (!err) {
-					print( "\nStorage has already been set up.  There is no need to run this command again.\n\n" );
+					print( "Storage has already been set up.  There is no need to run this command again.\n\n" );
 					process.exit(1);
 				}
 				
 				async.eachSeries( setup.storage,
 					function(params, callback) {
-						print( "Executing: " + JSON.stringify(params) + "\n" );
+						verbose( "Executing: " + JSON.stringify(params) + "\n" );
 						// [ "listCreate", "global/users", { "page_size": 100 } ]
 						var func = params.shift();
 						params.push( callback );
@@ -124,7 +124,9 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 					},
 					function(err) {
 						if (err) throw err;
-						print( "\nSetup completed successfully!\n" );
+						if (args.verbose) print("\n");
+						
+						print( "Setup completed successfully!\n" );
 						print( "This server ("+hostname+") has been added as the single primary master server.\n" );
 						print( "An administrator account has been created with username 'admin' and password 'admin'.\n" );
 						print( "You should now be able to start the service by typing: '/opt/cronicle/bin/control.sh start'\n" );
