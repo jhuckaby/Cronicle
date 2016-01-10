@@ -23,6 +23,14 @@ var symlinkFile = exports.symlinkFile = function symlinkFile( old_file, new_file
 	// Note: 'new_file' is the object that will be created on the filesystem
 	// 'old_file' should already exist, and is the file being pointed to
 	if (new_file.match(/\/$/)) new_file += path.basename(old_file);
+	
+	// if target exists and is not a symlink, skip this
+	try {
+		var stats = fs.lstatSync(new_file);
+		if (!stats.isSymbolicLink()) return callback();
+	}
+	catch (e) {;}
+	
 	console.log( "Symlink: " + old_file + " --> " + new_file );
 	
 	try { fs.unlinkSync( new_file ); }
