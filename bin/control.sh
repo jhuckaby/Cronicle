@@ -106,9 +106,13 @@ do
 		node $HOMEDIR/bin/storage-cli.js admin $1 $2
 	;;
 	upgrade)
-		$0 stop
+		if [ $RUNNING -eq 1 ]; then
+		    $0 stop
+		fi
 		node $HOMEDIR/bin/install.js $2
-		$0 start
+		if [ $RUNNING -eq 1 ]; then
+		    $0 start
+		fi
 	;;
     *)
 	echo "usage: $0 (start|stop|cycle|status|help)"
