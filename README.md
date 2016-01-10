@@ -2562,6 +2562,8 @@ Also, you can force it to become the master server right away, so there is no de
 
 Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become master (~60 seconds after startup).
 
+Please note that when starting Cronicle in debug mode, all existing events with [Run All Mode](#run-all-mode) set will instantly be "caught up" to the current time, and not run any previous jobs.
+
 # Colophon
 
 We stand on the shoulders of giants.  Cronicle is based heavily on a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
