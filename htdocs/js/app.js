@@ -488,18 +488,20 @@ app.extend({
 		// check page scroll, see if we need to fade in/out the scroll time widget
 		var y = $('body').scrollTop();
 		var min_y = 70;
-				
+		
 		if ((y >= min_y) && this.clock_visible) {
 			if (!this.scroll_time_visible) {
 				// time to fade it in
-				$('#d_scroll_time').stop().fadeTo( 1000, 1.0 );
+				$('#d_scroll_time').stop().css('top', '0px').fadeTo( 1000, 1.0 );
 				this.scroll_time_visible = true;
 			}
 		}
 		else {
 			if (this.scroll_time_visible) {
 				// time to fade it out
-				$('#d_scroll_time').stop().fadeTo( 500, 0 );
+				$('#d_scroll_time').stop().fadeTo( 500, 0, function() {
+					$(this).css('top', '-30px');
+				} );
 				this.scroll_time_visible = false;
 			}
 		}
