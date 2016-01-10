@@ -666,7 +666,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			'</tr></table>' 
 		);
 		html += get_form_table_caption( rc_classes, 
-			"Optionally reset time for this event, to repeat past jobs, or jump over a queue." 
+			"Optionally reset the internal clock for this event, to repeat past jobs, or jump over a queue.<br/>" + 
+			"This is interpreted in your local timezone ("+app.tz+")." 
 		);
 		html += get_form_table_spacer( rc_classes, '' );
 		
