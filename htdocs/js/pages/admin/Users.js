@@ -414,19 +414,33 @@ Class.add( Page.Admin, {
 		
 		// privilege list
 		var priv_html = '';
+		var user_is_admin = !!user.privileges.admin;
+		
 		for (var idx = 0, len = config.privilege_list.length; idx < len; idx++) {
 			var priv = config.privilege_list[idx];
 			var has_priv = !!user.privileges[ priv.id ];
-			priv_html += '<div style="margin-top:4px; margin-bottom:4px;">';
-			priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" '+(has_priv ? 'checked="checked"' : '')+'>';
+			var priv_visible = (priv.id == 'admin') || !user_is_admin;
+			var priv_class = (priv.id == 'admin') ? 'priv_group_admin' : 'priv_group_other';
+			
+			priv_html += '<div class="'+priv_class+'" style="margin-top:4px; margin-bottom:4px; '+(priv_visible ? '' : 'display:none;')+'">';
+			priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" ' + 
+				(has_priv ? 'checked="checked" ' : '') + ((priv.id == 'admin') ? 'onChange="$P().change_admin_checkbox()"' : '') + '>';
 			priv_html += '<label for="fe_eu_priv_'+priv.id+'">'+priv.title+'</label>';
 			priv_html += '</div>';
 		}
+		
 		html += get_form_table_row( 'Privileges', priv_html );
-		html += get_form_table_caption( "Select which privileges the user account should have." );
+		html += get_form_table_caption( "Select which privileges the user account should have. Administrators have all privileges." );
 		html += get_form_table_spacer();
 		
 		return html;
+	},
+	
+	change_admin_checkbox: function() {
+		// toggle admin checkbox
+		var is_checked = $('#fe_eu_priv_admin').is(':checked');
+		if (is_checked) $('div.priv_group_other').hide(250);
+		else $('div.priv_group_other').show(250);
 	},
 	
 	get_user_form_json: function() {
