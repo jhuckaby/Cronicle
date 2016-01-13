@@ -2544,6 +2544,18 @@ Here is how you can download the very latest Cronicle dev build and install it m
 
 This will keep all JavaScript and CSS unobfuscated (original source served as separate files).
 
+I highly recommend the following `.gitignore` file at the base of the project, if you plan on committing changes and sending pull requests:
+
+```
+.gitignore
+/node_modules
+/work
+/logs
+/queue
+/data
+/conf
+```
+
 ## Starting in Debug Mode
 
 To start Cronicle in debug mode, issue the following command:
@@ -2552,7 +2564,7 @@ To start Cronicle in debug mode, issue the following command:
 	./bin/debug.sh
 ```
 
-This will launch the service without forking a daemon process, and echo the entire debug log contents to the console.  This is great for debugging server-side issues.  Hit Ctrl-C to shut down the service when in this mode.
+This will launch the service without forking a daemon process, and echo the entire debug log contents to the console.  This is great for debugging server-side issues.  Beware of file permissions if you run as a non-root user.  Hit Ctrl-C to shut down the service when in this mode.
 
 Also, you can force it to become the master server right away, so there is no delay before you can use the web app:
 
@@ -2562,13 +2574,13 @@ Also, you can force it to become the master server right away, so there is no de
 
 Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become master (~60 seconds after startup).
 
-Please note that when starting Cronicle in debug mode, all existing events with [Run All Mode](#run-all-mode) set will instantly be "caught up" to the current time, and not run any previous jobs.
+Please note that when starting Cronicle in debug mode, all existing events with [Run All Mode](#run-all-mode) set will instantly be "caught up" to the current time, and not run any previous jobs.  Also, some features are not available in debug mode, namely the "Restart" and "Shut Down" links in the UI.
 
 # Colophon
 
-We stand on the shoulders of giants.  Cronicle is based heavily on a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
+We stand on the shoulders of giants.  Cronicle is inspired by a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
 
-Cronicle was built on top of these awesome Node modules:
+Cronicle was built using these awesome Node modules:
 
 | Module Name | Description | License |
 |-------------|-------------|---------|
