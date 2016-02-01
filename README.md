@@ -44,7 +44,7 @@
 	- [Sample Node Plugin](#sample-node-plugin)
 	- [Sample Perl Plugin](#sample-perl-plugin)
 	- [Sample PHP Plugin](#sample-php-plugin)
-	- [Shell Plugin](#shell-plugin)
+	- [Built-in Shell Plugin](#built-in-shell-plugin)
 - **[Command Line](#command-line)**
 	- [Starting and Stopping](#starting-and-stopping)
 	- [Storage Maintenance](#storage-maintenance)
@@ -1141,7 +1141,7 @@ The Plugin edit form contains the following elements:
 - The **Plugin ID** which is an auto-generated alphanumeric ID used only by the API.  This cannot be changed.
 - The **Plugin Name** which is used for display purposes.
 - The **Status** which controls whether the Plugin is active or disabled.  This also affects all events assigned to the Plugin, meaning if the Plugin is disabled, all the events assigned to it will also be effectively disabled as well (the scheduler won't start jobs for them).
-- The **Executable** path, which is executed in a sub-process to run jobs.  You may include command-line arguments here if your Plugin requires them, but no shell redirects or pipes (see the [Shell Plugin](#shell-plugin) if you need those).
+- The **Executable** path, which is executed in a sub-process to run jobs.  You may include command-line arguments here if your Plugin requires them, but no shell redirects or pipes (see the [Shell Plugin](#built-in-shell-plugin) if you need those).
 - A set of custom **Parameters** which you can define here, and then edit later for each event.  These parameters are then passed to your Plugin when jobs run. See below for details.
 - A set of **Advanced Options**, including customizing the working directory, and user/group (all optional).  See below for details.
 
@@ -1263,7 +1263,7 @@ The user edit form contains the following elements:
 
 Plugins handle running your events, and reporting status back to the Cronicle daemon.  They can be written in virtually any language, as they are really just command-line executables.  Cronicle spawns a sub-process for each job, executes a command-line you specify, and then uses [pipes](https://en.wikipedia.org/wiki/Pipeline_%28Unix%29) to pass in job information and retrieve status, all in JSON format.
 
-So you can write a Plugin in your language of choice, as long as it can read and write JSON.  Also, Cronicle ships with a built-in Plugin for handling shell scripts, which makes things even easier if you just have some simple shell commands to run, and don't want to have to deal with JSON at all.  See [Shell Plugin](#shell-plugin) below for more on this.
+So you can write a Plugin in your language of choice, as long as it can read and write JSON.  Also, Cronicle ships with a built-in Plugin for handling shell scripts, which makes things even easier if you just have some simple shell commands to run, and don't want to have to deal with JSON at all.  See [Shell Plugin](#built-in-shell-plugin) below for more on this.
 
 ## Writing Plugins
 
@@ -1467,6 +1467,9 @@ rl.on('line', function(line) {
 		}) + "\n" );
 		
 	}, 10 * 1000 );
+	
+	// close readline interface
+	rl.close();
 });
 ```
 
@@ -1516,13 +1519,16 @@ Here is a sample Plugin written in [PHP](https://php.net/):
 #!/usr/bin/env php
 <?php
 
-# read line from stdin -- it should be our job JSON
+// make sure php flushes after every print
+ob_implicit_flush();
+
+// read line from stdin -- it should be our job JSON
 $line = fgets( STDIN );
-$job = json_decode($line);
+$job = json_decode($line, true);
 
 print( "Running job: " . $job['id'] . ": " . json_encode($job) . "\n" );
 
-# report progress at 50%
+// report progress at 50%
 sleep(5);
 print( "Halfway there!\n" );
 print( json_encode(array( 'progress' => 0.5 )) . "\n" );
@@ -1530,7 +1536,7 @@ print( json_encode(array( 'progress' => 0.5 )) . "\n" );
 sleep(5);
 print( "Job complete, exiting.\n" );
 
-# All done, send completion via JSON
+// All done, send completion via JSON
 print( json_encode(array(
 	'complete' => 1,
 	'code' => 0
@@ -1540,7 +1546,7 @@ exit(0);
 ?>
 ```
 
-## Shell Plugin
+## Built-in Shell Plugin
 
 Cronicle ships with a built-in "Shell Plugin", which you can use to execute arbitrary shell scripts.  Simply select the Shell Plugin from the [Edit Event Tab](#edit-event-tab), and enter your script.  This is an easy way to get up and running quickly, because you don't have to worry about reading or writing JSON.
 
