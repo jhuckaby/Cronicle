@@ -1,13 +1,13 @@
 {
 	"name": "Cronicle",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
 	"license": "MIT",
 	"main": "lib/main.js",
 	"scripts": {
-		
+		"test": "pixl-unit node_modules/pixl-server-storage/test/test.js lib/test.js"
 	},
 	"repository": {
 		"type": "git",
@@ -58,6 +58,6 @@
 		"pixl-server-user": "^1.0.0"
 	},
 	"devDependencies": {
-		
+		"pixl-unit": "^1.0.0"
 	}
 }
