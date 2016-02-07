@@ -2514,6 +2514,7 @@ In addition, Cronicle uses the following server-side PixlCore utility modules:
 | [pixl-perf](https://www.npmjs.com/package/pixl-perf) | A simple, high precision performance tracking system. | MIT |
 | [pixl-request](https://www.npmjs.com/package/pixl-request) | A very simple module for making HTTP requests. | MIT |
 | [pixl-tools](https://www.npmjs.com/package/pixl-tools) | A set of miscellaneous utility functions for Node.js. | MIT |
+| [pixl-unit](https://www.npmjs.com/package/pixl-unit) | A very simple unit test runner for Node.js. | MIT |
 
 For the client-side, the Cronicle web application is built on the [pixl-webapp](https://www.npmjs.com/package/pixl-webapp) HTML5/CSS/JavaScript framework:
 
@@ -2581,6 +2582,20 @@ Also, you can force it to become the master server right away, so there is no de
 Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become master (~60 seconds after startup).
 
 Please note that when starting Cronicle in debug mode, all existing events with [Run All Mode](#run-all-mode) set will instantly be "caught up" to the current time, and not run any previous jobs.  Also, some features are not available in debug mode, namely the "Restart" and "Shut Down" links in the UI.
+
+## Running Unit Tests
+
+Cronicle comes with a full unit test suite, which runs via the [pixl-unit](https://www.npmjs.com/package/pixl-unit) module (which should be installed automatically).  To run the unit tests, make sure Cronicle isn't already running, and type this:
+
+```
+	npm test
+```
+
+If any tests fail, please open a [GitHub issue](https://github.com/jhuckaby/Cronicle/issues) and include the full unit test log, which can be found here:
+
+```
+	/opt/cronicle/logs/unit.log
+```
 
 # Colophon
 
