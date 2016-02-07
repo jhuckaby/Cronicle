@@ -59,13 +59,15 @@ cstream.on('error', function(err, text) {
 
 child.on('error', function (err) {
 	// child error
-	fs.writeFileSync( job.queue_dir + '/' + job.id + '.json', JSON.stringify({
+	var queue_file = job.queue_dir + '/' + job.id + '.json';
+	fs.writeFileSync( queue_file + '.tmp', JSON.stringify({
 		action: "detachedJobUpdate",
 		id: job.id,
 		complete: 1,
 		code: 1,
 		description: "Script failed: " + Tools.getErrorDescription(err)
-	}) );		
+	}) );
+	fs.renameSync( queue_file + '.tmp', queue_file );
 } );
 
 child.on('exit', function (code, signal) {
@@ -82,7 +84,10 @@ child.on('exit', function (code, signal) {
 	updates.id = job.id;
 	updates.complete = 1;
 	
-	fs.writeFileSync( job.queue_dir + '/' + job.id + '.json', JSON.stringify(updates) );		
+	// write file atomically, just in case
+	var queue_file = job.queue_dir + '/' + job.id + '.json';
+	fs.writeFileSync( queue_file + '.tmp', JSON.stringify(updates) );
+	fs.renameSync( queue_file + '.tmp', queue_file );
 } );
 
 // send initial job + params
