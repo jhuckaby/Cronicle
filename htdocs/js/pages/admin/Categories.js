@@ -260,7 +260,7 @@ Class.add( Page.Admin, {
 		var jobs = [];
 		for (var id in app.activeJobs) {
 			var job = app.activeJobs[id];
-			if (job.category == category.id) jobs.push( job );
+			if ((job.category == category.id) && !job.detached) jobs.push( job );
 		}
 		
 		// if the cat was disabled and there are running jobs, ask user to abort them

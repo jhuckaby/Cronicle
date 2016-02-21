@@ -464,7 +464,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var jobs = [];
 		for (var id in app.activeJobs) {
 			var job = app.activeJobs[id];
-			if (job.event == event.id) jobs.push( job );
+			if ((job.event == event.id) && !job.detached) jobs.push( job );
 		}
 		
 		// if the event was disabled and there are running jobs, ask user to abort them
