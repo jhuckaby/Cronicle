@@ -64,7 +64,7 @@ Class.add( Page.Admin, {
 					'-', '(Nearby)', '-', '-', '-', '-',
 					'<span class="link" onMouseUp="$P().add_server_from_list('+idx+')"><b>Add Server</b></span>'
 				];
-				tds.className = 'yellow';
+				tds.className = 'blue';
 				return tds;
 			} // nearby
 			
@@ -202,7 +202,7 @@ Class.add( Page.Admin, {
 		
 		html += '<center><table>' + 
 			// get_form_table_spacer() + 
-			get_form_table_row('Hostname or IP:', '<input type="text" id="fe_as_hostname" size="30" value="" spellcheck="false"/>') + 
+			get_form_table_row('Hostname or IP:', '<input type="text" id="fe_as_hostname" style="width:280px" value="" spellcheck="false"/>') + 
 			get_form_table_caption("Enter the hostname or IP of the server you want to add.") + 
 		'</table></center>';
 		
