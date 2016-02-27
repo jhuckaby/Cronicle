@@ -140,6 +140,8 @@ Class.subclass( Page, "Page.Base", {
 			$(selector).show(250);
 		}
 		else $(selector).hide(250);
+		
+		return this; // for chaining
 	},
 	
 	checkUserExists: function(pre) {
