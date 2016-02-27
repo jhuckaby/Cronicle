@@ -109,7 +109,7 @@ If you'd rather install it manually (or something went wrong with the auto-insta
 	node bin/build.js dist
 ```
 
-Replace `v1.0.0` with the desired Cronicle version from the [release list](https://github.com/jhuckaby/Cronicle/releases).
+Replace `v1.0.0` with the desired Cronicle version from the [release list](https://github.com/jhuckaby/Cronicle/releases), or `master` for the head revision (unstable).
 
 The horribly-named [--unsafe-perm](https://docs.npmjs.com/misc/config#unsafe-perm) flag simply allows npm to compile native add-ons when running under [sudo](https://en.wikipedia.org/wiki/Sudo).  It's perfectly safe, but you can omit it if you are running as true root (i.e. not sudo'ed).
 
@@ -682,7 +682,21 @@ All events are assigned to a particular category.  If you don't want to create c
 
 #### Event Target
 
-In a multi-server cluster, events can be targeted to run on individual servers, or server groups.  Both are listed in the drop-down menu.  If a server group is targeted, one of the group's servers is picked at random each time the event runs a job.  See the [Servers Tab](#servers-tab) below for more details on creating server groups.
+In a multi-server cluster, events can be targeted to run on individual servers, or server groups.  Both are listed in the drop-down menu.  If a server group is targeted, one of the group's servers is chosen each time the event runs a job.  You can decide which algorithm to use for picking servers from the group (see below).  Also, see the [Servers Tab](#servers-tab) for more details on creating server groups.
+
+##### Algorithm
+
+When you target a server group for your event, a supplementary menu appears to select an "algorithm".  This is simply the method by which Cronicle picks a server in the group to run your job.  The default is "Random" (i.e. select a random server from the group for each job), but there are several others as well:
+
+| Algorithm Name | Description |
+|---------------|-------------|
+| **Random** | Pick a random server from the group. |
+| **Round Robin** | Pick each server in sequence (alphabetically sorted). |
+| **Least CPU Usage** | Pick the server with the least amount of CPU usage in the group. |
+| **Least Memory Usage** | Pick the server with the least amount of memory usage in the group. |
+| **Prefer First** | Prefer the first server in the group (alphabetically sorted), only picking alternatives if the first server is unavailable. |
+| **Prefer Last** | Prefer the last server in the group (alphabetically sorted), only picking alternatives if the last server is unavailable. |
+| **Multiplex** | Run the event on **all** servers in the group simultaneously (see below). |
 
 ##### Multiplexing
 
@@ -1203,7 +1217,7 @@ There is also an **Add Server** button, but note that servers on the same LAN sh
 
 #### Server Groups
 
-Below the server cluster you'll find a list of server groups.  These serve two purposes.  First, you can define groups in order to target events at them.  For example, an event can target the group of servers instead of an individual server, and one of the servers will be picked at random for each job (or, if [Multiplex](#multiplexing) is enabled, all the servers at once).  Second, you can use server groups to define which of your servers are eligible to become the master server, if the current master is shut down.
+Below the server cluster you'll find a list of server groups.  These serve two purposes.  First, you can define groups in order to target events at them.  For example, an event can target the group of servers instead of an individual server, and one of the servers will be picked for each job (or, if [Multiplex](#multiplexing) is enabled, all the servers at once).  Second, you can use server groups to define which of your servers are eligible to become the master server, if the current master is shut down.
 
 When Cronicle is first installed, two server groups are created by default.  A "Master Group" which contains only the current (master) server, and an "All Servers" group, which contains all the servers (current and future).  Groups automatically add servers by a hostname-based regular expression match.  Therefore, when additional servers join the cluster, they will be assigned to groups automatically via their hostname.
 
@@ -1648,8 +1662,8 @@ Replace `USERNAME` with the desired username, and `PASSWORD` with the desired pa
 Here are the instructions for making Cronicle automatically start on server boot (Linux only).  Type these commands as root:
 
 ```
-	cp /opt/cronicle/bin/cronicled.init /etc/init.d/
-	chmod 775 /etc/init.d/cronicled.init
+	cp /opt/cronicle/bin/cronicled.init /etc/init.d/cronicled
+	chmod 775 /etc/init.d/cronicled
 ```
 
 Then, if you have a RedHat-style Linux (i.e. Fedora, CentOS), type this:
@@ -2426,6 +2440,7 @@ Here are descriptions of all the properties in the event object, which is common
 | `memory_limit` | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
 | `memory_sustain` | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
 | `modified` | The date/time of the event's last modification, in Epoch seconds. |
+| `algo` | Specifies the algorithm to use for picking a server from the target group, e.g. `random`. |
 | `multiplex` | Specifies whether the event has [Multiplexing](#multiplexing) mode is enabled or not. |
 | `notes` | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
 | `notify_fail` | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
