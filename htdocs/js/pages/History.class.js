@@ -75,10 +75,10 @@ Class.subclass( Page.Base, "Page.History", {
 			
 			var event_link = '(None)';
 			if (event) {
-				event_link = '<div class="td_big"><a href="#History?sub=event_history&id='+job.event+'">' + self.getNiceEvent('<b>' + (event.title || job.event) + '</b>', col_width) + '</a></div>';
+				event_link = '<div class="td_big"><a href="#History?sub=event_history&id='+job.event+'">' + self.getNiceEvent('<b>' + (event.title || job.event) + '</b>', col_width + 40) + '</a></div>';
 			}
 			else if (job.event_title) {
-				event_link = self.getNiceEvent(job.event_title, col_width);
+				event_link = self.getNiceEvent(job.event_title, col_width + 40);
 			}
 			
 			var tds = [
