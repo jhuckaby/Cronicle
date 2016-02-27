@@ -517,20 +517,39 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// target (server group or individual server)
 		html += get_form_table_row( 'Target', 
+			'<select id="fe_ee_target" onChange="$P().set_event_target(this.options[this.selectedIndex].value)">' + this.render_target_menu_options( event.target ) + '</select>'
+		);
+		
+		/*html += get_form_table_row( 'Target', 
 			'<table cellspacing="0" cellpadding="0"><tr>' + 
 				'<td><select id="fe_ee_target">' + this.render_target_menu_options( event.target ) + '</select></td>' + 
-				'<td style="padding-left:15px;"><input type="checkbox" id="fe_ee_multiplex" value="1" ' + (event.multiplex ? 'checked="checked"' : '') + ' onChange="$P().setGroupVisible(\'mp\',this.checked)"/><label for="fe_ee_multiplex">Multiplex</label></td>' + 
+				'<td style="padding-left:15px;"><input type="checkbox" id="fe_ee_multiplex" value="1" ' + (event.multiplex ? 'checked="checked"' : '') + ' onChange="$P().setGroupVisible(\'mp\',this.checked).setGroupVisible(\'algo\',!this.checked)"/><label for="fe_ee_multiplex">Multiplex</label></td>' + 
 			'</tr></table>' 
-		);
+		);*/
 		html += get_form_table_caption( 
-			"Select a target server group or individual server to run the event on.<br/>" + 
-			"Multiplex means that the event will run on <b>all</b> matched servers simultaneously." 
+			"Select a target server group or individual server to run the event on."
+			// "Multiplex means that the event will run on <b>all</b> matched servers simultaneously." 
 		);
 		html += get_form_table_spacer();
 		
+		// algo selection
+		var algo_classes = 'algogroup';
+		var target_group = find_object( app.server_groups, { id: event.target } );
+		if (!target_group) algo_classes += ' collapse';
+		
+		var algo_items = [['random',"Random"],['round_robin',"Round Robin"],['least_cpu',"Least CPU Usage"],['least_mem',"Least Memory Usage"],['prefer_low',"Prefer First (Alphabetically)"],['prefer_high',"Prefer Last (Alphabetically)"],['multiplex',"Multiplex"]];
+		
+		html += get_form_table_row( algo_classes, 'Algorithm', '<select id="fe_ee_algo" onChange="$P().set_algo(this.options[this.selectedIndex].value)">' + render_menu_options(algo_items, event.algo, false) + '</select>' );
+		
+		html += get_form_table_caption( algo_classes, 
+			"Select the desired algorithm for choosing a server from the target group.<br/>" + 
+			"'Multiplex' means that the event will run on <b>all</b> group servers simultaneously." 
+		);
+		html += get_form_table_spacer( algo_classes, '' );
+		
 		// multiplex stagger
 		var mp_classes = 'mpgroup';
-		if (!event.multiplex) mp_classes += ' collapse';
+		if (!event.multiplex || !target_group) mp_classes += ' collapse';
 		
 		var stagger_units = 60;
 		var stagger = parseInt( event.stagger || 0 );
@@ -732,6 +751,22 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		return html;
 	},
 	
+	set_event_target: function(target) {
+		// event target has changed (from menu selection)
+		// hide / show sections as necessary
+		var target_group = find_object( app.server_groups, { id: target } );
+		var algo = $('#fe_ee_algo').val();
+		
+		this.setGroupVisible('algo', !!target_group);
+		this.setGroupVisible('mp', !!target_group && (algo == 'multiplex'));
+	},
+	
+	set_algo: function(algo) {
+		// target server algo has changed
+		// hide / show multiplex stagger as necessary
+		this.setGroupVisible('mp', (algo == 'multiplex'));
+	},
+	
 	change_retry_amount: function() {
 		// user has selected a retry amount from the menu
 		// adjust the visibility of the retry delay controls accordingly
@@ -749,7 +784,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		html += '<center><table>' + 
 			// get_form_table_spacer() + 
-			get_form_table_row('Crontab:', '<input type="text" id="fe_ee_crontab" size="45" value="" spellcheck="false"/>') + 
+			get_form_table_row('Crontab:', '<input type="text" id="fe_ee_crontab" style="width:330px;" value="" spellcheck="false"/>') + 
 			get_form_table_caption("Enter your crontab date/time expression here.") + 
 		'</table></center>';
 		
@@ -816,7 +851,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		html += '<center><table>' + 
 			// get_form_table_spacer() + 
-			get_form_table_row('Category Title:', '<input type="text" id="fe_ee_cat_title" size="45" value=""/>') + 
+			get_form_table_row('Category Title:', '<input type="text" id="fe_ee_cat_title" style="width:315px" value=""/>') + 
 			get_form_table_caption("Enter a title for your category here.") + 
 		'</table></center>';
 		
@@ -1305,8 +1340,9 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// target (server group or individual server)
 		event.target = $('#fe_ee_target').val();
 		
-		// multiplex / stagger
-		event.multiplex = $('#fe_ee_multiplex').is(':checked') ? 1 : 0;
+		// algo / multiplex / stagger
+		event.algo = $('#fe_ee_algo').val();
+		event.multiplex = (event.algo == 'multiplex') ? 1 : 0;
 		if (event.multiplex) {
 			event.stagger = parseInt( $('#fe_ee_stagger').val() ) * parseInt( $('#fe_ee_stagger_units').val() );
 			if (isNaN(event.stagger)) return app.badField('fe_ee_stagger', "Please enter a number of seconds to stagger by.");
