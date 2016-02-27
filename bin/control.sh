@@ -98,12 +98,15 @@ do
 	;;
 	setup)
 		node $HOMEDIR/bin/storage-cli.js setup
+		exit
 	;;
 	maint)
 		node $HOMEDIR/bin/storage-cli.js maint $1
+		exit
 	;;
 	admin)
 		node $HOMEDIR/bin/storage-cli.js admin $1 $2
+		exit
 	;;
 	upgrade)
 		if [ $RUNNING -eq 1 ]; then
@@ -113,6 +116,7 @@ do
 		if [ $RUNNING -eq 1 ]; then
 		    $0 start
 		fi
+		exit
 	;;
     *)
 	echo "usage: $0 (start|stop|cycle|status|help)"
