@@ -534,7 +534,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// algo selection
 		var algo_classes = 'algogroup';
-		var target_group = find_object( app.server_groups, { id: event.target } );
+		var target_group = !event.target || find_object( app.server_groups, { id: event.target } );
 		if (!target_group) algo_classes += ' collapse';
 		
 		var algo_items = [['random',"Random"],['round_robin',"Round Robin"],['least_cpu',"Least CPU Usage"],['least_mem',"Least Memory Usage"],['prefer_first',"Prefer First (Alphabetically)"],['prefer_last',"Prefer Last (Alphabetically)"],['multiplex',"Multiplex"]];
@@ -680,13 +680,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += get_form_table_row( rc_classes, 'Time Machine', 
 			'<table cellspacing="0" cellpadding="0"><tr>' + 
 				'<td><input type="checkbox" id="fe_ee_rc_enabled" value="1" onChange="$P().toggle_rc_textfield(this.checked)"/></td><td><label for="fe_ee_rc_enabled">Set Event Clock:</label>&nbsp;</td>' + 
-				'<td><input type="text" id="fe_ee_rc_time" style="font-size:13px; width:145px;" disabled="disabled" value="'+get_short_date_time( rc_epoch )+'"/></td>' + 
+				'<td><input type="text" id="fe_ee_rc_time" style="font-size:13px; width:180px;" disabled="disabled" value="'+$P().rc_get_short_date_time( rc_epoch )+'" onFocus="this.blur()" onMouseUp="$P().rc_click()"/></td>' + 
 				'<td><span id="s_ee_rc_reset" class="link addme" style="opacity:0" onMouseUp="$P().reset_rc_time_now()">&laquo; Reset</span></td>' + 
 			'</tr></table>' 
 		);
 		html += get_form_table_caption( rc_classes, 
-			"Optionally reset the internal clock for this event, to repeat past jobs, or jump over a queue.<br/>" + 
-			"This is interpreted in your local timezone ("+app.tz+")." 
+			"Optionally reset the internal clock for this event, to repeat past jobs, or jump over a queue."
 		);
 		html += get_form_table_spacer( rc_classes, '' );
 		
@@ -913,10 +912,44 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		}, 1 );
 	},
 	
+	rc_parse_date: function(str) {
+		// parse date using moment.tz and event tz, return epoch
+		var tz = this.event.timezone || app.tz;
+		return moment.tz( new Date(str), tz).unix();
+	},
+	
+	rc_get_short_date_time: function(epoch) {
+		// get short date/time with tz abbrev using moment
+		var tz = this.event.timezone || app.tz;
+		// return moment.tz( epoch * 1000, tz).format("MMM D, YYYY h:mm A z");
+		return moment.tz( epoch * 1000, tz).format("lll z");
+	},
+	
+	rc_click: function() {
+		// click in 'reset cursor' text field, popup edit dialog
+		var self = this;
+		$('#fe_ee_rc_time').blur();
+		
+		if ($('#fe_ee_rc_enabled').is(':checked')) {
+			var epoch = (new Date( $('#fe_ee_rc_time').val() ).getTime()) / 1000;
+			
+			$P().choose_date_time({
+				when: epoch,
+				title: "Set Event Clock",
+				timezone: this.event.timezone || app.tz,
+				
+				callback: function(rc_epoch) {
+					$('#fe_ee_rc_time').val( self.rc_get_short_date_time( rc_epoch ) );
+					$('#fe_ee_rc_time').blur();
+				}
+			});
+		}
+	},
+	
 	reset_rc_time_now: function() {
 		// reset cursor value to now, from click
 		var rc_epoch = normalize_time( time_now(), { sec: 0 } );
-		$('#fe_ee_rc_time').val( get_short_date_time( rc_epoch ) );
+		$('#fe_ee_rc_time').val( this.rc_get_short_date_time( rc_epoch ) );
 	},
 	
 	update_rc_value: function() {
@@ -925,7 +958,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = this.event;
 		
 		if (event.id && $('#fe_ee_catch_up').is(':checked') && !$('#fe_ee_rc_enabled').is(':checked') && app.state && app.state.cursors && app.state.cursors[event.id]) {
-			$('#fe_ee_rc_time').val( get_short_date_time( app.state.cursors[event.id] ) );
+			$('#fe_ee_rc_time').val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
 		}
 	},
 	
@@ -934,16 +967,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = this.event;
 		
 		if (state) {
-			$('#fe_ee_rc_time').removeAttr('disabled');
+			$('#fe_ee_rc_time').removeAttr('disabled').css('cursor', 'pointer');
 			$('#s_ee_rc_reset').fadeTo( 250, 1.0 );
 		}
 		else {
-			$('#fe_ee_rc_time').attr('disabled', 'disabled');
+			$('#fe_ee_rc_time').attr('disabled', 'disabled').css('cursor', 'default');
 			$('#s_ee_rc_reset').fadeTo( 250, 0.0 );
 			
 			// reset value just in case it changed while field was enabled
 			if (event.id && app.state && app.state.cursors && app.state.cursors[event.id]) {
-				$('#fe_ee_rc_time').val( get_short_date_time( app.state.cursors[event.id] ) );
+				$('#fe_ee_rc_time').val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
 			}
 		}
 	},
@@ -951,9 +984,20 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	change_timezone: function() {
 		// change timezone setting
 		var event = this.event;
-		event.timezone = $('#fe_ee_timezone').val();
 		
+		// update 'reset cursor' text field to reflect new timezone
+		var new_cursor = this.rc_parse_date( $('#fe_ee_rc_time').val() );
+		if (!new_cursor || isNaN(new_cursor)) {
+			new_cursor = app.state.cursors[event.id] || normalize_time( time_now(), { sec: 0 } );
+		}
+		new_cursor = normalize_time( new_cursor, { sec: 0 } );
+		
+		// update timezone
+		event.timezone = $('#fe_ee_timezone').val();
 		this.change_edit_timing_param();
+		
+		// render out new RC date/time
+		$('#fe_ee_rc_time').val( this.rc_get_short_date_time( new_cursor ) );
 	},
 	
 	change_edit_timing: function() {
@@ -1405,7 +1449,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {
-			var new_cursor = parse_date( $('#fe_ee_rc_time').val() );
+			var new_cursor = this.rc_parse_date( $('#fe_ee_rc_time').val() );
 			if (!new_cursor || isNaN(new_cursor)) return app.badField('fe_ee_rc_time', "Please enter a valid date/time for the new event time.");
 			event['reset_cursor'] = normalize_time( new_cursor, { sec: 0 } );
 		}
