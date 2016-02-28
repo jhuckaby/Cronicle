@@ -1,0 +1,19 @@
+To: [/notify_fail]
+From: [/config/email_from]
+Subject: ⚠️ Cronicle Event Error: [/title]
+
+Date/Time: [/nice_date_time]
+Event Title: [/title]
+Hostname: [/hostname]
+
+Error Description:
+[/description]
+
+Edit Event:
+[/edit_event_url]
+
+Event Notes:
+[/notes]
+
+Regards,
+The Cronicle Team
