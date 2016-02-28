@@ -277,6 +277,92 @@ Class.subclass( Page, "Page.Base", {
 		var $div = $fieldset.prev();
 		$fieldset.hide( 350 );
 		$div.show( 350 );
+	},
+	
+	choose_date_time: function(args) {
+		// show dialog for selecting a date/time
+		// args: {
+		//		when: default date/time (epoch or Date object, defaults to now)
+		//		timezone: custom timezone (defaults to app.tz)
+		//		title: dialog title
+		//		description: optional description
+		//		button: optional button label ("Select")
+		//		callback: fired when complete, passed new date/time
+		// }
+		var self = this;
+		var html = '';
+		
+		if (!args.when) args.when = time_now();
+		if (!args.timezone) args.timezone = app.tz;
+		if (!args.title) args.title = "Select Date/Time";
+		if (!args.button) args.button = "Select";
+		
+		if (args.description) {
+			html += '<div style="font-size:12px; color:#777; margin-bottom:20px;">' + args.description + '</div>';
+		}
+		
+		// var dargs = get_date_args( args.when );
+		var margs = moment.tz(args.when * 1000, args.timezone);
+		
+		html += '<center><table><tr>';
+		
+		// years
+		var year_items = [];
+		for (var idx = margs.year() - 10; idx <= margs.year() + 10; idx++) { 
+			year_items.push(idx); 
+		}
+		html += '<td align="left"><fieldset class="dt_fs"><legend>Year</legend>';
+		html += '<select id="fe_dt_year">' + render_menu_options(year_items, margs.year()) + '</select>';
+		html += '</fieldset></td>';
+		
+		// months
+		html += '<td align="left"><fieldset class="dt_fs" style="margin-left:5px;"><legend>Month</legend>';
+		html += '<select id="fe_dt_month">' + render_menu_options(_months, margs.month() + 1) + '</select>';
+		html += '</fieldset></td>';
+		
+		// days
+		html += '<td align="left"><fieldset class="dt_fs" style="margin-left:5px;"><legend>Day</legend>';
+		html += '<select id="fe_dt_day">' + render_menu_options(_days, margs.date()) + '</select>';
+		html += '</fieldset></td>';
+		
+		// hours
+		var hour_items = _hour_names.map( function(value, idx) {
+			return [idx, value.toUpperCase().replace(/^(\d+)(\w+)$/, '$1 $2')];
+		} );
+		html += '<td align="left"><fieldset class="dt_fs" style="margin-left:5px;"><legend>Hour</legend>';
+		html += '<select id="fe_dt_hour">' + render_menu_options(hour_items, margs.hour()) + '</select>';
+		html += '</fieldset></td>';
+		
+		// minutes
+		var min_items = [];
+		for (var idx = 0; idx < 60; idx++) { 
+			min_items.push([ idx, (idx < 10) ? ('0'+idx) : (''+idx) ]); 
+		}
+		html += '<td align="left"><fieldset class="dt_fs" style="margin-left:5px;"><legend>Minute</legend>';
+		html += '<select id="fe_dt_minute">' + render_menu_options(min_items, margs.minute()) + '</select>';
+		html += '</fieldset></td>';
+		
+		html += '</tr>';
+		html += '<tr><td align="left" colspan="5">';
+			html += '<div class="caption">Timezone: ' + args.timezone + '</div>';
+		html += '</td></tr>';
+		html += '</table></center>';
+		
+		app.confirm( '<i class="fa fa-calendar">&nbsp;</i>' + args.title, html, args.button, function(result) {
+			app.clearError();
+			
+			if (result) {
+				Dialog.hide();
+				
+				margs.year( parseInt( $('#fe_dt_year').val() ) );
+				margs.month( parseInt( $('#fe_dt_month').val() ) - 1 );
+				margs.date( parseInt( $('#fe_dt_day').val() ) );
+				margs.hour( parseInt( $('#fe_dt_hour').val() ) );
+				margs.minute( parseInt( $('#fe_dt_minute').val() ) );
+				
+				args.callback( margs.unix() );
+			}
+		} ); // app.confirm
 	}
 	
 } );
