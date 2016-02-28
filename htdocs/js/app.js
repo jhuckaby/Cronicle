@@ -462,7 +462,11 @@ app.extend({
 		}
 		
 		// date/time in tab bar
-		$('#d_tab_time, #d_scroll_time > span').html( get_nice_date_time( when, true, true ) );
+		// $('#d_tab_time, #d_scroll_time > span').html( get_nice_date_time( when, true, true ) );
+		$('#d_tab_time, #d_scroll_time > span').html(
+			get_nice_date_time( when, true, true ) + ' ' + 
+			moment.tz( when * 1000, app.tz).format("z") 
+		);
 	},
 	
 	updateMasterSwitch: function() {
