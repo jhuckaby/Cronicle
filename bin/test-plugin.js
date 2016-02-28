@@ -41,6 +41,7 @@ stream.on('json', function(job) {
 	
 	var start = Tools.timeNow();
 	var duration = parseInt( job.params.duration );
+	var idx = 0;
 	
 	var timer = setInterval( function() {
 		var now = Tools.timeNow();
@@ -55,6 +56,11 @@ stream.on('json', function(job) {
 			stream.write({
 				progress: progress
 			});
+		}
+		
+		idx++;
+		if (idx % 10 == 0) {
+			logger.debug(9, "Now is the time for all good men to come to the aid of their country! " + progress);
 		}
 		
 		if (progress >= 1.0) {
