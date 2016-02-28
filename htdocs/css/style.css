@@ -60,8 +60,8 @@
 	box-sizing: border-box;
 	top: -30px;
 	left: 100%;
-	margin-left: -175px;
-	width: 175px;
+	margin-left: -200px;
+	width: 200px;
 	height: 20px;
 	line-height: 20px;
 	
@@ -462,3 +462,13 @@ input[type=range]::-moz-range-thumb {
 	margin-top: -6px;
 }
 
+/* Date/Time Dialog */
+
+fieldset.dt_fs {
+	margin-bottom: 4px;
+	padding: 2px 5px 5px 5px;
+}
+fieldset.dt_fs > legend {
+	font-size: 11px;
+	text-transform: uppercase;
+}
