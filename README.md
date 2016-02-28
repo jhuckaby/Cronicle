@@ -529,6 +529,7 @@ Cronicle will send a number of different types of e-mails in response to certain
 | **Recover Password** | `conf/emails/recover_password.txt` | Sent when a user requests password recovery. |
 | **Job Succeeded** | `conf/emails/job_success.txt` | Conditionally sent when a job completes successfully (depends on event configuration). |
 | **Job Failed** | `conf/emails/job_fail.txt` | Conditionally sent when a job fails (depends on event configuration). |
+| **Event Error** | `conf/emails/event_error.txt` | Sent when a job fails to launch (depends on event configuration). |
 
 Feel free to edit these files to your liking.  Note that any text in `[/square_brackets]` is a placeholder which gets swapped out with live data relevant to the event which fired off the e-mail.
 
