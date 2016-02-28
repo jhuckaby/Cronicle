@@ -537,7 +537,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var target_group = find_object( app.server_groups, { id: event.target } );
 		if (!target_group) algo_classes += ' collapse';
 		
-		var algo_items = [['random',"Random"],['round_robin',"Round Robin"],['least_cpu',"Least CPU Usage"],['least_mem',"Least Memory Usage"],['prefer_low',"Prefer First (Alphabetically)"],['prefer_high',"Prefer Last (Alphabetically)"],['multiplex',"Multiplex"]];
+		var algo_items = [['random',"Random"],['round_robin',"Round Robin"],['least_cpu',"Least CPU Usage"],['least_mem',"Least Memory Usage"],['prefer_first',"Prefer First (Alphabetically)"],['prefer_last',"Prefer Last (Alphabetically)"],['multiplex',"Multiplex"]];
 		
 		html += get_form_table_row( algo_classes, 'Algorithm', '<select id="fe_ee_algo" onChange="$P().set_algo(this.options[this.selectedIndex].value)">' + render_menu_options(algo_items, event.algo, false) + '</select>' );
 		
