@@ -688,15 +688,15 @@ In a multi-server cluster, events can be targeted to run on individual servers, 
 
 When you target a server group for your event, a supplementary menu appears to select an "algorithm".  This is simply the method by which Cronicle picks a server in the group to run your job.  The default is "Random" (i.e. select a random server from the group for each job), but there are several others as well:
 
-| Algorithm Name | Description |
-|---------------|-------------|
-| **Random** | Pick a random server from the group. |
-| **Round Robin** | Pick each server in sequence (alphabetically sorted). |
-| **Least CPU Usage** | Pick the server with the least amount of CPU usage in the group. |
-| **Least Memory Usage** | Pick the server with the least amount of memory usage in the group. |
-| **Prefer First** | Prefer the first server in the group (alphabetically sorted), only picking alternatives if the first server is unavailable. |
-| **Prefer Last** | Prefer the last server in the group (alphabetically sorted), only picking alternatives if the last server is unavailable. |
-| **Multiplex** | Run the event on **all** servers in the group simultaneously (see below). |
+| Algorithm ID | Algorithm Name | Description |
+|--------------|----------------|-------------|
+| `random` | **Random** | Pick a random server from the group. |
+| `round_robin` | **Round Robin** | Pick each server in sequence (alphabetically sorted). |
+| `least_cpu` | **Least CPU Usage** | Pick the server with the least amount of CPU usage in the group. |
+| `least_mem` | **Least Memory Usage** | Pick the server with the least amount of memory usage in the group. |
+| `prefer_first` | **Prefer First** | Prefer the first server in the group (alphabetically sorted), only picking alternatives if the first server is unavailable. |
+| `prefer_last` | **Prefer Last** | Prefer the last server in the group (alphabetically sorted), only picking alternatives if the last server is unavailable. |
+| `multiplex` | **Multiplex** | Run the event on **all** servers in the group simultaneously (see below). |
 
 ##### Multiplexing
 
@@ -917,7 +917,7 @@ Here is an example web hook JSON record (`job_complete` version shown):
 
 Cronicle can automatically limit the server resource consumption of your jobs, by monitoring their CPU and RAM usage, and aborting them if the limits are exceeded.  You can also specify "sustain" times, so no action is taken until the limits are exceeded for a certain amount of time.
 
-CPU and RAM usage are measured every minute, by looking at the process spawned for the job, *and any child processes that may have also been spawned by your code*.  So if you fork your own child subprocess, or shell out to a command-line utility, all the memory is totaled up, and compared against the resource limits for the job.
+CPU and RAM usage are measured every 10 seconds, by looking at the process spawned for the job, *and any child processes that may have also been spawned by your code*.  So if you fork your own child subprocess, or shell out to a command-line utility, all the memory is totaled up, and compared against the resource limits for the job.
 
 #### Event Notes
 
@@ -2440,7 +2440,7 @@ Here are descriptions of all the properties in the event object, which is common
 | `memory_limit` | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
 | `memory_sustain` | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
 | `modified` | The date/time of the event's last modification, in Epoch seconds. |
-| `algo` | Specifies the algorithm to use for picking a server from the target group, e.g. `random`. |
+| `algo` | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](#algorithm). |
 | `multiplex` | Specifies whether the event has [Multiplexing](#multiplexing) mode is enabled or not. |
 | `notes` | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
 | `notify_fail` | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
