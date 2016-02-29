@@ -575,6 +575,8 @@ The Cronicle Team
 
 The stock e-mail templates shipped with Cronicle are plain text, but you can provide your own rich HTML e-mail templates if you want.  Simply start the e-mail body content (what comes after the Subject line) with an HTML open tag, e.g. `<div>`, and the e-mails will be sent as HTML instead of text.
 
+You can include any property from the main `conf/config.json` file by using the syntax `[/config/KEY]`.  Also, to include environment variables, use the syntax `[/env/ENV_KEY]`, for example `[/env/NODE_ENV]`.
+
 # Web UI
 
 This section describes the Cronicle web user interface.  It has been tested extensively in Safari, Chrome and Firefox.  Recent versions of IE should also work (11 and Edge).
@@ -777,6 +779,14 @@ When Uninterruptible (Detached Mode) mode is enabled on an event, jobs are spawn
 Please use this mode with caution, and only when truly needed, as there are downsides.  First of all, since the process runs detached and standalone, there are no real-time updates.  Meaning, no progress bar, and no time remaining display.  Also, when your job completes, there is a delay of up to a minute before Cronicle realizes.
 
 It is much better to design your jobs to be interrupted, if at all possible.  Note that Cronicle will re-run interrupted jobs if they have [Run All Mode](#run-all-mode) set.  So Detached Mode should only be needed in very special circumstances.
+
+##### Chain Reaction
+
+When Chain Reaction mode is enabled on an event, a drop-down menu will appear allowing you to select an additional event from the schedule.  This event will be launched automatically each time the current event completes a job.  You are essentially "chaining" two events together, so one always runs at the completion of the other.  This chain can be any number of events long, and the events can all run on different servers.
+
+The chained event only launches a job if the current event completes with a successful result.  Meaning, if an error occurs and the job fails, the chain reaction does not activate.
+
+You can have more control over this process by using the JSON API in your Plugins.  See [Chain Reaction Control](#chain-reaction-control) below for details.
 
 #### Event Time Machine
 
@@ -1430,6 +1440,34 @@ These JSON updates can be sent as standalone records as shown here, at any time 
 ```js
 { "complete": 1, "code": 999, "description": "Failed to connect to database.", "perf": { "db": 18.51, "db_run_sql": 3.22, "db_connect": 0.84 }, "notify_fail": "emergency-ops-pager@mycompany.com" }
 ```
+
+#### Chain Reaction Control
+
+You can enable or disable [Chain Reaction](#chain-reaction) mode on the fly, by setting the `chain` property in your JSON output.  This allows you to designate another event to launch as soon as the current job completes, or to clear the property (set it to false or a blank string) to disable Chain Reaction mode if it was enabled in the UI.
+
+To enable a chain reaction, you need to know the Event ID of the event you want to trigger.  You can determine this by editing the event in the UI and copy the Event ID from the top of the form, just above the title.  Then you can specify the ID in your jobs by printing some JSON to STDOUT like this:
+
+```js
+{ "chain": "e29bf12db" }
+```
+
+Remember that your job must complete successfully in order to trigger the chain reaction, and fire off the next event.
+
+To disable chain reaction mode, set the `chain` property to false or an empty string:
+
+```js
+{ "chain": "" }
+```
+
+##### Chain Data
+
+You can pass custom JSON data to the next event in the chain, when using a [Chain Reaction](#chain-reaction) event.  Simply specify a JSON property called `chain_data` in your JSON output, and pass in anything you want (can be a complex object / array tree), and the next event will receive it.  Example:
+
+```js
+{ "chain": "e29bf12db", "chain_data": { "custom_key": "foobar", "value": 42 } }
+```
+
+So in this case when the event `e29bf12db` runs, it will be passed your `chain_data` object as part of the JSON sent to it when the job starts.  The Plugin code running the chained event can access the data by parsing the JSON and grabbing the `chain_data` property.
 
 ### Environment Variables
 
@@ -2428,9 +2466,11 @@ Here are descriptions of all the properties in the event object, which is common
 
 | Event Property | Description |
 |----------|-------------|
+| `algo` | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](#algorithm). |
 | `api_key` | The API Key of the application that originally created the event (if created via API). |
 | `catch_up` | Specifies whether the event has [Run All Mode](#run-all-mode) enabled or not. |
 | `category` | The Category ID to which the event is assigned.  See [Categories Tab](#categories-tab). |
+| `chain` | The chain reaction event ID to launch when jobs complete.  See [Chain Reaction](#chain-reaction). |
 | `cpu_limit` | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). |
 | `cpu_sustain` | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
 | `created` | The date/time of the event's initial creation, in Epoch seconds. |
@@ -2441,7 +2481,6 @@ Here are descriptions of all the properties in the event object, which is common
 | `memory_limit` | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
 | `memory_sustain` | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
 | `modified` | The date/time of the event's last modification, in Epoch seconds. |
-| `algo` | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](#algorithm). |
 | `multiplex` | Specifies whether the event has [Multiplexing](#multiplexing) mode is enabled or not. |
 | `notes` | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
 | `notify_fail` | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
