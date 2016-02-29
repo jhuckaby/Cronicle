@@ -45,10 +45,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// presort some stuff for the filter menus
 		app.categories.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		app.plugins.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		
 		// render table
@@ -97,7 +99,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// sort events by title ascending
 		this.events = this.events.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+			// return (b.title < a.title) ? 1 : -1;
 		} );
 		
 		// render table
@@ -266,7 +269,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var html = '';
 		
 		app.server_groups.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		
 		html += '<optgroup label="Groups:">' + render_menu_options(app.server_groups, value, false) + '</optgroup>';
@@ -503,7 +507,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// category
 		app.categories.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		
 		html += get_form_table_row( 'Category', 
@@ -583,7 +588,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// plugin
 		app.plugins.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		
 		html += get_form_table_row( 'Plugin', '<select id="fe_ee_plugin" onMouseDown="this.options[0].disabled=true" onChange="$P().change_edit_plugin()"><option value="">Select Plugin</option>' + render_menu_options(app.plugins, event.plugin, false) + '</select>' );
@@ -659,12 +665,23 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// catch-up mode (run all)
 		// method (interruptable, non-interruptable)
+		// chain reaction
+		var sorted_events = app.schedule.sort( function(a, b) {
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
 		html += get_form_table_row( 'Options', 
 			'<div><input type="checkbox" id="fe_ee_catch_up" value="1" '+(event.catch_up ? 'checked="checked"' : '') + ' ' + (event.id ? 'onChange="$P().setGroupVisible(\'rc\',this.checked)"' : '') + ' /><label for="fe_ee_catch_up">Run All (Catch-Up)</label></div>' + 
 			'<div class="caption">Automatically run all missed events after server downtime or scheduler/event disabled.</div>' + 
 			
 			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_detached" value="1" '+(event.detached ? 'checked="checked"' : '')+'/><label for="fe_ee_detached">Uninterruptible (Detached)</label></div>' + 
-			'<div class="caption">Run event as a detached background process that is never interrupted.</div>'
+			'<div class="caption">Run event as a detached background process that is never interrupted.</div>' + 
+			
+			'<table style="margin-top:10px" cellspacing="0" cellpadding="0"><tr>' + 
+				'<td><input type="checkbox" id="fe_ee_chain_enabled" value="1" onChange="$P().set_chain_enabled(this.checked)" '+(event.chain ? 'checked="checked"' : '')+'/><label for="fe_ee_chain_enabled">Chain Reaction' + (event.chain ? ':' : '') + '</label></td>' + 
+				'<td><div id="d_ee_chain" style="'+(event.chain ? 'display:block' : 'display:none')+'"><select id="fe_ee_chain" style="margin-left:10px; font-size:12px;">' + render_menu_options( sorted_events, event.chain, false ) + '</select></div></td>' + 
+			'</tr></table>' + 
+			'<div class="caption">Select an event to run automatically after this event completes.</div>'
 		);
 		html += get_form_table_spacer();
 		
@@ -748,6 +765,18 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		}, 1 );
 		
 		return html;
+	},
+	
+	set_chain_enabled: function(enabled) {
+		// set chain reaction menu enabled or disabled
+		if (enabled) {
+			$('#d_ee_chain').show( 250 );
+			$('#fe_ee_chain_enabled').next().html('Chain Reaction:');
+		}
+		else {
+			$('#fe_ee_chain_enabled').next().html('Chain Reaction');
+			$('#d_ee_chain').hide( 250 );
+		}
 	},
 	
 	set_event_target: function(target) {
@@ -888,7 +917,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 					
 					// resort cats for menu rebuild
 					app.categories.sort( function(a, b) {
-						return (b.title < a.title) ? 1 : -1;
+						// return (b.title < a.title) ? 1 : -1;
+						return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 					} );
 					
 					// rebuild menu and select new cat
@@ -1446,6 +1476,14 @@ Class.subclass( Page.Base, "Page.Schedule", {
 
 		// method (interruptable, non-interruptable)
 		event.detached = $('#fe_ee_detached').is(':checked') ? 1 : 0;
+		
+		// chain reaction
+		if ($('#fe_ee_chain_enabled').is(':checked')) {
+			event.chain = $('#fe_ee_chain').val();
+		}
+		else {
+			delete event.chain;
+		}
 		
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {
