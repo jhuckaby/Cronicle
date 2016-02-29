@@ -45,7 +45,8 @@ Class.add( Page.Admin, {
 		
 		// sort by title ascending
 		this.plugins = app.plugins.sort( function(a, b) {
-			return (b.title < a.title) ? 1 : -1;
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} );
 		
 		var self = this;
