@@ -81,6 +81,9 @@ stream.on('json', function(job) {
 		fs.unlink( script_file );
 	} ); // exit
 	
+	// pass job down to child process (harmless for shell, useful for php/perl/node)
+	cstream.write( job );
+	
 	// Handle shutdown
 	process.on('SIGTERM', function() { 
 		console.log("Caught SIGTERM, killing child: " + child.pid);
