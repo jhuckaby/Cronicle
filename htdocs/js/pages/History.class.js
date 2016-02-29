@@ -58,7 +58,10 @@ Class.subclass( Page.Base, "Page.History", {
 			html += 'All Completed Jobs';
 			// html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().refresh_user_list()"><b>Refresh</b></span></div>';
 			// html += '<div class="subtitle_widget"><i class="fa fa-search">&nbsp;</i><input type="text" id="fe_ul_search" size="15" placeholder="Find username..." style="border:0px;"/></div>';
-			html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_hist_event" class="subtitle_menu" onChange="$P().jump_to_event_history()"><option value="">Filter by Event</option>' + render_menu_options( app.schedule, '', false ) + '</select></div>';
+			var sorted_events = app.schedule.sort( function(a, b) {
+				return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+			} );
+			html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_hist_event" class="subtitle_menu" onChange="$P().jump_to_event_history()"><option value="">Filter by Event</option>' + render_menu_options( sorted_events, '', false ) + '</select></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
