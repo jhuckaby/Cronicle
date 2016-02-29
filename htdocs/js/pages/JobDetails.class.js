@@ -198,7 +198,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB SOURCE</div>';
-				html += '<div class="info_value">' + (job.source || 'Scheduler') + '</div>';
+				html += '<div class="info_value"><div class="ellip" style="max-width:'+col_width+'px;">' + (job.source || 'Scheduler') + '</div></div>';
 				
 				html += '<div class="info_label">SERVER HOSTNAME</div>';
 				html += '<div class="info_value">' + this.getNiceGroup( null, job.hostname, col_width ) + '</div>';
@@ -530,7 +530,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB SOURCE</div>';
-				html += '<div class="info_value">' + (job.source || 'Scheduler') + '</div>';
+				html += '<div class="info_value"><div class="ellip" style="max-width:'+col_width+'px;">' + (job.source || 'Scheduler') + '</div></div>';
 				
 				html += '<div class="info_label">SERVER HOSTNAME</div>';
 				html += '<div class="info_value">' + this.getNiceGroup( null, job.hostname, col_width ) + '</div>';
