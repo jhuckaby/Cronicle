@@ -88,10 +88,19 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			job.description += ": " + desc;
 		}
 		
+		var job_desc_html = trim( job.description.replace(/\r\n/g, "\n") );
+		var multiline = !!job.description.match(/\n/);
+		job_desc_html = encode_entities( job_desc_html ).replace(/\n/g, "<br/>\n");
+		
 		var html = '';
 		html += '<div class="message inline '+type+'"><div class="message_inner">';
-		// html += '<div class="button mini right" style="position:relative; top:-3px;" onMouseUp="$P().run_again()">Run Again</div>';
-		html += '<i class="fa fa-'+icon+' fa-lg" style="transform-origin:50% 50%; transform:scale(1.25); -webkit-transform:scale(1.25);">&nbsp;&nbsp;&nbsp;</i>' + job.description;
+		
+		if (multiline) {
+			html += job_desc_html;
+		}
+		else {
+			html += '<i class="fa fa-'+icon+' fa-lg" style="transform-origin:50% 50%; transform:scale(1.25); -webkit-transform:scale(1.25);">&nbsp;&nbsp;&nbsp;</i>' + job_desc_html;
+		}
 		html += '</div></div>';
 		return html;
 	},

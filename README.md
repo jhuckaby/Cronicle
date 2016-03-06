@@ -369,7 +369,7 @@ To select a storage engine, place one of the following values into the `engine` 
 
 ### Filesystem
 
-The default storage method is to use local disk (can also be an NFS mount, for multi-server setups with failover support).  For this, set the `engine` property to `Filesystem', and declare a sub-object with the same name, with a couple more properties:
+The default storage method is to use local disk (can also be an NFS mount, for multi-server setups with failover support).  For this, set the `engine` property to `Filesystem`, and declare a sub-object with the same name, with a couple more properties:
 
 ```js
 {
@@ -2606,7 +2606,7 @@ Here is how you can download the very latest Cronicle dev build and install it m
 
 This will keep all JavaScript and CSS unobfuscated (original source served as separate files).
 
-I highly recommend the following `.gitignore` file at the base of the project, if you plan on committing changes and sending pull requests:
+I highly recommend placing the following `.gitignore` file at the base of the project, if you plan on committing changes and sending pull requests:
 
 ```
 .gitignore
@@ -2616,6 +2616,14 @@ I highly recommend the following `.gitignore` file at the base of the project, i
 /queue
 /data
 /conf
+htdocs/index.html
+htdocs/js/common
+htdocs/js/external/*
+htdocs/fonts/*
+htdocs/css/base.css
+htdocs/css/c3*
+htdocs/css/font*
+htdocs/css/mat*
 ```
 
 ## Starting in Debug Mode
