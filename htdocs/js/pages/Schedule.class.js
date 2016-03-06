@@ -107,7 +107,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var self = this;
 		html += this.getBasicTable( this.events, cols, 'event', function(item, idx) {
 			var actions = [
-				'<span class="link" onMouseUp="$P().run_event('+idx+')"><b>Run</b></span>',
+				'<span class="link" onMouseUp="$P().run_event('+idx+',event)"><b>Run</b></span>',
 				'<span class="link" onMouseUp="$P().edit_event('+idx+')"><b>Edit</b></span>',
 				'<a href="#History?sub=event_stats&id='+item.id+'"><b>Stats</b></a>',
 				'<a href="#History?sub=event_history&id='+item.id+'"><b>History</b></a>',
@@ -186,11 +186,34 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		} );
 	},
 	
-	run_event: function(idx) {
+	run_event: function(event_idx, e) {
+		// run event ad-hoc style
+		var self = this;
+		var event = (event_idx == 'edit') ? this.event : this.events[event_idx];
+		
+		if (e.shiftKey || e.ctrlKey || e.altKey) {
+			// allow use to select the "now" time
+			this.choose_date_time({
+				when: time_now(),
+				title: "Set Current Event Date/Time",
+				description: "Configure the internal date/time for the event to run immediately.  This is the timestamp which the Plugin will see as the current time.",
+				button: "Run Now",
+				timezone: event.timezone || app.tz,
+				
+				callback: function(new_epoch) {
+					self.run_event_now( event_idx, new_epoch );
+				}
+			});
+		}
+		else this.run_event_now(event_idx);
+	},
+	
+	run_event_now: function(idx, now) {
 		// run event ad-hoc style
 		var event = (idx == 'edit') ? this.event : this.events[idx];
+		if (!now) now = time_now();
 		
-		app.api.post( 'app/run_event', event, function(resp) {
+		app.api.post( 'app/run_event', merge_objects( event, { now: now } ), function(resp) {
 			var msg = '';
 			if (resp.ids.length > 1) {
 				// multiple jobs (multiplex)
@@ -425,7 +448,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				
 				// run
 				html += '<td width="40">&nbsp;</td>';
-				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event(\'edit\')">Run Now</div></td>';
+				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event(\'edit\',event)">Run Now</div></td>';
 				
 				// save
 				html += '<td width="40">&nbsp;</td>';
@@ -963,7 +986,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		if ($('#fe_ee_rc_enabled').is(':checked')) {
 			var epoch = (new Date( $('#fe_ee_rc_time').val() ).getTime()) / 1000;
 			
-			$P().choose_date_time({
+			this.choose_date_time({
 				when: epoch,
 				title: "Set Event Clock",
 				timezone: this.event.timezone || app.tz,
@@ -1422,7 +1445,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			if (isNaN(event.stagger)) return app.badField('fe_ee_stagger', "Please enter a number of seconds to stagger by.");
 		}
 		else {
-			delete event.stagger;
+			event.stagger = 0;
 		}
 		
 		// plugin
@@ -1482,7 +1505,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			event.chain = $('#fe_ee_chain').val();
 		}
 		else {
-			delete event.chain;
+			event.chain = "";
 		}
 		
 		// cursor reset

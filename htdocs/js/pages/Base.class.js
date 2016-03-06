@@ -359,6 +359,7 @@ Class.subclass( Page, "Page.Base", {
 				margs.date( parseInt( $('#fe_dt_day').val() ) );
 				margs.hour( parseInt( $('#fe_dt_hour').val() ) );
 				margs.minute( parseInt( $('#fe_dt_minute').val() ) );
+				margs.second( 0 );
 				
 				args.callback( margs.unix() );
 			}

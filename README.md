@@ -631,7 +631,7 @@ This table lists all the upcoming scheduled jobs in the next 24 hours, and vario
 | **Category** | The category to which the event is assigned. |
 | **Plugin** | The Plugin which will be loaded to run the event. |
 | **Target** | The server target (server group or individual server hostname) which will run the event. |
-| **Scheduled Time** | When the event is scheduled to run (adjusted for your local timezone). |
+| **Scheduled Time** | When the event is scheduled to run (in your local timezone unless otherwise specified). |
 | **Countdown** | How much time remains until the event runs. |
 | **Actions** | Click *Edit Event* to edit the event (see [Edit Event Tab](#edit-event-tab) below). |
 
@@ -796,7 +796,7 @@ For each event in the schedule, Cronicle keeps an internal clock called a "curso
 
 So for example, if you needed to re-run a daily 4 AM report event, you can just edit the cursor clock and set it back to 3:59 AM.  The cursor will catch up to the current time as quickly as it can, stopping only to run any scheduled events along the way.  You can also use this feature to "jump" over a queue, if jobs have stacked up for an event.  Just set the cursor clock to the current time, and the scheduler will resume jobs from that point onward.
 
-The event clocks for the Time Machine are displayed and interpreted in the user's local timezone.
+The event clock for the Time Machine is displayed and interpreted in the event's currently selected timezone.
 
 #### Event Notification
 
@@ -933,6 +933,12 @@ CPU and RAM usage are measured every 10 seconds, by looking at the process spawn
 #### Event Notes
 
 Event notes are for your own internal use.  They are displayed to users when editing an event, and in all e-mails regarding successful or failed jobs.  For example, you could use this to describe the event to members of your team who may not be familiar, and possibly provide a link to other documentation.  There is no character limit, so knock yourself out.
+
+#### Run Now
+
+To run an event immediately, click the **Run Now** button.  This will run the current event regardless of its timing settings, and whether the event is enabled or disabled in the schedule.  This is simply an on-demand job which is created and executed right away.
+
+If you need to customize the internal clock for the job, hold Shift which clicking the Run Now button.  This will bring up a dialog allowing you to set the date and time which the Plugin will see as the "current time", for your on-demand job only.  It will not affect any other jobs or the event itself.  This is useful for re-running past jobs with a Plugin that honors the `now` timestamp in the job data.
 
 ## Completed Jobs Tab
 

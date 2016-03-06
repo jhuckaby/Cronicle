@@ -35,6 +35,7 @@ stream.on('json', function(job) {
 	
 	logger.debug(1, "This is a test debug log entry");
 	logger.debug(9, "Here is our job, delivered via JSONStream:", job);
+	logger.debug(9, "The current date/time for our job is: " + (new Date(job.now * 1000)).toString() );
 	
 	// use some memory so we show up on the mem graph
 	var buf = new Buffer( 1024 * 1024 * Math.floor( 128 + (Math.random() * 128) ) );
