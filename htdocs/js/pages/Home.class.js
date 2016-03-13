@@ -264,9 +264,9 @@ Class.subclass( Page.Base, "Page.Home", {
 				'<span class="link" onMouseUp="$P().abort_job('+idx+')"><b>Abort Job</b></span>'
 			];
 			
-			var cat = job.category ? find_object( app.categories, { id: job.category } ) : { title: 'n/a' };
-			// var group = item.target ? find_object( app.server_groups, { id: item.target } ) : null;
-			var plugin = job.plugin ? find_object( app.plugins, { id: job.plugin } ) : { title: 'n/a' };
+			var cat = job.category ? find_object( app.categories || [], { id: job.category } ) : { title: 'n/a' };
+			// var group = item.target ? find_object( app.server_groups || [], { id: item.target } ) : null;
+			var plugin = job.plugin ? find_object( app.plugins || [], { id: job.plugin } ) : { title: 'n/a' };
 			var tds = null;
 			
 			if (job.pending) {
