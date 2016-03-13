@@ -7,4 +7,4 @@
 DIR=`dirname $0`
 PDIR=`dirname $DIR`
 
-node --expose_gc --always_compact $PDIR/lib/main.js --debug --echo --color "$@"
+node --expose_gc --always_compact $PDIR/lib/main.js --debug --echo "$@"
