@@ -81,6 +81,11 @@ stream.on('json', function(job) {
 		fs.unlink( script_file );
 	} ); // exit
 	
+	// silence EPIPE errors on child STDIN
+	child.stdin.on('error', function(err) {
+		// ignore
+	} );
+	
 	// pass job down to child process (harmless for shell, useful for php/perl/node)
 	cstream.write( job );
 	

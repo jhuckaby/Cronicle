@@ -90,6 +90,11 @@ child.on('exit', function (code, signal) {
 	fs.renameSync( queue_file + '.tmp', queue_file );
 } );
 
+// silence EPIPE errors on child STDIN
+child.stdin.on('error', function(err) {
+	// ignore
+} );
+
 // send initial job + params
 cstream.write( job );
 
