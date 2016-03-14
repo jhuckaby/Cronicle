@@ -47,13 +47,13 @@ stream.on('json', function(job) {
 		}
 		else {
 			// otherwise just log it
-			fs.appendFile(job.log_file, line);
+			fs.appendFileSync(job.log_file, line);
 		}
 	} );
 	
 	cstream.on('error', function(err, text) {
 		// Probably a JSON parse error (child emitting garbage)
-		if (text) fs.appendFile(job.log_file, text + "\n");
+		if (text) fs.appendFileSync(job.log_file, text + "\n");
 	} );
 	
 	child.on('error', function (err) {
