@@ -170,7 +170,7 @@ Class.subclass( Page.Base, "Page.Home", {
 		var self = this;
 		var events = this.upcoming_events = e.data;
 		var html = '';
-		var now = hires_time_now();
+		var now = app.epoch || hires_time_now();
 		
 		/*var elapsed = now - this.worker_start_time;
 		delete this.worker_start_time;
