@@ -374,7 +374,7 @@ app.extend({
 		// If slave knows who is master, switch now, otherwise go into wait loop
 		var self = this;
 		this.recalcMaster = true;
-		this.showProgress( 1.0, "Searching for master server..." );
+		this.showProgress( 1.0, "Waiting for master server..." );
 		
 		if (data.master_hostname) {
 			this.setMasterHostname( data.master_hostname );
