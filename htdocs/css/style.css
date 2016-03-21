@@ -472,3 +472,9 @@ fieldset.dt_fs > legend {
 	font-size: 11px;
 	text-transform: uppercase;
 }
+
+/* Table Pagination Spacing Fix */
+
+div.pagination > table tr td {
+	white-space: nowrap;
+}
