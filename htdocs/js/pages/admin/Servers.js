@@ -107,7 +107,7 @@ Class.add( Page.Admin, {
 				group_names.length ? group_names.join(', ') : '(None)',
 				server.master ? '<span class="color_label green"><i class="fa fa-check">&nbsp;</i>Master</span>' : (eligible ? '<span class="color_label purple">Backup</span>' : '<span class="color_label blue">Slave</span>'),
 				num_jobs ? commify( num_jobs ) : '(None)',
-				get_text_from_seconds( server.uptime, true, true ),
+				get_text_from_seconds( server.uptime, true, true ).replace(/\bday\b/, 'days'),
 				short_float(cpu) + '%',
 				get_text_from_bytes(mem),
 				actions.join(' | ')
