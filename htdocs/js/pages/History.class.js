@@ -615,7 +615,7 @@ col_max.push( short_float( 25 + Math.random() * 25 ) );*/
 		this.charts = {};
 		
 		delete this.rows;
-		this.div.html( '' );
+		if (this.args && (this.args.sub == 'event_stats')) this.div.html( '' );
 		return true;
 	}
 	
