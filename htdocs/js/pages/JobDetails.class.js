@@ -271,9 +271,23 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
-		var size = get_inner_window_size();
-		var iheight = size.height - 100;
-		html += '<iframe id="i_arch_job_log" style="width:100%; height:'+iheight+'px; border:none;" frameborder="0" src="'+app.base_api_url+'/app/get_job_log?id='+job.id+'"></iframe>';
+		var max_log_file_size = config.max_log_file_size || 10485760;
+		if (job.log_file_size && (job.log_file_size >= max_log_file_size)) {
+			// too big to show?  ask user
+			html += '<div id="d_job_log_warning">';
+			html += '<table class="data_table" width="100%"><tr><td style="padding-top:50px; padding-bottom:50px; text-align:center">';
+			html += '<div style="margin-bottom:15px;"><b>Warning: Job event log file is ' + get_text_from_bytes(job.log_file_size, 1) + '.  Please consider downloading instead of viewing in browser.</b></div>';
+			html += '<div style="width:50%; float:left;"><div class="button right" style="width:110px; margin-right:20px;" onMouseUp="$P().do_download_log()">Download Log</div></div>';
+			html += '<div style="width:50%; float:left;"><div class="button left" style="width:110px; margin-left:20px;" onMouseUp="$P().do_view_inline_log()">View Log</div></div>';			
+			html += '<div class="clear"></div>';
+			html += '</td></tr></table>';
+			html += '</div>';
+		}
+		else {
+			var size = get_inner_window_size();
+			var iheight = size.height - 100;
+			html += '<iframe id="i_arch_job_log" style="width:100%; height:'+iheight+'px; border:none;" frameborder="0" src="'+app.base_api_url+'/app/get_job_log?id='+job.id+'"></iframe>';
+		}
 		
 		this.div.html( html );
 		
@@ -473,6 +487,24 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		$('#d_arch_mem_legend').html( html );
 		
 		this.charts.mem = mem_chart;
+	},
+	
+	do_download_log: function() {
+		// download job log file
+		var job = this.job;
+		window.location = app.base_api_url + '/app/get_job_log?id=' + job.id + '&download=1';
+	},
+	
+	do_view_inline_log: function() {
+		// swap out job log size warning with IFRAME containing inline log
+		var job = this.job;
+		var html = '';
+		
+		var size = get_inner_window_size();
+		var iheight = size.height - 100;
+		html += '<iframe id="i_arch_job_log" style="width:100%; height:'+iheight+'px; border:none;" frameborder="0" src="'+app.base_api_url+'/app/get_job_log?id='+job.id+'"></iframe>';
+		
+		$('#d_job_log_warning').html( html );
 	},
 	
 	abort_job: function() {
