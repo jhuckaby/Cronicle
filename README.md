@@ -1475,6 +1475,71 @@ You can pass custom JSON data to the next event in the chain, when using a [Chai
 
 So in this case when the event `e29bf12db` runs, it will be passed your `chain_data` object as part of the JSON sent to it when the job starts.  The Plugin code running the chained event can access the data by parsing the JSON and grabbing the `chain_data` property.
 
+#### Custom Data Tables
+
+If your Plugin produces statistics or other tabular data at the end of a run, you can have Cronicle render this into a table on the Job Details page.  Simply print a JSON object with a property named `table`, containing the following keys:
+
+| Property Name | Description |
+|---------------|-------------|
+| `title` | Optional title displayed above the table, defaults to "Job Stats". |
+| `header` | Optional array of header columns, displayed in shaded bold above the main data rows. |
+| `rows` | **Required** array of rows, with each one being its own inner array of column values. |
+| `caption` | Optional caption to show under the table (centered, small gray text). |
+
+Here is an example data table.  Note that this has been expanded for documentation purposes, but in practice your JSON needs to be compacted onto a single line when printed to STDOUT.
+
+```js
+{
+	"table": {
+		"title": "Sample Job Stats",
+		"header": [
+			"IP Address", "DNS Lookup", "Flag", "Count", "Percentage"
+		],
+		"rows": [
+			["62.121.210.2", "directing.com", "MaxEvents-ImpsUserHour-DMZ", 138, "0.0032%" ],
+			["97.247.105.50", "hsd2.nm.comcast.net", "MaxEvents-ImpsUserHour-ILUA", 84, "0.0019%" ],
+			["21.153.110.51", "grandnetworks.net", "InvalidIP-Basic", 20, "0.00046%" ],
+			["95.224.240.69", "hsd6.mi.comcast.net", "MaxEvents-ImpsUserHour-NM", 19, "0.00044%" ],
+			["72.129.60.245", "hsd6.nm.comcast.net", "InvalidCat-Domestic", 17, "0.00039%" ],
+			["21.239.78.116", "cable.mindsprung.com", "InvalidDog-Exotic", 15, "0.00037%" ],
+			["172.24.147.27", "cliento.mchsi.com", "MaxEvents-ClicksPer", 14, "0.00035%" ],
+			["60.203.211.33", "rgv.res.com", "InvalidFrog-Croak", 14, "0.00030%" ],
+			["24.8.8.129", "dsl.att.com", "Pizza-Hawaiian", 12, "0.00025%" ],
+			["255.255.1.1", "favoriteisp.com", "Random-Data", 10, "0%" ]
+		],
+		"caption": "This is an example stats table you can generate from within your Plugin code."
+	}
+}
+```
+
+This would produce a table like the following:
+
+![Custom Stats Table Example](https://pixlcore.com/software/cronicle/screenshots/job-details-custom-table.png)
+
+#### Custom HTML Content
+
+If you would prefer to generate your own HTML content from your Plugin code, and just have it rendered into the Job Details page, you can do that as well.  Simply print a JSON object with a property named `html`, containing the following keys:
+
+| Property Name | Description |
+|---------------|-------------|
+| `title` | Optional title displayed above the section, defaults to "Job Report". |
+| `content` | **Required** Raw HTML content to render into the page. |
+| `caption` | Optional caption to show under your HTML (centered, small gray text). |
+
+Here is an example HTML report.  Note that this has been expanded for documentation purposes, but in practice your JSON needs to be compacted onto a single line when printed to STDOUT.
+
+```js
+{
+	"html": {
+		title: "Sample Job Report",
+		content: "This is <b>HTML</b> so you can use <i>styling</i> and such.",
+		caption: "This is a caption displayed under your HTML content."
+	}
+}
+```
+
+If your Plugin generates plain text instead of HTML, you can just wrap it in a `<pre>` block, which will preserve formatting such as whitespace.
+
 ### Environment Variables
 
 When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with all the following custom variables:

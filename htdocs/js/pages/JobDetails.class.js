@@ -262,6 +262,58 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 		html += '</div>';
 		
+		// custom data table
+		if (job.table && job.table.rows && job.table.rows.length) {
+			var table = job.table;
+			html += '<div class="subtitle" style="margin-top:15px;">' + (table.title || 'Job Stats') + '</div>';
+			html += '<table class="data_table" style="width:100%">';
+			
+			if (table.header && table.header.length) {
+				html += '<tr>';
+				for (var idx = 0, len = table.header.length; idx < len; idx++) {
+					html += '<th>' + table.header[idx] + '</th>';
+				}
+				html += '</tr>';
+			}
+			
+			var filters = table.filters || [];
+			
+			for (var idx = 0, len = table.rows.length; idx < len; idx++) {
+				var row = table.rows[idx];
+				if (row && row.length) {
+					html += '<tr>';
+					
+					for (var idy = 0, ley = row.length; idy < ley; idy++) {
+						var col = row[idy];
+						html += '<td>';
+						if (typeof(col) != 'undefined') {
+							if (filters[idy] && window[filters[idy]]) html += window[filters[idy]](col);
+							else if ((typeof(col) == 'string') && col.match(/^filter\:(\w+)\((.+)\)$/)) {
+								var filter = RegExp.$1;
+								var value = RegExp.$2;
+								if (window[filter]) html += window[filter](value);
+								else html += value;
+							}
+							else html += col;
+						}
+						html += '</td>';
+					} // foreach col
+					
+					html += '</tr>';
+				} // good row
+			} // foreach row
+			
+			html += '</table>';
+			if (table.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + table.caption + '</div>';
+		} // custom data table
+		
+		// custom html table
+		if (job.html) {
+			html += '<div class="subtitle" style="margin-top:15px;">' + (job.html.title || 'Job Report') + '</div>';
+			html += '<div>' + job.html.content + '</div>';
+			if (job.html.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + job.html.caption + '</div>';
+		}
+		
 		// job log (IFRAME)
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Job Event Log';

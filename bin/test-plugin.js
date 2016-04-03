@@ -79,6 +79,34 @@ stream.on('json', function(job) {
 			perf.perf.gzip_data = { end: 1, elapsed: rand_range(max * 0.6, max * 0.9) };
 			perf.perf.http_post = { end: 1, elapsed: rand_range(max * 0.8, max * 1) };
 			
+			// include a table with some stats
+			var table = {
+				title: "Sample Job Stats",
+				header: [
+					"IP Address", "DNS Lookup", "Flag", "Count", "Percentage"
+				],
+				rows: [
+					["62.121.210.2", "directing.com", "MaxEvents-ImpsUserHour-DMZ", 138, "0.0032%" ],
+					["97.247.105.50", "hsd2.nm.comcast.net", "MaxEvents-ImpsUserHour-ILUA", 84, "0.0019%" ],
+					["21.153.110.51", "grandnetworks.net", "InvalidIP-Basic", 20, "0.00046%" ],
+					["95.224.240.69", "hsd6.mi.comcast.net", "MaxEvents-ImpsUserHour-NM", 19, "0.00044%" ],
+					["72.129.60.245", "hsd6.nm.comcast.net", "InvalidCat-Domestic", 17, "0.00039%" ],
+					["21.239.78.116", "cable.mindsprung.com", "InvalidDog-Exotic", 15, "0.00037%" ],
+					["172.24.147.27", "cliento.mchsi.com", "MaxEvents-ClicksPer", 14, "0.00035%" ],
+					["60.203.211.33", "rgv.res.com", "InvalidFrog-Croak", 14, "0.00030%" ],
+					["24.8.8.129", "dsl.att.com", "Pizza-Hawaiian", 12, "0.00025%" ],
+					["255.255.1.1", "favoriteisp.com", "Random-Data", 10, "0%" ]
+				],
+				caption: "This is an example stats table you can generate from within your Plugin code."
+			};
+			
+			// include a custom html report
+			var html = {
+				title: "Sample Job Report",
+				content: "<pre>This is a sample text report you can generate from within your Plugin code (can be HTML too).\n\n-------------------------------------------------\n          Date/Time | 2015-10-01 6:28:38 AM      \n       Elapsed Time | 1 hour 15 minutes          \n     Total Log Rows | 4,313,619                  \n       Skipped Rows | 15                         \n  Pre-Filtered Rows | 16,847                     \n             Events | 4,296,757                  \n        Impressions | 4,287,421                  \n Backup Impressions | 4,000                      \n             Clicks | 5,309 (0.12%)              \n      Backup Clicks | 27 (0.00062%)              \n       Unique Users | 1,239,502                  \n      Flagged Users | 1,651                      \n      Ignored Users | 1,025,910                  \n        Other Users | 211,941                    \n     Flagged Events | 6,575 (0.15%)              \nFlagged Impressions | 6,327 (0.14%)              \n     Flagged Clicks | 241 (4.53%)                \n       Memory Usage | 7.38 GB                    \n-------------------------------------------------</pre>",
+				caption: ""
+			};
+			
 			switch (job.params.action) {
 				case 'Success':
 					logger.debug(9, "Simulating a successful response");
@@ -86,7 +114,9 @@ stream.on('json', function(job) {
 						complete: 1,
 						code: 0,
 						description: "Success!",
-						perf: perf.summarize()
+						perf: perf.summarize(),
+						table: table,
+						html: html
 					});
 				break;
 				
