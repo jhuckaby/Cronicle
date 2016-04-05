@@ -120,6 +120,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		app.api.post( 'app/run_event', job, function(resp) {
 			// app.showMessage('success', "Event '"+event.title+"' has been started.");
 			self.jump_live_job_id = resp.ids[0];
+			self.jump_live_time_start = hires_time_now();
 			self.jump_to_live_when_ready();
 		} );
 	},
@@ -129,10 +130,11 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		if (!this.active) return; // user navigated away from page
 		
-		if (app.activeJobs[this.jump_live_job_id]) {
+		if (app.activeJobs[this.jump_live_job_id] || ((hires_time_now() - this.jump_live_time_start) >= 3.0)) {
 			app.hideProgress();
 			Nav.go( 'JobDetails?id=' + this.jump_live_job_id );
 			delete this.jump_live_job_id;
+			delete this.jump_live_time_start;
 		}
 		else {
 			setTimeout( self.jump_to_live_when_ready.bind(self), 250 );
