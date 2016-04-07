@@ -283,35 +283,35 @@ pre.log_chunk {
 
 .data_table tr.plain td, .swatch.plain {
 	background-color: #efefef;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.red td, .swatch.red {
 	background-color: #ffe0e0;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.green td, .swatch.green {
 	background-color: #d8ffd8;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.blue td, .swatch.blue {
 	background-color: #e0f0ff;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.skyblue td, .swatch.skyblue {
 	background-color: #e0ffff;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.yellow td, .swatch.yellow {
 	background-color: #ffffd0;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.purple td, .swatch.purple {
 	background-color: #ffe0ff;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 .data_table tr.orange td, .swatch.orange {
 	background-color: #ffe8d0;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%); */
 }
 
 /* Misc */
@@ -338,7 +338,7 @@ div.activity_desc > b {
 	border: 1px solid #fff;
 	border-radius: 5px;
 	margin: 1px;
-	background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 100%) !important;
+	/* background-image: linear-gradient(to top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 100%) !important; */
 	cursor: pointer;
 }
 .swatch:hover {

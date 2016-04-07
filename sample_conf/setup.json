@@ -102,6 +102,7 @@
 			
 			[ "symlinkFile", "node_modules/pixl-webapp/js", "htdocs/js/common" ],
 			[ "symlinkFile", "node_modules/pixl-webapp/css/base.css", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/pixl-webapp/fonts/*", "htdocs/fonts/" ],
 			
 			[ "chmodFiles", "755", "bin/*" ]
 		],

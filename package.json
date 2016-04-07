@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.2.1",
+	"version": "0.2.2",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
