@@ -18,6 +18,19 @@ var glob = require('glob');
 var UglifyJS = require("uglify-js");
 var Tools = require('pixl-tools');
 
+var fileStatSync = function(file) {
+	// no-throw version of fs.statSync
+	var stats = null;
+	try { stats = fs.statSync(file); }
+	catch (err) { return false; }
+	return stats;
+};
+
+var fileExistsSync = function(file) {
+	// replacement for fs.existsSync which is being removed
+	return !!fileStatSync(file);
+};
+
 var symlinkFile = exports.symlinkFile = function symlinkFile( old_file, new_file, callback ) {
 	// create symlink to file
 	// Note: 'new_file' is the object that will be created on the filesystem
@@ -36,7 +49,7 @@ var symlinkFile = exports.symlinkFile = function symlinkFile( old_file, new_file
 	try { fs.unlinkSync( new_file ); }
 	catch (e) {;}
 	
-	if (!fs.existsSync( path.dirname(new_file) )) {
+	if (!fileExistsSync( path.dirname(new_file) )) {
 		mkdirp.sync( path.dirname(new_file) );
 	}
 	
@@ -56,7 +69,7 @@ var copyFile = exports.copyFile = function copyFile( old_file, new_file, callbac
 	try { fs.unlinkSync( new_file ); }
 	catch (e) {;}
 	
-	if (!fs.existsSync( path.dirname(new_file) )) {
+	if (!fileExistsSync( path.dirname(new_file) )) {
 		mkdirp.sync( path.dirname(new_file) );
 	}
 	
@@ -75,7 +88,10 @@ var copyFiles = exports.copyFiles = function copyFiles( src_spec, dest_dir, call
 		if (files && files.length) {
 			async.eachSeries( files, function(src_file, callback) {
 				// foreach file
-				copyFile( src_file, dest_dir + '/', callback );
+				var stats = fileStatSync(src_file);
+				if (stats && stats.isFile()) {
+					copyFile( src_file, dest_dir + '/', callback );
+				}
 			}, callback );
 		} // got files
 		else {
@@ -88,7 +104,7 @@ var compressFile = exports.compressFile = function compressFile( src_file, gz_fi
 	// gzip compress file
 	console.log( "Compress: " + src_file + " --> " + gz_file );
 	
-	if (fs.existsSync(gz_file)) {
+	if (fileExistsSync(gz_file)) {
 		fs.unlinkSync( gz_file );
 	}
 	
@@ -127,7 +143,7 @@ var deleteFile = exports.deleteFile = function deleteFile( file, callback ) {
 	// delete file
 	console.log( "Delete: " + file );
 	
-	if (fs.existsSync(file)) {
+	if (fileExistsSync(file)) {
 		fs.unlink( file, callback );
 	}
 	else callback();
@@ -171,7 +187,7 @@ var copyDir = exports.copyDir = function copyDir( src_dir, dest_dir, exclusive, 
 	var src_spec = src_dir + '/*';
 	
 	// exclusive means skip if dest exists (do not replace)
-	if (exclusive && fs.existsSync(dest_dir)) return callback();
+	if (exclusive && fileExistsSync(dest_dir)) return callback();
 	
 	mkdirp.sync( dest_dir );
 	
@@ -201,7 +217,7 @@ var bundleCompress = exports.bundleCompress = function bundleCompress( args, cal
 	var html_file = args.html_file;
 	var html_dir = path.dirname( html_file );
 	
-	if (!fs.existsSync( path.dirname(args.dest_bundle) )) {
+	if (!fileExistsSync( path.dirname(args.dest_bundle) )) {
 		mkdirp.sync( path.dirname(args.dest_bundle) );
 	}
 	
@@ -301,7 +317,7 @@ var addToServerStartup = exports.addToServerStartup = function addToServerStartu
 	
 	// skip on os x, and if init dir is missing
 	if (os.platform() == 'darwin') return callback();
-	if (!fs.existsSync(dest_dir)) return callback( new Error("Cannot locate init.d directory: " + dest_dir) );
+	if (!fileExistsSync(dest_dir)) return callback( new Error("Cannot locate init.d directory: " + dest_dir) );
 	if (process.getuid() != 0) return callback( new Error("Must be root to add services to server startup system.") );
 	
 	// copy file into place
