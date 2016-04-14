@@ -92,6 +92,7 @@ var copyFiles = exports.copyFiles = function copyFiles( src_spec, dest_dir, call
 				if (stats && stats.isFile()) {
 					copyFile( src_file, dest_dir + '/', callback );
 				}
+				else callback();
 			}, callback );
 		} // got files
 		else {
