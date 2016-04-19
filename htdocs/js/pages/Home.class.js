@@ -29,18 +29,11 @@ Class.subclass( Page.Base, "Page.Home", {
 		
 		// upcoming events
 		
-		html += '<div class="subtitle">';
-			html += 'Upcoming Events';
-			html += '<div class="clear"></div>';
+		html += '<div id="d_home_upcoming_header" class="subtitle">';
+			
 		html += '</div>';
 		
 		html += '<div id="d_home_upcoming_events" class="loading"></div>';
-		
-		
-		
-		// completed events
-		
-		
 		
 		html += '</div>'; // container
 		
@@ -58,6 +51,39 @@ Class.subclass( Page.Base, "Page.Home", {
 		app.showTabBar(true);
 		
 		this.upcoming_offset = 0;
+		
+		// presort some stuff for the filter menus
+		app.categories.sort( function(a, b) {
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		app.plugins.sort( function(a, b) {
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
+		// render upcoming event filters
+		var html = '';
+		html += 'Upcoming Events';
+		
+		html += '<div class="subtitle_widget"><i class="fa fa-search">&nbsp;</i><input type="text" id="fe_home_keywords" size="10" placeholder="Find events..." style="border:0px;" value="' + escape_text_field_value( args.keywords ) + '"/></div>';
+		
+		html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_home_target" class="subtitle_menu" style="width:75px;" onChange="$P().set_search_filters()"><option value="">All Servers</option>' + this.render_target_menu_options( args.target ) + '</select></div>';
+		html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_home_plugin" class="subtitle_menu" style="width:75px;" onChange="$P().set_search_filters()"><option value="">All Plugins</option>' + render_menu_options( app.plugins, args.plugin, false ) + '</select></div>';
+		html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_home_cat" class="subtitle_menu" style="width:95px;" onChange="$P().set_search_filters()"><option value="">All Categories</option>' + render_menu_options( app.categories, args.category, false ) + '</select></div>';
+		
+		html += '<div class="clear"></div>';
+		
+		$('#d_home_upcoming_header').html( html );
+		
+		setTimeout( function() {
+			$('#fe_home_keywords').keypress( function(event) {
+				if (event.keyCode == '13') { // enter key
+					event.preventDefault();
+					$P().set_search_filters();
+				}
+			} ); 
+		}, 1 );
 		
 		// refresh datas
 		$('#d_home_active_jobs').html( this.get_active_jobs_html() );
@@ -165,16 +191,59 @@ Class.subclass( Page.Base, "Page.Home", {
 		});
 	},
 	
+	set_search_filters: function() {
+		// grab values from search filters, and refresh
+		var args = this.args;
+		
+		args.plugin = $('#fe_home_plugin').val();
+		if (!args.plugin) delete args.plugin;
+		
+		args.target = $('#fe_home_target').val();
+		if (!args.target) delete args.target;
+		
+		args.category = $('#fe_home_cat').val();
+		if (!args.category) delete args.category;
+		
+		args.keywords = $('#fe_home_keywords').val();
+		if (!args.keywords) delete args.keywords;
+		
+		this.nav_upcoming(0);
+	},
+	
 	render_upcoming_events: function(e) {
 		// receive data from worker, render table now
 		var self = this;
-		var events = this.upcoming_events = e.data;
 		var html = '';
 		var now = app.epoch || hires_time_now();
+		var args = this.args;
+		this.upcoming_events = e.data;
 		
 		/*var elapsed = now - this.worker_start_time;
 		delete this.worker_start_time;
 		Debug.trace('Home', "Worker elapsed time: " + elapsed + ' sec for ' + app.schedule.length + ' events.');*/
+		
+		// apply filters
+		var events = [];
+		
+		for (var idx = 0, len = e.data.length; idx < len; idx++) {
+			var stub = e.data[idx];
+			var item = find_object( app.schedule, { id: stub.id } ) || {};
+			
+			// category filter
+			if (args.category && (item.category != args.category)) continue;
+
+			// plugin filter
+			if (args.plugin && (item.plugin != args.plugin)) continue;
+			
+			// server group filter
+			if (args.target && (item.target != args.target)) continue;
+			
+			// keyword filter
+			var words = [item.title, item.username, item.notes, item.target].join(' ').toLowerCase();
+			if (args.keywords && words.indexOf(args.keywords.toLowerCase()) == -1) continue;
+			
+			events.push( stub );
+		} // foreach item in schedule
 		
 		var size = get_inner_window_size();
 		var col_width = Math.floor( ((size.width * 0.9) + 50) / 7 );

@@ -364,6 +364,33 @@ Class.subclass( Page, "Page.Base", {
 				args.callback( margs.unix() );
 			}
 		} ); // app.confirm
+	},
+	
+	render_target_menu_options: function(value) {
+		// render menu items for server group (target)
+		// including optgroups for both server group and individual servers
+		var html = '';
+		
+		app.server_groups.sort( function(a, b) {
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
+		html += '<optgroup label="Groups:">' + render_menu_options(app.server_groups, value, false) + '</optgroup>';
+		
+		if (find_object(app.server_groups, { id: value })) value = '';
+		
+		// trim hostname suffixes
+		var hostnames = hash_keys_to_array(app.servers).sort();
+		if (value && !app.servers[value]) hostnames.push( value );
+		
+		var short_hostnames = [];
+		for (var idx = 0, len = hostnames.length; idx < len; idx++) {
+			short_hostnames.push([ hostnames[idx], hostnames[idx].replace(/\.[\w\-]+\.\w+$/, '') ]);
+		}
+		
+		html += '<optgroup label="Servers:">' + render_menu_options(short_hostnames, value, false) + '</optgroup>';
+		return html;
 	}
 	
 } );

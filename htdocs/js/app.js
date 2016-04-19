@@ -240,11 +240,12 @@ app.extend({
 		
 		if (this.socket) {
 			this.socket._pixl_disconnected = true;
-			this.socket.off('disconnect');
+			this.socket.removeAllListeners();
 			this.socket.disconnect();
+			this.socket = null;
 		}
 		
-		this.socket = io( this.proto + this.masterHostname + ':' + this.port, {
+		var socket = this.socket = io( this.proto + this.masterHostname + ':' + this.port, {
 			forceNew: true,
 			reconnection: true,
 			reconnectionDelay: 1000,
@@ -253,7 +254,8 @@ app.extend({
 			timeout: 5000
 		} );
 		
-		this.socket.on('connect', function() {
+		socket.on('connect', function() {
+			if (socket._pixl_disconnected) return;
 			if (self.reconnectTimer) { clearTimeout(self.reconnectTimer); self.reconnectTimer = null; }
 			if (!Nav.inited) Nav.init();
 			
@@ -262,32 +264,43 @@ app.extend({
 			
 			// if we are already logged in, authenticate websocket now
 			var session_id = app.getPref('session_id');
-			if (session_id) self.socket.emit( 'authenticate', { token: session_id } );
+			if (session_id) socket.emit( 'authenticate', { token: session_id } );
 		} );
-		this.socket.on('connect_error', function(err) {
+		
+		socket.on('connect_error', function(err) {
 			Debug.trace("socket.io connect error: " + err);
 		} );
-		this.socket.on('connect_timeout', function(err) {
+		
+		socket.on('connect_timeout', function(err) {
 			Debug.trace("socket.io connect timeout");
 		} );
-		this.socket.on('reconnecting', function() {
+		
+		socket.on('reconnecting', function() {
+			if (socket._pixl_disconnected) return;
 			if (self.reconnectTimer) { clearTimeout(self.reconnectTimer); self.reconnectTimer = null; }
 			Debug.trace("socket.io reconnecting...");
 			self.showProgress( 0.5, "Reconnecting to server..." );
 			self.recalcMaster = true;
 		} );
-		this.socket.on('reconnect', function() {
+		
+		socket.on('reconnect', function() {
 			Debug.trace("socket.io reconnected successfully");
 			// if (self.progress) self.hideProgress();
 		} );
-		this.socket.on('reconnect_failed', function() {
+		
+		socket.on('reconnect_failed', function() {
+			if (socket._pixl_disconnected) return;
 			Debug.trace("socket.io has given up -- will try different server at random");
 			self.randomizeMaster();
 		} );
-		this.socket.on('disconnect', function() {
+		
+		socket.on('disconnect', function() {
 			// unexpected disconnection -- attempt to reconnect in a few seconds
-			if (!self.socket._pixl_disconnected) {
+			if (!socket._pixl_disconnected) {
 				Debug.trace("socket.io disconnected unexpectedly -- Reconnecting...");
+				socket._pixl_disconnected = true;
+				socket.removeAllListeners();
+				
 				self.showProgress( 0.5, "Reconnecting to server..." );
 				self.recalcMaster = true;
 				self.socket = null;
@@ -300,7 +313,9 @@ app.extend({
 			}
 		} );
 		
-		this.socket.on('status', function(data) {
+		socket.on('status', function(data) {
+			if (socket._pixl_disconnected) return;
+			
 			if (!data.master) {
 				// OMG we're not talking to master anymore?
 				self.recalculateMaster(data);
@@ -329,8 +344,10 @@ app.extend({
 			} // master
 		} );
 		
-		this.socket.on('update', function(data) {
+		socket.on('update', function(data) {
 			// receive data update (global list contents)
+			if (socket._pixl_disconnected) return;
+			
 			for (var key in data) {
 				self[key] = data[key];
 				
@@ -381,9 +398,11 @@ app.extend({
 			
 			// separating this thread for safety
 			setTimeout( function() {
-				self.socket._pixl_disconnected = true;
-				self.socket.off('disconnect');
-				self.socket.disconnect();
+				if (self.socket) {
+					self.socket._pixl_disconnected = true;
+					self.socket.removeAllListeners();
+					self.socket.disconnect();
+				}
 				
 				// allow time for socket to disconnect
 				setTimeout( function() {

@@ -286,33 +286,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		Nav.go( 'Schedule' + compose_query_string(args) );
 	},
 	
-	render_target_menu_options: function(value) {
-		// render menu items for server group (target)
-		// including optgroups for both server group and individual servers
-		var html = '';
-		
-		app.server_groups.sort( function(a, b) {
-			// return (b.title < a.title) ? 1 : -1;
-			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
-		} );
-		
-		html += '<optgroup label="Groups:">' + render_menu_options(app.server_groups, value, false) + '</optgroup>';
-		
-		if (find_object(app.server_groups, { id: value })) value = '';
-		
-		// trim hostname suffixes
-		var hostnames = hash_keys_to_array(app.servers).sort();
-		if (value && !app.servers[value]) hostnames.push( value );
-		
-		var short_hostnames = [];
-		for (var idx = 0, len = hostnames.length; idx < len; idx++) {
-			short_hostnames.push([ hostnames[idx], hostnames[idx].replace(/\.[\w\-]+\.\w+$/, '') ]);
-		}
-		
-		html += '<optgroup label="Servers:">' + render_menu_options(short_hostnames, value, false) + '</optgroup>';
-		return html;
-	},
-	
 	gosub_new_event: function(args) {
 		// create new event
 		var html = '';
@@ -679,8 +652,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += get_form_table_row( 'Retries', 
 			'<table cellspacing="0" cellpadding="0"><tr>' + 
 				'<td><select id="fe_ee_retries" onChange="$P().change_retry_amount()">' + render_menu_options([[0,'None'], 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], event.retries, false) + '</select></td>' + 
-				'<td id="td_ee_retry1" '+(event.retries ? '' : 'style="opacity:0"')+'><span style="padding-left:15px; font-size:13px; color:#777;"><b>Delay:</b>&nbsp;</span></td>' + 
-				'<td id="td_ee_retry2" '+(event.retries ? '' : 'style="opacity:0"')+'>' + this.get_relative_time_combo_box('fe_ee_retry_delay', event.retry_delay, '', true) + '</td>' + 
+				'<td id="td_ee_retry1" '+(event.retries ? '' : 'style="display:none"')+'><span style="padding-left:15px; font-size:13px; color:#777;"><b>Delay:</b>&nbsp;</span></td>' + 
+				'<td id="td_ee_retry2" '+(event.retries ? '' : 'style="display:none"')+'>' + this.get_relative_time_combo_box('fe_ee_retry_delay', event.retry_delay, '', true) + '</td>' + 
 			'</tr></table>'
 		);
 		html += get_form_table_caption( "Select the number of retries to be attempted before an error is reported." );
@@ -822,8 +795,18 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// user has selected a retry amount from the menu
 		// adjust the visibility of the retry delay controls accordingly
 		var retries = parseInt( $('#fe_ee_retries').val() );
-		if (retries) $('#td_ee_retry1, #td_ee_retry2').fadeTo( 250, 1.0 );
-		else $('#td_ee_retry1, #td_ee_retry2').fadeTo( 250, 0.0 );
+		if (retries) {
+			if (!$('#td_ee_retry1').hasClass('yup')) {
+				$('#td_ee_retry1, #td_ee_retry2').css({ display:'table-cell', opacity:0 }).fadeTo( 250, 1.0, function() {
+					$(this).addClass('yup');
+				} );
+			}
+		}
+		else {
+			$('#td_ee_retry1, #td_ee_retry2').fadeTo( 250, 0.0, function() {
+				$(this).css({ display:'none', opacity:0 }).removeClass('yup');
+			} );
+		}
 	},
 	
 	show_crontab_import_dialog: function() {

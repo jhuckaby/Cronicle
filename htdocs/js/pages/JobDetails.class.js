@@ -485,10 +485,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var html = '';
 		
 		html += '<div class="info_label">MIN</div>';
-		html += '<div class="info_value">' + (job.cpu.min || 0) + '%</div>';
+		html += '<div class="info_value">' + short_float(job.cpu.min || 0) + '%</div>';
 		
 		html += '<div class="info_label">PEAK</div>';
-		html += '<div class="info_value">' + (job.cpu.max || 0) + '%</div>';
+		html += '<div class="info_value">' + short_float(job.cpu.max || 0) + '%</div>';
 		
 		$('#d_arch_cpu_legend').html( html );
 		
@@ -920,13 +920,13 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var html = '';
 		
 		html += '<div class="info_label">MIN</div>';
-		html += '<div class="info_value">' + (job.cpu.min || 0) + '%</div>';
+		html += '<div class="info_value">' + short_float(job.cpu.min || 0) + '%</div>';
 		
 		html += '<div class="info_label">AVERAGE</div>';
 		html += '<div class="info_value">' + (cpu_avg || 0) + '%</div>';
 		
 		html += '<div class="info_label">PEAK</div>';
-		html += '<div class="info_value">' + (job.cpu.max || 0) + '%</div>';
+		html += '<div class="info_value">' + short_float(job.cpu.max || 0) + '%</div>';
 		
 		$('#d_live_cpu_legend').html( html );
 		
@@ -987,7 +987,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	
 	onStatusUpdate: function(data) {
 		// received status update (websocket), update sub-page if needed
-		if (this.args.sub == 'live') {
+		if (this.args && (this.args.sub == 'live')) {
 			if (!app.activeJobs[this.args.id]) {
 				// check for pending job (retry delay)
 				var pending_job = null;
