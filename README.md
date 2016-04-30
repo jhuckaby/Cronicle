@@ -2501,6 +2501,49 @@ The CPU is measured as percentage of one CPU core, so 100 means that a full CPU 
 
 The memory usage is measured in bytes.  The current value can be found in `current`, and the minimum (`min`) and maximum (`max`) readings are also tracked.  To compute the average, divide the `total` value by the `count`.
 
+### update_job
+
+```
+	/api/app/update_job/v1
+```
+
+This updates a job that is already in progress.  Only certain job properties may be changed when the job is running, and those are listed below.  This is typically used to adjust timeouts, resource limits, or user notification settings.  API Keys require the `edit_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `id` | **(Required)** The ID of the event you wish to run a job for. |
+| `timeout` | (Optional) The total run time in seconds to allow, before the job is aborted. |
+| `retries` | (Optional) The number of retries before the job is reported a failure. |
+| `retry_delay` | (Optional) The number of seconds between retries. |
+| `chain` | (Optional) Launch another event when the job completes (see [Chain Reaction](#chain-reaction)). |
+| `notify_success` | (Optional) A comma-separated list of e-mail addresses to notify on job success. |
+| `notify_fail` | (Optional) A comma-separated list of e-mail addresses to notify on job failure. |
+| `web_hook` | (Optional) A fully-qualified URL to ping when the job completes. |
+| `cpu_limit` | (Optional) The maximum allowed CPU before the job is aborted (100 = 1 CPU core). |
+| `cpu_sustain` | (Optional) The number of seconds to allow the max CPU to be exceeded. |
+| `memory_limit` | (Optional) The maximum allowed memory usage (in bytes) before the job is aborted. |
+| `memory_sustain` | (Optional) The number of seconds to allow the max memory to be exceeded. |
+
+As shown above, you can include *some* of the properties from the [Event Data Object](#event-data-format) to customize the job in progress.  Example request:
+
+```js
+{
+	"id": "j3c182051",
+	"timeout": 300,
+	"notify_success": "email@server.com"
+}
+```
+
+Example response:
+
+```js
+{
+	"code": 0
+}
+```
+
+See the [Standard Response Format](#standard-response-format) for details.
+
 ### abort_job
 
 ```

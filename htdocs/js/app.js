@@ -492,13 +492,15 @@ app.extend({
 		// update master switch display
 		$('#d_tab_master')
 			.css( 'color', this.state.enabled ? '#3f7ed5' : '#777' )
-			.html( '<i '+(this.state.enabled ? 'class="fa fa-check-square-o">' : 'class="fa fa-square-o">')+'&nbsp;</i><b>Scheduler Enabled</b>' );
+			.html( '<i '+(this.state.enabled ? 'class="fa fa-check-square-o">' : 'class="fa fa-square-o">')+'</i>&nbsp;<b>Scheduler Enabled</b>' );
 	},
 	
 	toggleMasterSwitch: function() {
 		// toggle master scheduler switch on/off
 		var self = this;
 		var enabled = this.state.enabled ? 0 : 1;
+		
+		// $('#d_tab_master > i').removeClass().addClass('fa fa-spin fa-spinner');
 		
 		app.api.post( 'app/update_master_state', { enabled: enabled }, function(resp) {
 			app.showMessage('success', "Scheduler has been " + (enabled ? 'enabled' : 'disabled') + ".");

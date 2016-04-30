@@ -442,6 +442,9 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	do_save_event: function() {
 		// save changes to existing event
 		app.clearError();
+		
+		this.old_event = JSON.parse( JSON.stringify(this.event) );
+		
 		var event = this.get_event_form_json();
 		if (!event) return; // error
 		
@@ -468,7 +471,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		}
 		
 		// if the event was disabled and there are running jobs, ask user to abort them
-		if (!event.enabled && jobs.length) {
+		if (this.old_event.enabled && !event.enabled && jobs.length) {
 			app.confirm( '<span style="color:red">Abort Jobs</span>', "There " + ((jobs.length != 1) ? 'are' : 'is') + " currently still " + jobs.length + " active " + pluralize('job', jobs.length) + " using the disabled event <b>"+event.title+"</b>.  Do you want to abort " + ((jobs.length != 1) ? 'these' : 'it') + " now?", "Abort", function(result) {
 				if (result) {
 					app.showProgress( 1.0, "Aborting " + pluralize('Job', jobs.length) + "..." );
@@ -484,6 +487,46 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				} // clicked Abort
 			} ); // app.confirm
 		} // disabled + jobs
+		else {
+			// if certain key properties were changed and event has active jobs, ask user to update them
+			var need_update = false;
+			var updates = {};
+			var keys = ['title', 'timeout', 'retries', 'retry_delay', 'chain', 'notify_success', 'notify_fail', 'web_hook', 'cpu_limit', 'cpu_sustain', 'memory_limit', 'memory_sustain'];
+			
+			for (var idx = 0, len = keys.length; idx < len; idx++) {
+				var key = keys[idx];
+				if (event[key] != this.old_event[key]) {
+					updates[key] = event[key];
+					need_update = true;
+				}
+			} // foreach key
+			
+			// recount active jobs, including detached this time
+			jobs = [];
+			for (var id in app.activeJobs) {
+				var job = app.activeJobs[id];
+				if (job.event == event.id) jobs.push( job );
+			}
+			
+			if (need_update && jobs.length) {
+				app.confirm( 'Update Jobs', "This event currently has " + jobs.length + " active " + pluralize('job', jobs.length) + ".  Do you want to update " + ((jobs.length != 1) ? 'these' : 'it') + " as well?", "Update", function(result) {
+					if (result) {
+						app.showProgress( 1.0, "Updating " + pluralize('Job', jobs.length) + "..." );
+						app.api.post( 'app/update_jobs', { event: event.id, updates: updates }, function(resp) {
+							app.hideProgress();
+							if (resp.count > 0) {
+								app.showMessage('success', "The " + pluralize('job', resp.count) + " " + ((resp.count != 1) ? 'were' : 'was') + " updated successfully.");
+							}
+							else {
+								app.showMessage('warning', "No jobs were updated.  It is likely they completed while the dialog was up.");
+							}
+						} );
+					} // clicked Update
+				} ); // app.confirm
+			} // jobs need update
+		} // check for update
+		
+		delete this.old_event;
 	},
 	
 	get_event_edit_html: function() {

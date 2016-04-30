@@ -478,3 +478,24 @@ fieldset.dt_fs > legend {
 div.pagination > table tr td {
 	white-space: nowrap;
 }
+
+/* Subtitle Widget Adjustments */
+
+.subtitle_widget a, .subtitle_widget span.link {
+	color: #777;
+	text-decoration: none;
+}
+.subtitle_widget a:hover, .subtitle_widget span.link:hover {
+	text-decoration: underline;
+	color: #036;
+}
+#s_watch_job:hover {
+	color: #036 !important;
+}
+
+span.link.abort {
+	color: #777;
+}
+span.link.abort:hover {
+	color: red;
+}

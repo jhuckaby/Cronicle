@@ -320,8 +320,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Job Event Log';
 			if (job.log_file_size) html += ' (' + get_text_from_bytes(job.log_file_size, 1) + ')';
-			html += '<div class="subtitle_widget" style="margin-left:2px;"><i class="fa fa-external-link">&nbsp;</i><a href="'+app.base_api_url+'/app/get_job_log?id='+job.id+'" target="_blank"><b>View Full Log</b></a></div>';
-			html += '<div class="subtitle_widget"><i class="fa fa-download">&nbsp;</i><a href="'+app.base_api_url+'/app/get_job_log?id='+job.id+'&download=1"><b>Download Log</b></a></div>';
+			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="'+app.base_api_url+'/app/get_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
+			html += '<div class="subtitle_widget"><a href="'+app.base_api_url+'/app/get_job_log?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
@@ -576,6 +576,71 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		} );
 	},
 	
+	check_watch_enabled: function(job) {
+		// check if watch is enabled on current live job
+		var watch_enabled = 0;
+		var email = app.user.email.toLowerCase();
+		if (email && job.notify_success && (job.notify_success.toLowerCase().indexOf(email) > -1)) watch_enabled++;
+		if (email && job.notify_fail && (job.notify_fail.toLowerCase().indexOf(email) > -1)) watch_enabled++;
+		return (watch_enabled == 2);
+	},
+	
+	watch_add_me: function(job, key) {
+		// add current user's e-mail to job property
+		if (!job[key]) job[key] = '';
+		var value = trim( job[key].replace(/\,\s*\,/g, ',').replace(/^\s*\,\s*/, '').replace(/\s*\,\s*$/, '') );
+		var email = app.user.email.toLowerCase();
+		var regexp = new RegExp( "\\b" + escape_regexp(email) + "\\b", "i" );
+		
+		if (!value.match(regexp)) {
+			if (value) value += ', ';
+			job[key] = value + app.user.email;
+		}
+	},
+	
+	watch_remove_me: function(job, key) {
+		// remove current user's email from job property
+		if (!job[key]) job[key] = '';
+		var value = trim( job[key].replace(/\,\s*\,/g, ',').replace(/^\s*\,\s*/, '').replace(/\s*\,\s*$/, '') );
+		var email = app.user.email.toLowerCase();
+		var regexp = new RegExp( "\\b" + escape_regexp(email) + "\\b", "i" );
+		
+		value = value.replace( regexp, '' ).replace(/\,\s*\,/g, ',').replace(/^\s*\,\s*/, '').replace(/\s*\,\s*$/, '');
+		job[key] = trim(value);
+	},
+	
+	toggle_watch: function() {
+		// toggle watch on/off on current live job
+		var job = app.activeJobs[this.args.id];
+		var watch_enabled = this.check_watch_enabled(job);
+		
+		if (!watch_enabled) {
+			this.watch_add_me( job, 'notify_success' );
+			this.watch_add_me( job, 'notify_fail' );
+		}
+		else {
+			this.watch_remove_me( job, 'notify_success' );
+			this.watch_remove_me( job, 'notify_fail' );
+		}
+		
+		// update on server
+		$('#s_watch_job > i').removeClass().addClass('fa fa-spin fa-spinner');
+		
+		app.api.post( 'app/update_job', { id: job.id, notify_success: job.notify_success, notify_fail: job.notify_fail }, function(resp) {
+			watch_enabled = !watch_enabled;
+			if (watch_enabled) {
+				app.showMessage('success', "You will now be notified via e-mail when the job completes (success or fail).");
+				$('#s_watch_job').css('color', '#3f7ed5');
+				$('#s_watch_job > i').removeClass().addClass('fa fa-check-square-o');
+			}
+			else {
+				app.showMessage('success', "You will no longer be notified about this job.");
+				$('#s_watch_job').css('color', '#777');
+				$('#s_watch_job > i').removeClass().addClass('fa fa-square-o');
+			}
+		} );
+	},
+	
 	gosub_live: function(args) {
 		// show live job status
 		var job = app.activeJobs[args.id];
@@ -596,10 +661,20 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			group.multiplex = 1;
 		}
 		
+		// new header with watch & abort
+		var watch_enabled = this.check_watch_enabled(job);
+		
+		html += '<div class="subtitle" style="margin-top:7px; margin-bottom:13px;">';
+			html += 'Live Job Progress';
+			html += '<div class="subtitle_widget" style="margin-left:2px;"><span class="link abort" onMouseUp="$P().abort_job()"><i class="fa fa-ban">&nbsp;</i><b>Abort Job</b></span></div>';
+			html += '<div class="subtitle_widget"><span id="s_watch_job" class="link" onMouseUp="$P().toggle_watch()" style="' + (watch_enabled ? 'color:#3f7ed5;' : 'color:#777;') + '"><i class="fa ' + (watch_enabled ? 'fa-check-square-o' : 'fa-square-o') + '">&nbsp;</i><b>Watch Job</b></a></div>';
+			html += '<div class="clear"></div>';
+		html += '</div>';
+		
 		// fieldset header
-		html += '<fieldset style="margin-top:0px; margin-right:0px; padding-top:10px; position:relative"><legend>Live Job Details</legend>';
+		html += '<fieldset style="margin-top:0px; margin-right:0px; padding-top:10px; position:relative"><legend>Job Details</legend>';
 			
-			html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().abort_job()">Abort Job...</div>';
+			// html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().abort_job()">Abort Job...</div>';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';
@@ -686,8 +761,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
-			html += '<div class="subtitle_widget" style="margin-left:2px;"><i class="fa fa-external-link">&nbsp;</i><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'" target="_blank"><b>View Full Log</b></a></div>';
-			html += '<div class="subtitle_widget"><i class="fa fa-download">&nbsp;</i><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'&download=1"><b>Download Log</b></a></div>';
+			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
+			html += '<div class="subtitle_widget"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
