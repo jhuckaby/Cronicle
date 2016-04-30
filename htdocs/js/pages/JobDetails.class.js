@@ -912,7 +912,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		// live cpu overlay
 		var html = '';
-		html += '<div class="pie-overlay-title">'+cpu_cur+'%</div>';
+		html += '<div class="pie-overlay-title">' + short_float(cpu_cur) + '%</div>';
 		html += '<div class="pie-overlay-subtitle">Current</div>';
 		$('#d_live_cpu_overlay').html( html );
 		
