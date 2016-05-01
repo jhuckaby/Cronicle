@@ -560,7 +560,7 @@ Class.add( Page.Admin, {
 				html += get_form_table_row('Size:', '<input type="text" id="fe_epp_text_size" size="5" value="'+escape_text_field_value(param.size)+'"/>');
 				html += get_form_table_caption("Enter the size of the text field, in characters.");
 				html += get_form_table_spacer('short transparent');
-				html += get_form_table_row('Default Value:', '<input type="text" id="fe_epp_text_value" size="35" value="'+escape_text_field_value(param.value)+'"/>');
+				html += get_form_table_row('Default Value:', '<input type="text" id="fe_epp_text_value" size="35" value="'+escape_text_field_value(param.value)+'" spellcheck="false"/>');
 				html += get_form_table_caption("Enter the default value for the text field.");
 			break;
 			
@@ -568,7 +568,7 @@ Class.add( Page.Admin, {
 				html += get_form_table_row('Rows:', '<input type="text" id="fe_epp_textarea_rows" size="5" value="'+escape_text_field_value(param.rows || 5)+'"/>');
 				html += get_form_table_caption("Enter the number of visible rows to allocate for the text box.");
 				html += get_form_table_spacer('short transparent');
-				html += get_form_table_row('Default Text:', '<textarea id="fe_epp_textarea_value" style="width:99%; height:60px;">'+escape_text_field_value(param.value)+'</textarea>');
+				html += get_form_table_row('Default Text:', '<textarea id="fe_epp_textarea_value" style="width:99%; height:60px;" spellcheck="false">'+escape_text_field_value(param.value)+'</textarea>');
 				html += get_form_table_caption("Optionally enter default text for the text box.");
 			break;
 			
@@ -578,15 +578,15 @@ Class.add( Page.Admin, {
 			break;
 			
 			case 'hidden':
-				html += get_form_table_row('Value:', '<input type="text" id="fe_epp_hidden_value" size="35" value="'+escape_text_field_value(param.value)+'"/>');
+				html += get_form_table_row('Value:', '<input type="text" id="fe_epp_hidden_value" size="35" value="'+escape_text_field_value(param.value)+'" spellcheck="false"/>');
 				html += get_form_table_caption("Enter the value for the hidden field.");
 			break;
 			
 			case 'select':
-				html += get_form_table_row('Menu Items:', '<input type="text" id="fe_epp_select_items" size="35" value="'+escape_text_field_value(param.items ? param.items.join(', ') : '')+'"/>');
+				html += get_form_table_row('Menu Items:', '<input type="text" id="fe_epp_select_items" size="35" value="'+escape_text_field_value(param.items ? param.items.join(', ') : '')+'" spellcheck="false"/>');
 				html += get_form_table_caption("Enter a comma-separated list of items for the menu.");
 				html += get_form_table_spacer('short transparent');
-				html += get_form_table_row('Selected Item:', '<input type="text" id="fe_epp_select_value" size="20" value="'+escape_text_field_value(param.value)+'"/>');
+				html += get_form_table_row('Selected Item:', '<input type="text" id="fe_epp_select_value" size="20" value="'+escape_text_field_value(param.value)+'" spellcheck="false"/>');
 				html += get_form_table_caption("Optionally enter an item to be selected by default.");
 			break;
 		} // switch type
