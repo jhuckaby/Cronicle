@@ -101,11 +101,22 @@ do
 		exit
 	;;
 	maint)
-		node $HOMEDIR/bin/storage-cli.js maint $1
+		node $HOMEDIR/bin/storage-cli.js maint $2
 		exit
 	;;
 	admin)
-		node $HOMEDIR/bin/storage-cli.js admin $1 $2
+		node $HOMEDIR/bin/storage-cli.js admin $2 $3
+		exit
+	;;
+	export)
+		node $HOMEDIR/bin/storage-cli.js export $2 $3 $4
+		exit
+	;;
+	import)
+		if [ $RUNNING -eq 1 ]; then
+		    $0 stop
+		fi
+		node $HOMEDIR/bin/storage-cli.js import $2 $3 $4
 		exit
 	;;
 	upgrade)
@@ -119,14 +130,20 @@ do
 		exit
 	;;
     *)
-	echo "usage: $0 (start|stop|cycle|status|help)"
+	echo "usage: $0 (start|stop|cycle|status|setup|maint|admin|export|import|upgrade|help)"
 	cat <<EOF
 
-start      - start $NAME
-stop       - stop $NAME and wait until process actually exits
-restart    - calls stop, then start (hard restart)
-status     - check whether service is currently running
-help       - display this screen
+start      - Starts $NAME.
+stop       - Stops $NAME and wait until it actually exits.
+restart    - Calls stop, then start (hard restart).
+status     - Checks whether $NAME is currently running.
+setup      - Runs initial storage setup.
+maint      - Runs daily maintenance routine.
+admin      - Creates new emergency admin account (specify user / pass).
+export     - Exports data to specified file.
+import     - Imports data from specified file.
+upgrade    - Upgrades $NAME to the latest stable (or specify version).
+help       - Displays this screen.
 
 EOF
 	ERROR=2

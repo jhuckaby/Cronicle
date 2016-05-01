@@ -1812,6 +1812,37 @@ If you upgrade to the `HEAD` version, this will grab the very latest from GitHub
 	/opt/cronicle/bin/control.sh upgrade HEAD
 ```
 
+## Data Import and Export
+
+Cronicle can import and export data via the command-line, to/from a plain text file.  This data includes all the "vital" storage records such as Users, Plugins, Categories, Servers, Server Groups, API Keys and all Scheduled Events.  It *excludes* things like user sessions, job completions and job logs.
+
+To export your Cronicle data, issue this command on your master server:
+
+```
+	/opt/cronicle/bin/control.sh export /path/to/cronicle-data-backup.txt --verbose
+```
+
+The `--verbose` flag makes it emit some extra information to the console.  Omit that if you want it to run silently.  Omit the filename if you want it to export the data to STDOUT instead of a file.
+
+To import data back into the system, **first make sure Cronicle is stopped on all servers**, and then run this command:
+
+```
+	/opt/cronicle/bin/control.sh import /path/to/cronicle-data-backup.txt
+```
+
+If you want daily backups of the data which auto-expire after a year, a simple shell script can do it for ya:
+
+```sh
+#!/bin/bash
+DATE_STAMP=`date "+%Y-%m-%d"`
+BACKUP_DIR="/backup/cronicle/data"
+BACKUP_FILE="$BACKUP_DIR/backup-$DATE_STAMP.txt"
+
+mkdir -p $BACKUP_DIR
+/opt/cronicle/bin/control.sh export $BACKUP_FILE --verbose
+find $BACKUP_DIR -mtime +365 -type f -exec rm -v {} \;
+```
+
 # Inner Workings
 
 This section contains details on some of the inner workings of Cronicle.
