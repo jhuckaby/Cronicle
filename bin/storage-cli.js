@@ -325,5 +325,68 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			} );
 		break;
 		
+		case 'upgrade_logs':
+			// upgrade all non-compressed logs to gzip-compressed
+			// This is part of Cronicle Version 0.5 and can be discarded after that release
+			var zlib = require('zlib');
+			print( "Special Cronicle v0.5 Log Upgrade\n" );
+			print( "Compressing all job logs...\n\n" );
+			
+			storage.listEach( 'logs/completed', 
+				function(item, idx, callback) {
+					var job_path = 'jobs/' + item.id;
+					var old_path = 'jobs/' + item.id + '/log.txt';
+					var new_path = old_path + '.gz';
+					
+					storage.get( job_path, function(err, job) {
+						if (err) {
+							// silently skip -- job record deleted or already converted
+							return callback();
+						}
+						
+						storage.getStream( old_path, function(err, stream) {
+							if (err) {
+								// silently skip -- log deleted or already converted
+								return callback();
+							}
+							
+							print( "Compressing: " + old_path + "..." );
+							
+							var gzip = zlib.createGzip( config['gzip_opts'] || {} );
+							stream.pipe( gzip );
+							
+							storage.putStream( new_path, gzip, function(err) {
+								if (err) {
+									print("Failed to store job log: " + new_path + ": " + err + "\n");
+									return callback();
+								}
+								
+								// delete uncompressed log
+								storage.delete( old_path, function(err, data) {
+									if (err) {
+										print("Failed to delete job log: " + old_path + ": " + err + "\n");
+										return callback();
+									}
+									
+									// set new expiration
+									var expiration = Math.floor(job.time_end || Tools.timeNow()) + (86400 * (job.log_expire_days || config['job_data_expire_days']));
+									var dargs = Tools.getDateArgs( expiration );
+									verbose( "<<" + dargs.yyyy_mm_dd + ">>" );
+									
+									storage.expire( new_path, expiration );
+									
+									print( "OK.\n" );
+									callback();
+								} ); // delete
+							} ); // putStream
+						} ); // getStream
+					} ); // get
+				}, 
+				function(err) {
+					print( "\nAll job logs compressed.\nExiting.\n\n");
+				}
+			);
+		break;
+		
 	} // switch
 });
