@@ -2,7 +2,7 @@
 
 **Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of slave servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
 
-![Main Screenshot](https://pixlcore.com/software/cronicle/screenshots/job-details-complete.png)
+![Main Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/job-details-complete.png)
 
 ## Features at a Glance
 
@@ -583,7 +583,7 @@ This section describes the Cronicle web user interface.  It has been tested exte
 
 ## Home Tab
 
-![Home Tab Screenshot](https://pixlcore.com/software/cronicle/screenshots/home.png)
+![Home Tab Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/home.png)
 
 The **Home** tab, also known as the dashboard, is the default page shown after you log in.  It displays basic information about the application, currently active (running) jobs, and a list of upcoming jobs in the next 24 hours.  The page is split vertically into three main sections:
 
@@ -637,7 +637,7 @@ This table lists all the upcoming scheduled jobs in the next 24 hours, and vario
 
 ## Schedule Tab
 
-![Schedule Screenshot](https://pixlcore.com/software/cronicle/screenshots/schedule.png)
+![Schedule Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/schedule.png)
 
 This tab displays the list of all events currently in the schedule, including both active and disabled events.  From here you can add new events, edit existing events, run events on-demand, and jump to locations such as [Event History](#event-history-tab) and [Event Stats](#event-stats-tab).  The schedule table has the following columns:
 
@@ -663,7 +663,7 @@ Here are the actions you can run on each event from the Schedule tab:
 
 ### Edit Event Tab
 
-![Edit Event Screenshot](https://pixlcore.com/software/cronicle/screenshots/edit-event.png)
+![Edit Event Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/edit-event.png)
 
 The Edit Event Tab displays a form for editing scheduled events, and creating new ones.  Here are all the form fields and what they mean:
 
@@ -715,7 +715,7 @@ If the Plugin defines any custom parameters, they are editable per event.  This 
 
 #### Event Timing
 
-![Event Timing Screenshot](https://pixlcore.com/software/cronicle/screenshots/edit-event-timing.png)
+![Event Timing Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/edit-event-timing.png)
 
 Events are scheduled to run at various dates and times using a visual multi-selector widget, as shown above.  This allows you to multi-select any combination of years, months, days, weekdays, hours and/or minutes, for an event to run on.  It will also repeat on a recurring basis, each time the server clock matches your selections.  This is very similar to the [Unix Cron](https://en.wikipedia.org/wiki/Cron) format, but with a more visual user interface.
 
@@ -924,7 +924,7 @@ Here is an example web hook JSON record (`job_complete` version shown):
 
 #### Event Resource Limits
 
-![Resource Limits Screenshot](https://pixlcore.com/software/cronicle/screenshots/edit-event-res-limits.png)
+![Resource Limits Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/edit-event-res-limits.png)
 
 Cronicle can automatically limit the server resource consumption of your jobs, by monitoring their CPU and RAM usage, and aborting them if the limits are exceeded.  You can also specify "sustain" times, so no action is taken until the limits are exceeded for a certain amount of time.
 
@@ -942,7 +942,7 @@ If you need to customize the internal clock for the job, hold Shift which clicki
 
 ## Completed Jobs Tab
 
-![Completed Jobs Screenshot](https://pixlcore.com/software/cronicle/screenshots/completed-jobs.png)
+![Completed Jobs Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/completed-jobs.png)
 
 This tab shows you all recently completed jobs, for all events, and whether they succeeded or failed.  Cronicle will keep up to [list_row_max](#list_row_max) job completions in storage (default is 10,000).  The jobs are sorted by completion date/time, with the latest at the top.  Use the pagination controls on the top right to jump further back in time.  The table columns are:
 
@@ -959,7 +959,7 @@ This tab shows you all recently completed jobs, for all events, and whether they
 
 ### Event History Tab
 
-![Event History Screenshot](https://pixlcore.com/software/cronicle/screenshots/event-history.png)
+![Event History Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/event-history.png)
 
 This tab shows you all recently completed jobs for one specific event.  Cronicle will keep up to [list_row_max](#list_row_max) job completions in storage (default is 10,000).  The jobs are sorted by completion date/time, with the latest at the top.  Use the pagination controls on the top right to jump further back in time.  The table columns are:
 
@@ -975,7 +975,7 @@ This tab shows you all recently completed jobs for one specific event.  Cronicle
 
 ### Event Stats Tab
 
-![Event Stats Screenshot](https://pixlcore.com/software/cronicle/screenshots/event-stats.png)
+![Event Stats Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/event-stats.png)
 
 This tab contains statistics about a specific event, including basic information and performance graphs.  The data is calculated from the last 50 completed jobs.  Here is a list of all the stats that are displayed at the top of the screen:
 
@@ -996,7 +996,7 @@ This tab contains statistics about a specific event, including basic information
 
 Below the stats are a number of graphs:
 
-![Graphs Screenshot](https://pixlcore.com/software/cronicle/screenshots/event-stats-graphs.png)
+![Graphs Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/event-stats-graphs.png)
 
 The first graph shows performance of your Plugin's metrics over time.  The different categories shown are entirely driven by your custom code.  You can choose to provide performance metrics or not, and add as many custom categories as you like.  For details, see the [Writing Plugins](#writing-plugins) and [Performance Metrics](#performance-metrics) sections below.
 
@@ -1004,7 +1004,7 @@ Below the performance history graph are the **CPU Usage History** and **Memory U
 
 ## Job Details Tab
 
-![Job In Progress Screenshot](https://pixlcore.com/software/cronicle/screenshots/job-live-progress.png)
+![Job In Progress Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/job-live-progress.png)
 
 The Job Details Tab is used to view jobs currently in progress, and to see details about completed jobs.  The display is slightly different for each case.  For jobs in progress, you'll see some statistics about the job which are updated live (see below), and three large donut charts: The current job progress (if provided by the Plugin), and the current CPU and memory usage of the job.  Below the donuts you'll find the live job log file, updated in real-time.  The stats consist of:
 
@@ -1027,7 +1027,7 @@ The CPU donut chart visually indicates how close your job is to using a full CPU
 
 When the job completes, or when viewing details about a previously completed job, the display looks slightly different:
 
-![Job Success Screenshot](https://pixlcore.com/software/cronicle/screenshots/job-details-complete.png)
+![Job Success Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/job-details-complete.png)
 
 The only difference in the statistics table is that the right-hand column contains the **Job Completed** date/time instead of the remaining time.  Below that, the left-hand donut graph now shows performance metrics from your Plugin (if provided).  You can choose to provide performance metrics or not, and add as many custom categories as you like.  For details, see the [Writing Plugins](#writing-plugins) and [Performance Metrics](#performance-metrics) sections below.
 
@@ -1035,7 +1035,7 @@ The CPU and Memory donut charts now show the average values over the course of y
 
 Here is how the Job Details tab looks when a job fails:
 
-![Job Failed Screenshot](https://pixlcore.com/software/cronicle/screenshots/job-details-error.png)
+![Job Failed Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/job-details-error.png)
 
 The error message is displayed in a banner along the top of the screen.  The banner will be yellow if the job was aborted, or red if an error was returned from your Plugin.
 
@@ -1043,7 +1043,7 @@ In this case the job was aborted, so the Plugin had no chance to report performa
 
 ## My Account Tab
 
-![My Account Screenshot](https://pixlcore.com/software/cronicle/screenshots/my-account.png)
+![My Account Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/my-account.png)
 
 On this tab you can edit your own account profile, i.e. change your name, e-mail address, and/or password.  You also have the option of completely deleting your account via the "Delete Account" button.  For security purposes, in order to save any changes you must enter your existing account password.
 
@@ -1055,7 +1055,7 @@ This tab is only visible and accessible to administrator level users.  It allows
 
 ### Activity Log Tab
 
-![Activity Log Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-activity-log.png)
+![Activity Log Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-activity-log.png)
 
 All activity in Cronicle is logged, and viewable on the **Activity Log** tab.  The log is presented as a paginated table, sorted by descending date/time (newest activity at the top).  Pagination controls are located in the top-right corner.  The table columns are as follows:
 
@@ -1088,7 +1088,7 @@ Cronicle will keep the latest [list_row_max](#list_row_max) activity log entries
 
 ### API Keys Tab
 
-![API Keys Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-api-keys.png)
+![API Keys Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-api-keys.png)
 
 [API Keys](#api-keys) allow you to register external applications or services to use the REST API.  This tab lists all the API Keys registered in the system, and allows you to edit, delete and add new keys.  The table columns include:
 
@@ -1103,7 +1103,7 @@ Cronicle will keep the latest [list_row_max](#list_row_max) activity log entries
 
 When you create or edit a key, you will see this screen:
 
-![Editing API Key Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-api-keys-edit.png)
+![Editing API Key Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-api-keys-edit.png)
 
 The API Key form contains the following elements:
 
@@ -1119,7 +1119,7 @@ For more details on how to use the API Key system in your apps, see the [API Key
 
 Events can be assigned to custom categories that you define.  This is a great way to enable/disable groups of events at once, set a maximum concurrent job limit for the entire category, set default notification and resource limits, and highlight events with a specific color.
 
-![Categories Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-categories.png)
+![Categories Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-categories.png)
 
 On this screen is the list of all event categories.  The table columns are as follows:
 
@@ -1133,7 +1133,7 @@ On this screen is the list of all event categories.  The table columns are as fo
 
 When you create or edit a category, you are taken to this screen:
 
-![Edit Category Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-category-edit.png)
+![Edit Category Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-category-edit.png)
 
 The category edit form contains the following elements:
 
@@ -1150,7 +1150,7 @@ The category edit form contains the following elements:
 
 [Plugins](#plugins) are used to run jobs, and can be written in virtually any language.  They are spawned as sub-processes, launched via a custom command-line script that you provide.  Communication is achieved via reading and writing JSON to STDIN / STDOUT.  For more details, see the [Plugins](#plugins) section below.
 
-![Plugins Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-plugins.png)
+![Plugins Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugins.png)
 
 On this screen you'll find a list of all the Plugins registered in the system.  The table columns are as follows:
 
@@ -1165,7 +1165,7 @@ On this screen you'll find a list of all the Plugins registered in the system.  
 
 When you create or edit a Plugin, you are taken to this screen:
 
-![Edit Plugin Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit.png)
+![Edit Plugin Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit.png)
 
 The Plugin edit form contains the following elements:
 
@@ -1182,7 +1182,7 @@ The Parameter system allows you to define a set of UI controls for your Plugin (
 
 When adding or editing Plugin Parameters, you will be presented with this dialog:
 
-![Edit Plugin Param Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit-param.png)
+![Edit Plugin Param Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-param.png)
 
 Here you will need to provide:
 
@@ -1194,7 +1194,7 @@ Depending on the control type selected, you may need to provide different pieces
 
 Parameter values for each event are passed to your Plugin when jobs are launched.  These arrive as a JSON object (located in `params`), as well as upper-case [environment variables](https://en.wikipedia.org/wiki/Environment_variable).  So for example, you can use Plugin Parameters to set custom environment variables for your jobs, or override existing ones such as `PATH`.  Example of this:
 
-![Edit Plugin PATH Example](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit-path.png)
+![Edit Plugin PATH Example](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-path.png)
 
 For more details on how to use these parameters in your Plugin code, see the [Plugins](#plugins) section below.
 
@@ -1202,7 +1202,7 @@ For more details on how to use these parameters in your Plugin code, see the [Pl
 
 The **Advanced** options pane expands to the following:
 
-![Edit Plugin Advanced Panel](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit-advanced.png)
+![Edit Plugin Advanced Panel](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-advanced.png)
 
 Here you can customize the following settings:
 
@@ -1214,7 +1214,7 @@ Here you can customize the following settings:
 
 ### Servers Tab
 
-![Servers Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-servers.png)
+![Servers Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-servers.png)
 
 When Cronicle is configured to run in a multi-server environment, this tab allows you to manage the cluster.  At the top of the page you'll see a list of all the servers currently registered, their status, and controls to restart or shut them down.  The table columns include:
 
@@ -1251,7 +1251,7 @@ The list of server groups contains the following columns:
 
 When adding or editing a server group, you will be presented with this dialog:
 
-![Edit Server Group Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-servers-group-edit.png)
+![Edit Server Group Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-servers-group-edit.png)
 
 Here you will need to provide:
 
@@ -1263,7 +1263,7 @@ Note that "Master Eligible" servers all need to be properly configured and have 
 
 ### Users Tab
 
-![Users Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-users.png)
+![Users Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-users.png)
 
 This tab shows you all the user accounts registered in the system, and allows you to edit, delete and add new ones.  The table columns are as follows:
 
@@ -1279,7 +1279,7 @@ This tab shows you all the user accounts registered in the system, and allows yo
 
 When you create or edit a user, you are taken to this screen:
 
-![Edit User Screenshot](https://pixlcore.com/software/cronicle/screenshots/admin-users-edit.png)
+![Edit User Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-users-edit.png)
 
 The user edit form contains the following elements:
 
@@ -1514,7 +1514,7 @@ Here is an example data table.  Note that this has been expanded for documentati
 
 This would produce a table like the following:
 
-![Custom Stats Table Example](https://pixlcore.com/software/cronicle/screenshots/job-details-custom-table.png)
+![Custom Stats Table Example](https://pixlcore.com/software/cronicle/screenshots-new/job-details-custom-stats.png)
 
 #### Custom HTML Content
 
@@ -1553,11 +1553,11 @@ When processes are spawned to run jobs, your Plugin executable is provided with 
 
 In addition, any [Plugin Parameters](#plugin-parameters) are also passed as environment variables.  The keys are converted to upper-case, as that seems to be the standard.  So for example, you can customize the `PATH` by declaring it as a Plugin Parameter:
 
-![Edit Plugin PATH Example](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit-path.png)
+![Edit Plugin PATH Example](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-path.png)
 
 You can also include inline variables in the parameter value itself, using the syntax `$VARNAME`.  So for example, if you wanted to *append* to the current `PATH` instead of having to set it from scratch, you could:
 
-![Edit Plugin PATH Inline Example](https://pixlcore.com/software/cronicle/screenshots/admin-plugin-edit-path-inline.png)
+![Edit Plugin PATH Inline Example](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-path-inline.png)
 
 Please note that if you do customize the path, you must include the location of the Node.js `node` binary (typically in `/usr/bin` or `/usr/local/bin`).  Otherwise, things may not work well.
 
