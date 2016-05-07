@@ -17,6 +17,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		this.args = args;
 		
 		app.showTabBar(true);
+		this.tab[0]._page_id = Nav.currentAnchor();
 		
 		this.div.addClass('loading');
 		this['gosub_'+args.sub](args);
@@ -379,6 +380,15 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = find_object( app.schedule, { id: args.id } );
 		if (!event) return app.doError("Could not locate Event with ID: " + args.id);
 		
+		// check for autosave recovery
+		if (this.autosave_event) {
+			if (args.id == this.autosave_event.id) {
+				Debug.trace("Recovering autosave data for: " + args.id);
+				event = this.autosave_event;
+			}
+			delete this.autosave_event;
+		}
+		
 		// make local copy so edits don't affect main app list until save
 		this.event = deep_copy_object( event );
 		
@@ -421,7 +431,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				
 				// run
 				html += '<td width="40">&nbsp;</td>';
-				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event(\'edit\',event)">Run Now</div></td>';
+				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event_from_edit(event)">Run Now</div></td>';
 				
 				// save
 				html += '<td width="40">&nbsp;</td>';
@@ -437,6 +447,18 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += '</div>'; // sidebar tabs
 		
 		this.div.html( html );
+	},
+	
+	run_event_from_edit: function(e) {
+		// run event in its current (possibly edited, unsaved) state
+		app.clearError();
+		
+		var event = this.get_event_form_json();
+		if (!event) return; // error
+		
+		this.event = event;
+		
+		this.run_event('edit', e);
 	},
 	
 	do_save_event: function() {
@@ -1445,20 +1467,20 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		$('#d_ee_plugin_params').html( this.get_plugin_params_html() );
 	},
 	
-	get_event_form_json: function() {
+	get_event_form_json: function(quiet) {
 		// get event elements from form, used for new or edit
 		var event = this.event;
 		
 		// event title
 		event.title = trim( $('#fe_ee_title').val() );
-		if (!event.title) return app.badField('fe_ee_title', "Please enter a title for the event.");
+		if (!event.title) return quiet ? false : app.badField('fe_ee_title', "Please enter a title for the event.");
 		
 		// event enabled
 		event.enabled = $('#fe_ee_enabled').is(':checked') ? 1 : 0;
 		
 		// category
 		event.category = $('#fe_ee_cat').val();
-		if (!event.category) return app.badField('fe_ee_cat', "Please select a Category for the event."); 
+		if (!event.category) return quiet ? false : app.badField('fe_ee_cat', "Please select a Category for the event."); 
 		
 		// target (server group or individual server)
 		event.target = $('#fe_ee_target').val();
@@ -1468,7 +1490,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		event.multiplex = (event.algo == 'multiplex') ? 1 : 0;
 		if (event.multiplex) {
 			event.stagger = parseInt( $('#fe_ee_stagger').val() ) * parseInt( $('#fe_ee_stagger_units').val() );
-			if (isNaN(event.stagger)) return app.badField('fe_ee_stagger', "Please enter a number of seconds to stagger by.");
+			if (isNaN(event.stagger)) return quiet ? false : app.badField('fe_ee_stagger', "Please enter a number of seconds to stagger by.");
 		}
 		else {
 			event.stagger = 0;
@@ -1476,7 +1498,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// plugin
 		event.plugin = $('#fe_ee_plugin').val();
-		if (!event.plugin) return app.badField('fe_ee_plugin', "Please select a Plugin for the event."); 
+		if (!event.plugin) return quiet ? false : app.badField('fe_ee_plugin', "Please select a Plugin for the event."); 
 		
 		// plugin params
 		event.params = {};
@@ -1511,14 +1533,14 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// timeout
 		event.timeout = parseInt( $('#fe_ee_timeout').val() ) * parseInt( $('#fe_ee_timeout_units').val() );
-		if (isNaN(event.timeout)) return app.badField('fe_ee_timeout', "Please enter an integer value for the event timeout.");
-		if (event.timeout < 0) return app.badField('fe_ee_timeout', "Please enter a positive integer for the event timeout.");
+		if (isNaN(event.timeout)) return quiet ? false : app.badField('fe_ee_timeout', "Please enter an integer value for the event timeout.");
+		if (event.timeout < 0) return quiet ? false : app.badField('fe_ee_timeout', "Please enter a positive integer for the event timeout.");
 		
 		// retries
 		event.retries = parseInt( $('#fe_ee_retries').val() );
 		event.retry_delay = parseInt( $('#fe_ee_retry_delay').val() ) * parseInt( $('#fe_ee_retry_delay_units').val() );
-		if (isNaN(event.retry_delay)) return app.badField('fe_ee_retry_delay', "Please enter an integer value for the event retry delay.");
-		if (event.retry_delay < 0) return app.badField('fe_ee_retry_delay', "Please enter a positive integer for the event retry delay.");
+		if (isNaN(event.retry_delay)) return quiet ? false : app.badField('fe_ee_retry_delay', "Please enter an integer value for the event retry delay.");
+		if (event.retry_delay < 0) return quiet ? false : app.badField('fe_ee_retry_delay', "Please enter a positive integer for the event retry delay.");
 		
 		// catch-up mode (run all)
 		event.catch_up = $('#fe_ee_catch_up').is(':checked') ? 1 : 0;
@@ -1537,7 +1559,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {
 			var new_cursor = this.rc_parse_date( $('#fe_ee_rc_time').val() );
-			if (!new_cursor || isNaN(new_cursor)) return app.badField('fe_ee_rc_time', "Please enter a valid date/time for the new event time.");
+			if (!new_cursor || isNaN(new_cursor)) return quiet ? false : app.badField('fe_ee_rc_time', "Please enter a valid date/time for the new event time.");
 			event['reset_cursor'] = normalize_time( new_cursor, { sec: 0 } );
 		}
 		else delete event['reset_cursor'];
@@ -1550,12 +1572,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// cpu limit
 		if ($('#fe_ee_cpu_enabled').is(':checked')) {
 			event.cpu_limit = parseInt( $('#fe_ee_cpu_limit').val() );
-			if (isNaN(event.cpu_limit)) return app.badField('fe_ee_cpu_limit', "Please enter an integer value for the CPU limit.");
-			if (event.cpu_limit < 0) return app.badField('fe_ee_cpu_limit', "Please enter a positive integer for the CPU limit.");
+			if (isNaN(event.cpu_limit)) return quiet ? false : app.badField('fe_ee_cpu_limit', "Please enter an integer value for the CPU limit.");
+			if (event.cpu_limit < 0) return quiet ? false : app.badField('fe_ee_cpu_limit', "Please enter a positive integer for the CPU limit.");
 			
 			event.cpu_sustain = parseInt( $('#fe_ee_cpu_sustain').val() ) * parseInt( $('#fe_ee_cpu_sustain_units').val() );
-			if (isNaN(event.cpu_sustain)) return app.badField('fe_ee_cpu_sustain', "Please enter an integer value for the CPU sustain period.");
-			if (event.cpu_sustain < 0) return app.badField('fe_ee_cpu_sustain', "Please enter a positive integer for the CPU sustain period.");
+			if (isNaN(event.cpu_sustain)) return quiet ? false : app.badField('fe_ee_cpu_sustain', "Please enter an integer value for the CPU sustain period.");
+			if (event.cpu_sustain < 0) return quiet ? false : app.badField('fe_ee_cpu_sustain', "Please enter a positive integer for the CPU sustain period.");
 		}
 		else {
 			event.cpu_limit = 0;
@@ -1565,12 +1587,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// mem limit
 		if ($('#fe_ee_memory_enabled').is(':checked')) {
 			event.memory_limit = parseInt( $('#fe_ee_memory_limit').val() ) * parseInt( $('#fe_ee_memory_limit_units').val() );
-			if (isNaN(event.memory_limit)) return app.badField('fe_ee_memory_limit', "Please enter an integer value for the memory limit.");
-			if (event.memory_limit < 0) return app.badField('fe_ee_memory_limit', "Please enter a positive integer for the memory limit.");
+			if (isNaN(event.memory_limit)) return quiet ? false : app.badField('fe_ee_memory_limit', "Please enter an integer value for the memory limit.");
+			if (event.memory_limit < 0) return quiet ? false : app.badField('fe_ee_memory_limit', "Please enter a positive integer for the memory limit.");
 			
 			event.memory_sustain = parseInt( $('#fe_ee_memory_sustain').val() ) * parseInt( $('#fe_ee_memory_sustain_units').val() );
-			if (isNaN(event.memory_sustain)) return app.badField('fe_ee_memory_sustain', "Please enter an integer value for the memory sustain period.");
-			if (event.memory_sustain < 0) return app.badField('fe_ee_memory_sustain', "Please enter a positive integer for the memory sustain period.");
+			if (isNaN(event.memory_sustain)) return quiet ? false : app.badField('fe_ee_memory_sustain', "Please enter an integer value for the memory sustain period.");
+			if (event.memory_sustain < 0) return quiet ? false : app.badField('fe_ee_memory_sustain', "Please enter a positive integer for the memory sustain period.");
 		}
 		else {
 			event.memory_limit = 0;
@@ -1607,9 +1629,24 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		if (this.args.sub == 'events') this.gosub_events(this.args);
 	},
 	
+	leavesub_edit_event: function(args) {
+		// special hook fired when leaving edit_event sub-page
+		// try to save edited state of event in mem cache
+		var event = this.get_event_form_json(true); // quiet mode
+		if (event) {
+			this.autosave_event = event;
+		}
+	},
+	
 	onDeactivate: function() {
 		// called when page is deactivated
 		// this.div.html( '' );
+		
+		// allow sub-page to hook deactivate
+		if (this.args && this.args.sub && this['leavesub_'+this.args.sub]) {
+			this['leavesub_'+this.args.sub](this.args);
+		}
+		
 		return true;
 	}
 	
