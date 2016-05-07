@@ -1540,9 +1540,25 @@ Here is an example HTML report.  Note that this has been expanded for documentat
 
 If your Plugin generates plain text instead of HTML, you can just wrap it in a `<pre>` block, which will preserve formatting such as whitespace.
 
+#### Updating The Event
+
+Your job can optionally trigger an event update when it completes.  This can be used to do things such as disable the event (remove it from the schedule) in response to a catastrophic error, or change the event's timing, change the server or group target, and more.
+
+To update the event for a job, simply include an `update_event` object in your Plugin's JSON output, containing any properties from the [Event Data Format](#event-data-format).  Example:
+
+```js
+{
+	"update_event": {
+		"enabled": 0
+	}
+}
+```
+
+This would cause the event to be disabled, so the schedule would no longer launch it.  Note that you can only update the event once, and it happens at the completion of your job.
+
 ### Environment Variables
 
-When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with all the following custom variables:
+When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with the following custom variables:
 
 | Variable | Description |
 |----------|-------------|
@@ -1559,7 +1575,7 @@ You can also include inline variables in the parameter value itself, using the s
 
 ![Edit Plugin PATH Inline Example](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-path-inline.png)
 
-Please note that if you do customize the path, you must include the location of the Node.js `node` binary (typically in `/usr/bin` or `/usr/local/bin`).  Otherwise, things may not work well.
+Please note that if you do overwrite the entire path, you must include the location of the Node.js `node` binary (typically in `/usr/bin` or `/usr/local/bin`).  Otherwise, things will not work well.
 
 ## Sample Node Plugin
 

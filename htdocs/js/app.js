@@ -358,6 +358,9 @@ app.extend({
 			
 			// update master switch (once per minute)
 			if (data.state) self.updateMasterSwitch();
+			
+			// clear event autosave data if schedule was updated
+			if (data.schedule) delete self.autosave_event;
 		} );
 	},
 	

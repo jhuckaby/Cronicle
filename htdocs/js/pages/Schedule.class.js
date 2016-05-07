@@ -381,12 +381,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		if (!event) return app.doError("Could not locate Event with ID: " + args.id);
 		
 		// check for autosave recovery
-		if (this.autosave_event) {
-			if (args.id == this.autosave_event.id) {
+		if (app.autosave_event) {
+			if (args.id == app.autosave_event.id) {
 				Debug.trace("Recovering autosave data for: " + args.id);
-				event = this.autosave_event;
+				event = app.autosave_event;
 			}
-			delete this.autosave_event;
+			delete app.autosave_event;
 		}
 		
 		// make local copy so edits don't affect main app list until save
@@ -1634,7 +1634,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// try to save edited state of event in mem cache
 		var event = this.get_event_form_json(true); // quiet mode
 		if (event) {
-			this.autosave_event = event;
+			app.autosave_event = event;
 		}
 	},
 	
