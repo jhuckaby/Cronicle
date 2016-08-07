@@ -9,6 +9,7 @@ var cp = require('child_process');
 var os = require('os');
 var fs = require('fs');
 var async = require('async');
+var bcrypt = require('bcrypt-node');
 
 var Args = require('pixl-args');
 var Tools = require('pixl-tools');
@@ -146,7 +147,7 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 		break;
 		
 		case 'admin':
-			// create admin account
+			// create or replace admin account
 			// Usage: ./storage-cli.js admin USERNAME PASSWORD
 			var username = commands.shift();
 			var password = commands.shift();
@@ -154,7 +155,7 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				print( "\nUsage: bin/storage-cli.js admin USERNAME PASSWORD\n\n" );
 				process.exit(1);
 			}
-			if (!username.match(/^[\\w\\-\\.]+$/)) {
+			if (!username.match(/^[\w\-\.]+$/)) {
 				print( "\nERROR: Username must contain only alphanumerics, dash and period.\n\n" );
 				process.exit(1);
 			}
@@ -170,7 +171,7 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			user.active = 1;
 			user.created = user.modified = Tools.timeNow(true);
 			user.salt = Tools.generateUniqueID( 64, user.username );
-			user.password = Tools.digestHex( '' + user.password + user.salt );
+			user.password = bcrypt.hashSync( user.password + user.salt );
 			user.privileges = { admin: 1 };
 			
 			storage.put( 'users/' + username, user, function(err) {

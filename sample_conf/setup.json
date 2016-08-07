@@ -2,7 +2,7 @@
 	"storage": [
 		[ "put", "users/admin", {
 			"username": "admin",
-			"password": "156834400da0de912ad70e67e4e72465a638e1db891b258c8ec7d38f4423dc52",
+			"password": "$2a$10$VAF.FNvz1JqhCAB5rCh9GOa965eYWH3fcgWIuQFAmsZnnVS/.ye1y",
 			"full_name": "Administrator",
 			"email": "admin@cronicle.com",
 			"active": 1,
