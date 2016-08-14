@@ -305,15 +305,23 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += '<div style="padding:0px 20px 50px 20px">';
 		html += '<center><table style="margin:0;">';
 		
-		this.event = { 
-			enabled: 1, 
-			params: {}, 
-			timing: { minutes: [0] },
-			max_children: 1,
-			timeout: 3600,
-			catch_up: 1,
-			timezone: app.tz
-		};
+		if (config.new_event_template) {
+			// app has a custom event template
+			this.event = deep_copy_object( config.new_event_template );
+			if (!this.event.timezone) this.event.timezone = app.tz;
+		}
+		else {
+			// default blank event
+			this.event = { 
+				enabled: 1, 
+				params: {}, 
+				timing: { minutes: [0] },
+				max_children: 1,
+				timeout: 3600,
+				catch_up: 0,
+				timezone: app.tz
+			};
+		}
 		
 		html += this.get_event_edit_html();
 		

@@ -41,7 +41,15 @@
 			{ "id": "run_events", "title": "Run Events" },
 			{ "id": "abort_events", "title": "Abort Events" },
 			{ "id": "state_update", "title": "Toggle Scheduler" }
-		]
+		],
+		"new_event_template": { 
+			"enabled": 1, 
+			"params": {}, 
+			"timing": { "minutes": [0] },
+			"max_children": 1,
+			"timeout": 3600,
+			"catch_up": 0
+		}
 	},
 	
 	"Storage": {
