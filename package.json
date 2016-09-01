@@ -40,7 +40,6 @@
 		"jstimezonedetect": "^1.0.6",
 		"netmask": "^1.0.5",
 		"shell-quote": "^1.4.3",
-		"posix": "^4.0.0",
 		"bcrypt-node": "^0.1.0",
 		"pixl-args": "^1.0.0",
 		"pixl-config": "^1.0.0",
