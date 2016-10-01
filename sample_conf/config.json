@@ -82,7 +82,14 @@
 		"https_cert_file": "conf/ssl.crt",
 		"https_key_file": "conf/ssl.key",
 		"https_force": 0,
-		"https_timeout": 30
+		"https_timeout": 30,
+        "https_header_detect": {
+            "Front-End-Https": "^on$",
+            "X-Url-Scheme": "^https$",
+            "X-Forwarded-Protocol": "^https$",
+            "X-Forwarded-Proto": "^https$",
+            "X-Forwarded-Ssl": "^on$"
+        }
 	},
 	
 	"User": {
