@@ -412,7 +412,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			]
 		);
 		
-		html += '<div style="padding:20px;"><div class="subtitle">Editing Event &ldquo;' + event.title + '&rdquo;</div></div>';
+		// html += '<div style="padding:20px;"><div class="subtitle">Editing Event &ldquo;' + event.title + '&rdquo;</div></div>';
+		
+		html += '<div style="padding:20px;">';
+			html += '<div class="subtitle">';
+				html += 'Editing Event &ldquo;' + event.title + '&rdquo;';
+				html += '<div class="subtitle_widget" style="margin-left:5px;"><a href="#History?sub=event_history&id='+event.id+'"><i class="fa fa-arrow-circle-right">&nbsp;</i><b>Jump to History</b></a></div>';
+				html += '<div class="subtitle_widget"><a href="#History?sub=event_stats&id='+event.id+'"><i class="fa fa-arrow-circle-right">&nbsp;</i><b>Jump to Stats</b></a></div>';
+				html += '<div class="clear"></div>';
+			html += '</div>';
+		html += '</div>';
 		
 		html += '<div style="padding:0px 20px 50px 20px">';
 		html += '<center>';

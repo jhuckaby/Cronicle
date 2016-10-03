@@ -376,7 +376,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// advanced options
-		var adv_expanded = !!(plugin.cwd || plugin.uid || plugin.gid);
+		var adv_expanded = !!(plugin.cwd || plugin.uid);
 		html += get_form_table_row( 'Advanced', 
 			'<div style="font-size:13px;'+(adv_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Advanced Options</span></div>' + 
 			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(adv_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Advanced Options</legend>' + 
@@ -386,13 +386,11 @@ Class.add( Page.Admin, {
 				'<div class="plugin_params_label">Run as User (UID):</div>' + 
 				'<div class="plugin_params_content"><input type="text" id="fe_ep_uid" size="20" value="'+escape_text_field_value(plugin.uid)+'" placeholder="" spellcheck="false"/></div>' + 
 				
-				'<div class="plugin_params_label">Run as Group (GID):</div>' + 
-				'<div class="plugin_params_content"><input type="text" id="fe_ep_gid" size="20" value="'+escape_text_field_value(plugin.gid)+'" placeholder="" spellcheck="false"/></div>' + 
 			'</fieldset>'
 		);
 		html += get_form_table_caption(
-			"Optionally enter a working directory path, custom UID and/or GID for the Plugin.<br>" + 
-			"The UID and GID may be either numerical or strings ('root', 'wheel', etc.)." 
+			"Optionally enter a working directory path, and/or a custom UID for the Plugin.<br>" + 
+			"The UID may be either numerical or a string ('root', 'wheel', etc.)." 
 		);
 		html += get_form_table_spacer();
 		
@@ -682,10 +680,8 @@ Class.add( Page.Admin, {
 		
 		plugin.cwd = trim( $('#fe_ep_cwd').val() );
 		plugin.uid = trim( $('#fe_ep_uid').val() );
-		plugin.gid = trim( $('#fe_ep_gid').val() );
 		
 		if (plugin.uid.match(/^\d+$/)) plugin.uid = parseInt( plugin.uid );
-		if (plugin.gid.match(/^\d+$/)) plugin.gid = parseInt( plugin.gid );
 		
 		return plugin;
 	}

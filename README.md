@@ -91,7 +91,7 @@ A quick introduction to some common terms used in Cronicle:
 
 Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  If there is enough interest, I'll look into making it work on Windows.
 
-You'll need to have [Node.js](https://nodejs.org/en/download/) pre-installed, plus standard [developer tools](#installing-dev-tools) like gcc/make for compiling some [npm](https://www.npmjs.com/) dependencies.  Then become root and type this:
+You'll need to have [Node.js](https://nodejs.org/en/download/) pre-installed on your server.  Then become root and type this:
 
 ```
 	curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js | node
@@ -105,13 +105,11 @@ If you'd rather install it manually (or something went wrong with the auto-insta
 	mkdir -p /opt/cronicle
 	cd /opt/cronicle
 	curl -L https://github.com/jhuckaby/Cronicle/archive/v1.0.0.tar.gz | tar zxvf - --strip-components 1
-	npm install --unsafe-perm
+	npm install
 	node bin/build.js dist
 ```
 
 Replace `v1.0.0` with the desired Cronicle version from the [release list](https://github.com/jhuckaby/Cronicle/releases), or `master` for the head revision (unstable).
-
-The horribly-named [--unsafe-perm](https://docs.npmjs.com/misc/config#unsafe-perm) flag simply allows npm to compile native add-ons when running under [sudo](https://en.wikipedia.org/wiki/Sudo).  It's perfectly safe, but you can omit it if you are running as true root (i.e. not sudo'ed).
 
 # Setup
 
@@ -1202,7 +1200,7 @@ For more details on how to use these parameters in your Plugin code, see the [Pl
 
 The **Advanced** options pane expands to the following:
 
-![Edit Plugin Advanced Panel](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-advanced.png)
+![Edit Plugin Advanced Panel](https://pixlcore.com/software/cronicle/screenshots-new/admin-plugin-edit-advanced-uid.png)
 
 Here you can customize the following settings:
 
@@ -1210,7 +1208,6 @@ Here you can customize the following settings:
 |--------|-------------|
 | **Working Directory** | This is the directory path to set as the [current working directory](https://en.wikipedia.org/wiki/Working_directory) when your jobs are launched.  It defaults to the Cronicle base directory (`/opt/cronicle`). |
 | **Run as User** | You can optionally run your jobs as another user by entering their UID here.  A username string is also acceptable (and recommended, as UIDs may differ between servers). |
-| **Run as Group** | You can optionally change the group of your job processes by entering the GID or name here (e.g. `wheel`). |
 
 ### Servers Tab
 
@@ -2848,7 +2845,6 @@ Cronicle was built using these awesome Node modules:
 | [netmask](https://www.npmjs.com/package/netmask) | Parses and understands IPv4 CIDR blocks so they can be explored and compared. | MIT |
 | [node-static](https://www.npmjs.com/package/node-static) | A simple, compliant file streaming module for node. | MIT |
 | [nodemailer](https://www.npmjs.com/package/nodemailer) | Easy as cake e-mail sending from your Node.js applications. | MIT |
-| [posix](https://www.npmjs.com/package/posix) | Provides POSIX system calls that Node.js is missing. | MIT |
 | [shell-quote](https://www.npmjs.com/package/shell-quote) | Quote and parse shell commands. | MIT |
 | [socket.io](https://www.npmjs.com/package/socket.io) | Node.js real-time framework server (Websockets). | MIT |
 | [socket.io-client](https://www.npmjs.com/package/socket.io-client) | Client library for server-to-server socket.io connections. | MIT |
