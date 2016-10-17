@@ -35,7 +35,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		this.tab.show();
 		this.tab[0]._page_id = Nav.currentAnchor();
 		
-		if (app.activeJobs[args.id]) {
+		if (this.find_job(args.id)) {
 			// job is currently active -- jump to real-time view
 			args.sub = 'live';
 			this.gosub_live(args);
@@ -51,6 +51,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	
 	gosub_archive: function(args) {
 		// show job archive
+		Debug.trace("Showing archived job: " + args.id);
 		this.div.addClass('loading');
 		app.api.post( 'app/get_job_details', { id: args.id }, this.receive_details.bind(this) );
 	},
@@ -563,7 +564,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	
 	abort_job: function() {
 		// abort job, after confirmation
-		var job = app.activeJobs[this.args.id];
+		var job = this.find_job(this.args.id);
 		
 		app.confirm( '<span style="color:red">Abort Job</span>', "Are you sure you want to abort the current job?", "Abort", function(result) {
 			if (result) {
@@ -611,7 +612,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	
 	toggle_watch: function() {
 		// toggle watch on/off on current live job
-		var job = app.activeJobs[this.args.id];
+		var job = this.find_job(this.args.id);
 		var watch_enabled = this.check_watch_enabled(job);
 		
 		if (!watch_enabled) {
@@ -643,7 +644,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	
 	gosub_live: function(args) {
 		// show live job status
-		var job = app.activeJobs[args.id];
+		Debug.trace("Showing live job: " + args.id);
+		var job = this.find_job(args.id);
 		var html = '';
 		this.div.removeClass('loading');
 		
@@ -719,7 +721,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				
 				var progress = job.progress || 0;
 				var nice_remain = 'n/a';
-				if ((elapsed >= 10) && (progress > 0) && (progress < 1.0)) {
+				if (job.pending && job.when) {
+					nice_remain = 'Retry in '+get_text_from_seconds( Math.max(0, job.when - app.epoch), true, true )+'';
+				}
+				else if ((elapsed >= 10) && (progress > 0) && (progress < 1.0)) {
 					var sec_remain = Math.floor(((1.0 - progress) * elapsed) / progress);
 					nice_remain = get_text_from_seconds( sec_remain, false, true );
 				}
@@ -878,7 +883,13 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var $cont = null;
 		var chunk_count = 0;
 		
-		this.socket = io( app.proto + job.hostname + ':' + app.port, {
+		var url = app.proto + job.hostname + ':' + app.port;
+		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+			// use ip if available, may work better in some setups
+			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
+		}
+		
+		this.socket = io( url, {
 			forceNew: true,
 			reconnection: true,
 			reconnectionDelay: 1000,
@@ -888,7 +899,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		} );
 		
 		this.socket.on('connect', function() {
-			Debug.trace("JobDetails socket.io connected successfully");
+			Debug.trace("JobDetails socket.io connected successfully: " + url);
 			
 			// cache this for later
 			$cont = $('#d_live_job_log');
@@ -960,9 +971,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var progress = Math.min(1, Math.max(0, job.progress));
 		var prog_pct = short_float( progress * 100 );
 		
-		this.charts.progress.segments[0].value = prog_pct;
-		this.charts.progress.segments[1].value = 100 - prog_pct;
-		this.charts.progress.update();
+		if (prog_pct != this.charts.progress.__cronicle_prog_pct) {
+			this.charts.progress.__cronicle_prog_pct = prog_pct;
+			this.charts.progress.segments[0].value = prog_pct;
+			this.charts.progress.segments[1].value = 100 - prog_pct;
+			this.charts.progress.update();
+		}
 		
 		// progress overlay
 		var html = '';
@@ -980,10 +994,13 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		
 		var jcm = 100;
-		this.charts.cpu.segments[0].value = Math.min(cpu_cur, jcm);
-		this.charts.cpu.segments[0].fillColor = (cpu_cur < jcm*0.5) ? this.pie_colors.cool : ((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
-		this.charts.cpu.segments[1].value = jcm - Math.min(cpu_cur, jcm);
-		this.charts.cpu.update();
+		if (cpu_cur != this.charts.cpu.__cronicle_cpu_cur) {
+			this.charts.cpu.__cronicle_cpu_cur = cpu_cur;
+			this.charts.cpu.segments[0].value = Math.min(cpu_cur, jcm);
+			this.charts.cpu.segments[0].fillColor = (cpu_cur < jcm*0.5) ? this.pie_colors.cool : ((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
+			this.charts.cpu.segments[1].value = jcm - Math.min(cpu_cur, jcm);
+			this.charts.cpu.update();
+		}
 		
 		// live cpu overlay
 		var html = '';
@@ -1015,10 +1032,13 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		
 		var jmm = config.job_memory_max || 1073741824;
-		this.charts.mem.segments[0].value = Math.min(mem_cur, jmm);
-		this.charts.mem.segments[0].fillColor = (mem_cur < jmm*0.5) ? this.pie_colors.cool : ((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
-		this.charts.mem.segments[1].value = jmm - Math.min(mem_cur, jmm);
-		this.charts.mem.update();
+		if (mem_cur != this.charts.mem.__cronicle_mem_cur) {
+			this.charts.mem.__cronicle_mem_cur = mem_cur;
+			this.charts.mem.segments[0].value = Math.min(mem_cur, jmm);
+			this.charts.mem.segments[0].fillColor = (mem_cur < jmm*0.5) ? this.pie_colors.cool : ((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
+			this.charts.mem.segments[1].value = jmm - Math.min(mem_cur, jmm);
+			this.charts.mem.update();
+		}
 		
 		// live mem overlay
 		var html = '';
@@ -1060,6 +1080,24 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		);
 	},
 	
+	find_job: function(id) {
+		// locate active or pending (retry delay) job
+		if (!id) id = this.args.id;
+		var job = app.activeJobs[id];
+		
+		if (!job) {
+			for (var key in app.activeJobs) {
+				var temp_job = app.activeJobs[key];
+				if (temp_job.pending && (temp_job.id == id)) {
+					job = temp_job;
+					break;
+				}
+			}
+		}
+		
+		return job;
+	},
+	
 	onStatusUpdate: function(data) {
 		// received status update (websocket), update sub-page if needed
 		if (this.args && (this.args.sub == 'live')) {
@@ -1076,6 +1114,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				
 				if (pending_job) {
 					// job switched to pending (retry delay)
+					if (app.progress) app.hideProgress();
 					this.update_live_progress( pending_job );
 				}
 				else {
