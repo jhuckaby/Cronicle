@@ -335,7 +335,8 @@ Class.subclass( Page.Base, "Page.History", {
 			
 			for (var idy = 0, ley = perf_data.length; idy < ley; idy++) {
 				var perf = perf_data[idy];
-				col.push( short_float( perf[perf_key] || 0 ) );
+				var value = Math.max( 0, perf[perf_key] || 0 );
+				col.push( short_float( value ) );
 			} // foreach row
 			
 			cols.push( col );
@@ -363,7 +364,9 @@ Class.subclass( Page.Base, "Page.History", {
 					show: true,
 					tick: {
 						format: function (y) {
-							return '' + short_float(y) + ' sec';
+							// return '' + short_float(y) + " sec";
+							if (y < 0) return '';
+							return '' + get_text_from_seconds_round(y, true, true);
 						}
 					}
 				}
