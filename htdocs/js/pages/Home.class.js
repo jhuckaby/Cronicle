@@ -338,7 +338,22 @@ Class.subclass( Page.Base, "Page.Home", {
 			var plugin = job.plugin ? find_object( app.plugins || [], { id: job.plugin } ) : { title: 'n/a' };
 			var tds = null;
 			
-			if (job.pending) {
+			if (job.pending && job.log_file) {
+				// job in retry delay
+				tds = [
+					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job.id) + '</span></div>',
+					self.getNiceEvent( job.event_title, col_width ),
+					self.getNiceCategory( cat, col_width ),
+					// self.getNicePlugin( plugin ),
+					self.getNiceGroup( null, job.hostname, col_width ),
+					'<div id="d_home_jt_elapsed_'+job.id+'">' + self.getNiceJobElapsedTime(job) + '</div>',
+					'<div id="d_home_jt_progress_'+job.id+'">' + self.getNiceJobPendingText(job) + '</div>',
+					'n/a',
+					actions.join(' | ')
+				];
+			}
+			else if (job.pending) {
+				// multiplex stagger delay
 				tds = [
 					'<div class="td_big">' + self.getNiceJob(job.id) + '</div>',
 					self.getNiceEvent( job.event_title, col_width ),
@@ -352,8 +367,8 @@ Class.subclass( Page.Base, "Page.Home", {
 				];
 			} // pending job
 			else {
+				// active job
 				tds = [
-					// '<div class="td_big" style="white-space:nowrap;"><span class="link" onMouseUp="$P().go_job_details('+idx+')" title="Job ID: '+job.id+'"><i class="fa fa-clock-o">&nbsp;</i><b>' + job.event_title + '</b></span></div>',
 					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job.id) + '</span></div>',
 					self.getNiceEvent( job.event_title, col_width ),
 					self.getNiceCategory( cat, col_width ),
@@ -451,9 +466,15 @@ Class.subclass( Page.Base, "Page.Home", {
 			// update progress, time remaining, no refresh
 			for (var id in app.activeJobs) {
 				var job = app.activeJobs[id];
+				
 				if (job.pending) {
 					// update countdown
 					$('#d_home_jt_progress_' + job.id).html( this.getNiceJobPendingText(job) );
+					
+					if (job.log_file) {
+						// retry delay
+						$('#d_home_jt_elapsed_' + job.id).html( this.getNiceJobElapsedTime(job) );
+					}
 				} // pending job
 				else {
 					$('#d_home_jt_elapsed_' + job.id).html( this.getNiceJobElapsedTime(job) );
