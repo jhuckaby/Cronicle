@@ -359,6 +359,14 @@ When using the [job_cpu_max](#job_cpu_max) feature, you can optionally specify h
 
 CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
 
+### server_comm_use_hostnames
+
+Setting this parameter to `1` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses.  This is mainly for special situations where your local server IP addresses may change, and you would prefer to rely on DNS instead.  The default is `0` (disabled), meaning connect using IP addresses.
+
+### web_socket_use_hostnames
+
+Setting this parameter to `1` will force Cronicle's Web UI to connect to the back-end servers using their hostnames rather than IP addresses.  This includes both AJAX API calls and Websocket streams.  You should only need to enable this in special situations where your users cannot access your servers via their LAN IPs, and you need to proxy them through a hostname (DNS) instead.  The default is `0` (disabled), meaning connect using IP addresses.
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
@@ -919,6 +927,10 @@ Here is an example web hook JSON record (`job_complete` version shown):
 	"time_start": 1449431840.214
 }
 ```
+
+In addition to `job_start` and `job_complete`, there is one other special hook action that may be sent, and that is `job_launch_failure`.  This happens if a scheduled event completely fails to start a job, due to an unrecoverable error (such as an unavailable target server or group).  In this case the `code` property will be non-zero, and the `description` property will contain a summary of the error.
+
+Only a small subset of the properties shown above will be included with a `job_launch_failure`, as a job object was never successfully created, so there will be no `hostname`, `pid`, `elapsed`, `log_file_size`, etc.
 
 #### Event Resource Limits
 
