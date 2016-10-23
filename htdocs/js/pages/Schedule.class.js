@@ -32,7 +32,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		var size = get_inner_window_size();
 		var col_width = Math.floor( ((size.width * 0.9) + 200) / 8 );
-		
+		var group_by = app.getPref('schedule_group_by');
 		var html = '';
 		
 		/* html += this.getSidebarTabs( 'categories',
@@ -55,7 +55,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		} );
 		
 		// render table
-		var cols = ['Active', 'Event Name', 'Timing', 'Category', 'Plugin', 'Target', 'Status', 'Actions'];
+		var cols = [
+			'<i class="fa fa-check-square-o"></i>', 
+			'Event Name', 
+			'Category', 
+			'Plugin', 
+			'Target', 
+			'Timing', 
+			'Status', 
+			'Actions'
+		];
 		
 		html += '<div style="padding:20px 20px 20px 20px">';
 		
@@ -95,17 +104,42 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			if ((args.enabled == 1) && !item.enabled) continue;
 			if ((args.enabled == -1) && item.enabled) continue;
 			
-			this.events.push( item );
+			this.events.push( copy_object(item) );
 		} // foreach item in schedule
+		
+		// prep events for sort
+		this.events.forEach( function(item) {
+			var cat = item.category ? find_object( app.categories, { id: item.category } ) : null;
+			var group = item.target ? find_object( app.server_groups, { id: item.target } ) : null;
+			var plugin = item.plugin ? find_object( app.plugins, { id: item.plugin } ) : null;
+			
+			item.category_title = cat ? cat.title : 'Uncategorized';
+			item.group_title = group ? group.title : item.target;
+			item.plugin_title = plugin ? plugin.title : 'No Plugin';
+		} );
 		
 		// sort events by title ascending
 		this.events = this.events.sort( function(a, b) {
-			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+			var key = group_by ? (group_by + '_title') : 'title';
+			if (group_by && (a[key].toLowerCase() == b[key].toLowerCase())) key = 'title';
+			return a[key].toLowerCase().localeCompare( b[key].toLowerCase() );
 			// return (b.title < a.title) ? 1 : -1;
 		} );
 		
+		// header center (group by buttons)
+		var chtml = '';
+		chtml += '<div class="schedule_group_button_container">';
+		chtml += '<i class="fa fa-clock-o '+(group_by ? '' : 'selected')+'" title="Sort by Title" onMouseUp="$P().change_group_by(\'\')"></i>';
+		chtml += '<i class="fa fa-folder-open-o '+((group_by == 'category') ? 'selected' : '')+'" title="Group by Category" onMouseUp="$P().change_group_by(\'category\')"></i>';
+		chtml += '<i class="fa fa-plug '+((group_by == 'plugin') ? 'selected' : '')+'" title="Group by Plugin" onMouseUp="$P().change_group_by(\'plugin\')"></i>';
+		chtml += '<i class="mdi mdi-server-network '+((group_by == 'group') ? 'selected' : '')+'" title="Group by Target" onMouseUp="$P().change_group_by(\'group\')"></i>';
+		chtml += '</div>';
+		cols.headerRight = chtml;
+		
 		// render table
 		var self = this;
+		var last_group = '';
+		
 		html += this.getBasicTable( this.events, cols, 'event', function(item, idx) {
 			var actions = [
 				'<span class="link" onMouseUp="$P().run_event('+idx+',event)"><b>Run</b></span>',
@@ -130,10 +164,10 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			var tds = [
 				'<input type="checkbox" style="cursor:pointer" onChange="$P().change_event_enabled('+idx+')" '+(item.enabled ? 'checked="checked"' : '')+'/>', 
 				'<div class="td_big"><span class="link" onMouseUp="$P().edit_event('+idx+')">' + self.getNiceEvent(item.title, col_width) + '</span></div>',
-				summarize_event_timing( item.timing, item.timezone ),
 				self.getNiceCategory( cat, col_width ),
 				self.getNicePlugin( plugin, col_width ),
 				self.getNiceGroup( group, item.target, col_width ),
+				summarize_event_timing( item.timing, item.timezone ),
 				status_html,
 				actions.join('&nbsp;|&nbsp;')
 			];
@@ -146,6 +180,22 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				if (tds.className) tds.className += ' '; else tds.className = '';
 				tds.className += cat.color;
 			}
+			
+			// group by
+			if (group_by) {
+				var cur_group = item[ group_by + '_title' ];
+				if (cur_group != last_group) {
+					last_group = cur_group;
+					var insert_html = '<tr><td colspan="'+cols.length+'"><div class="schedule_group_header">';
+					switch (group_by) {
+						case 'category': insert_html += self.getNiceCategory(cat); break;
+						case 'plugin': insert_html += self.getNicePlugin(plugin); break;
+						case 'group': insert_html += self.getNiceGroup(group, item.target); break;
+					}
+					insert_html += '</div></td></tr>';
+					tds.insertAbove = insert_html;
+				} // group changed
+			} // group_by
 			
 			return tds;
 		} );
@@ -168,6 +218,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				}
 			} ); 
 		}, 1 );
+	},
+	
+	change_group_by: function(group_by) {
+		// change grop by setting and refresh schedule display
+		app.setPref('schedule_group_by', group_by);
+		this.gosub_events( this.args );
 	},
 	
 	change_event_enabled: function(idx) {

@@ -13,6 +13,9 @@ app.extend({
 	plain_text_post: true,
 	clock_visible: false,
 	scroll_time_visible: false,
+	default_prefs: {
+		schedule_group_by: 'category'
+	},
 	
 	receiveConfig: function(resp) {
 		// receive config from server
@@ -76,6 +79,13 @@ app.extend({
 			var filename = '' + this.preload_images[idx];
 			var img = new Image();
 			img.src = '/images/'+filename;
+		}
+		
+		// populate prefs for first time user
+		for (var key in this.default_prefs) {
+			if (!(key in window.localStorage)) {
+				window.localStorage[key] = this.default_prefs[key];
+			}
 		}
 		
 		// pop version into footer

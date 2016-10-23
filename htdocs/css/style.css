@@ -352,6 +352,30 @@ tr.collapse {
 	display: none;
 }
 
+div.schedule_group_header {
+	margin-top: 11px;
+	font-size: 14px;
+	line-height: 16px;
+	color: #888;
+}
+
+div.schedule_group_button_container > i {
+	cursor: pointer;
+	margin-left: 5px;
+	/* padding: 2px;
+	box-shadow: 0px 0px 0px 1px #ccc; */
+}
+div.schedule_group_button_container > i:hover {
+	color:#036;
+}
+div.schedule_group_button_container > i.selected {
+	color: #3f7ed5;
+	cursor: default !important;
+}
+div.schedule_group_button_container > i.selected:hover {
+	color: #3f7ed5 !important;
+}
+
 /* Password Stuff */
 
 .password_toggle {
