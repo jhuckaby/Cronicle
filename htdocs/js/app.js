@@ -774,7 +774,12 @@ function summarize_event_timing(timing, timezone) {
 			if (timing.minutes && timing.minutes.length) {
 				var interval = detect_num_interval( timing.minutes, 60 );
 				if (interval) {
-					groups.push( 'every ' + interval + ' minutes' );
+					var new_str = 'every ' + interval + ' minutes';
+					if (timing.minutes[0] > 0) {
+						var m_g1 = timing.minutes[0].toString();
+						new_str += ' starting on the :' + ((m_g1.length == 1) ? ('0'+m_g1) : m_g1);
+					}
+					groups.push( new_str );
 					min_added = true;
 				}
 			}
@@ -805,7 +810,7 @@ function detect_num_interval(arr, max) {
 	// detect interval between array elements, return if found
 	// all elements must have same interval between them
 	if (arr.length < 2) return false;
-	if (arr[0] > 0) return false;
+	// if (arr[0] > 0) return false;
 	
 	var interval = arr[1] - arr[0];
 	for (var idx = 1, len = arr.length; idx < len; idx++) {
@@ -814,7 +819,8 @@ function detect_num_interval(arr, max) {
 	}
 	
 	// if max is provided, final element + interval must equal max
-	if (max && (arr[arr.length - 1] + interval != max)) return false;
+	// if (max && (arr[arr.length - 1] + interval != max)) return false;
+	if (max && ((arr[arr.length - 1] + interval) % max != arr[0])) return false;
 	
 	return interval;
 };
