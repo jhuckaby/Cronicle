@@ -246,16 +246,6 @@ app.extend({
 		// init socket.io client
 		var self = this;
 		
-		if (this.reconnectTimer) clearTimeout( this.reconnectTimer );
-		this.reconnectTimer = null;
-		
-		if (this.socket) {
-			this.socket._pixl_disconnected = true;
-			this.socket.removeAllListeners();
-			this.socket.disconnect();
-			this.socket = null;
-		}
-		
 		var url = this.proto + this.masterHostname + ':' + this.port;
 		if (!config.web_socket_use_hostnames && this.servers && this.servers[this.masterHostname] && this.servers[this.masterHostname].ip) {
 			// use ip instead of hostname if available
@@ -263,18 +253,23 @@ app.extend({
 		}
 		Debug.trace("Websocket Connect: " + url);
 		
+		if (this.socket) {
+			Debug.trace("Destroying previous socket");
+			this.socket.removeAllListeners();
+			if (this.socket.connected) this.socket.disconnect();
+			this.socket = null;
+		}
+		
 		var socket = this.socket = io( url, {
 			forceNew: true,
 			reconnection: true,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 2000,
-			reconnectionAttempts: 5,
+			reconnectionAttempts: 9999,
 			timeout: 5000
 		} );
 		
 		socket.on('connect', function() {
-			if (socket._pixl_disconnected) return;
-			if (self.reconnectTimer) { clearTimeout(self.reconnectTimer); self.reconnectTimer = null; }
 			if (!Nav.inited) Nav.init();
 			
 			Debug.trace("socket.io connected successfully");
@@ -294,11 +289,8 @@ app.extend({
 		} );
 		
 		socket.on('reconnecting', function() {
-			if (socket._pixl_disconnected) return;
-			if (self.reconnectTimer) { clearTimeout(self.reconnectTimer); self.reconnectTimer = null; }
 			Debug.trace("socket.io reconnecting...");
-			self.showProgress( 0.5, "Reconnecting to server..." );
-			self.recalcMaster = true;
+			// self.showProgress( 0.5, "Reconnecting to server..." );
 		} );
 		
 		socket.on('reconnect', function() {
@@ -307,33 +299,17 @@ app.extend({
 		} );
 		
 		socket.on('reconnect_failed', function() {
-			if (socket._pixl_disconnected) return;
-			Debug.trace("socket.io has given up -- will try different server at random");
-			self.randomizeMaster();
+			Debug.trace("socket.io has given up -- we must refresh");
+			location.reload();
 		} );
 		
 		socket.on('disconnect', function() {
-			// unexpected disconnection -- attempt to reconnect in a few seconds
-			if (!socket._pixl_disconnected) {
-				Debug.trace("socket.io disconnected unexpectedly -- Reconnecting...");
-				socket._pixl_disconnected = true;
-				socket.removeAllListeners();
-				
-				self.showProgress( 0.5, "Reconnecting to server..." );
-				self.recalcMaster = true;
-				self.socket = null;
-				
-				self.reconnectTimer = setTimeout( function() { 
-					self.reconnectTimer = null; 
-					// self.socketConnect(); 
-					self.randomizeMaster();
-				}, 5000 );
-			}
+			// unexpected disconnection
+			Debug.trace("socket.io disconnected unexpectedly, will force reconnect");
+			setTimeout( function() { app.socketConnect(); }, 1000 );
 		} );
 		
 		socket.on('status', function(data) {
-			if (socket._pixl_disconnected) return;
-			
 			if (!data.master) {
 				// OMG we're not talking to master anymore?
 				self.recalculateMaster(data);
@@ -343,14 +319,6 @@ app.extend({
 				self.epoch = data.epoch;
 				self.servers = data.servers;
 				self.setHeaderClock( data.epoch );
-				
-				// master recalculation
-				if (self.recalcMaster) {
-					// we found master again, hide progress dialog and clear flag
-					data.servers_changed = true;
-					if (self.progress) self.hideProgress();
-					delete self.recalcMaster;
-				}
 				
 				// update active jobs
 				self.updateActiveJobs( data );
@@ -364,8 +332,6 @@ app.extend({
 		
 		socket.on('update', function(data) {
 			// receive data update (global list contents)
-			if (socket._pixl_disconnected) return;
-			
 			for (var key in data) {
 				self[key] = data[key];
 				
@@ -411,26 +377,11 @@ app.extend({
 		// Oops, we're connected to a slave!  Master must have been restarted.
 		// If slave knows who is master, switch now, otherwise go into wait loop
 		var self = this;
-		this.recalcMaster = true;
 		this.showProgress( 1.0, "Waiting for master server..." );
 		
 		if (data.master_hostname) {
-			this.setMasterHostname( data.master_hostname );
-			
-			// separating this thread for safety
-			setTimeout( function() {
-				if (self.socket) {
-					self.socket._pixl_disconnected = true;
-					self.socket.removeAllListeners();
-					self.socket.disconnect();
-				}
-				
-				// allow time for socket to disconnect
-				setTimeout( function() {
-					self.socket = null;
-					self.socketConnect();
-				}, 500 );
-			}, 1 );
+			// reload browser which should connect to master
+			location.reload();
 		}
 	},
 	
@@ -446,30 +397,6 @@ app.extend({
 		}
 		
 		Debug.trace("API calls now going to: " + this.base_api_url);
-	},
-	
-	randomizeMaster: function() {
-		// pick server at random and try to connect
-		// if we don't get the master, the server should tell us where to go
-		// we can only pick from 'master eligible' servers
-		var eligible_hostnames = {};
-		var count = 0;
-		
-		for (var hostname in this.servers) {
-			var server = this.servers[hostname];
-			
-			for (var idx = 0, len = this.server_groups.length; idx < len; idx++) {
-				var group = this.server_groups[idx];
-				var regexp = new RegExp( group.regexp, "i" );
-				if (hostname.match(regexp) && group.master) {
-					eligible_hostnames[hostname] = 1;
-					count++;
-				} // matches
-			} // foreach group
-		} // foreach server
-		
-		if (count) this.setMasterHostname( rand_array( hash_keys_to_array( eligible_hostnames ) ) );
-		this.socketConnect();
 	},
 	
 	setHeaderClock: function(when) {
@@ -852,10 +779,16 @@ var cron_aliases = {
 };
 var cron_alias_re = new RegExp("\\b(" + hash_keys_to_array(cron_aliases).join('|') + ")\\b", "g");
 
-function parse_crontab_part(timing, raw, key, min, max) {
+function parse_crontab_part(timing, raw, key, min, max, rand_seed) {
 	// parse one crontab part, e.g. 1,2,3,5,20-25,30-35,59
 	// can contain single number, and/or list and/or ranges and/or these things: */5 or 10-50/5
 	if (raw == '*') { return; } // wildcard
+	if (raw == 'h') {
+		// unique value over accepted range, but locked to random seed
+		// https://github.com/jhuckaby/Cronicle/issues/6
+		raw = min + (parseInt( hex_md5(rand_seed), 16 ) % ((max - min) + 1));
+		raw = '' + raw;
+	}
 	if (!raw.match(/^[\w\-\,\/\*]+$/)) { throw new Error("Invalid crontab format: " + raw); }
 	var values = {};
 	var bits = raw.split(/\,/);
@@ -920,10 +853,11 @@ function parse_crontab_part(timing, raw, key, min, max) {
 	if (list.length) timing[key] = list;
 };
 
-function parse_crontab(raw) {
+function parse_crontab(raw, rand_seed) {
 	// parse standard crontab syntax, return timing object
 	// e.g. 1,2,3,5,20-25,30-35,59 23 31 12 * *
 	// optional 6th element == years
+	if (!rand_seed) rand_seed = get_unique_id();
 	var timing = {};
 	
 	// resolve all @shortcuts
@@ -939,8 +873,8 @@ function parse_crontab(raw) {
 		return cron_aliases[m_g1];
 	} );
 	
-	// at this point string should not contain any alpha characters or '@'
-	if (raw.match(/([a-z\@]+)/i)) throw new Error("Invalid crontab keyword: " + RegExp.$1);
+	// at this point string should not contain any alpha characters or '@', except for 'h'
+	if (raw.match(/([a-gi-z\@]+)/i)) throw new Error("Invalid crontab keyword: " + RegExp.$1);
 	
 	// split into parts
 	var parts = raw.split(/\s+/);
@@ -948,12 +882,12 @@ function parse_crontab(raw) {
 	if (!parts[0].length) throw new Error("Invalid crontab format");
 	
 	// parse each part
-	if ((parts.length > 0) && parts[0].length) parse_crontab_part( timing, parts[0], 'minutes', 0, 59 );
-	if ((parts.length > 1) && parts[1].length) parse_crontab_part( timing, parts[1], 'hours', 0, 23 );
-	if ((parts.length > 2) && parts[2].length) parse_crontab_part( timing, parts[2], 'days', 1, 31 );
-	if ((parts.length > 3) && parts[3].length) parse_crontab_part( timing, parts[3], 'months', 1, 12 );
-	if ((parts.length > 4) && parts[4].length) parse_crontab_part( timing, parts[4], 'weekdays', 0, 6 );
-	if ((parts.length > 5) && parts[5].length) parse_crontab_part( timing, parts[5], 'years', 1970, 3000 );
+	if ((parts.length > 0) && parts[0].length) parse_crontab_part( timing, parts[0], 'minutes', 0, 59, rand_seed );
+	if ((parts.length > 1) && parts[1].length) parse_crontab_part( timing, parts[1], 'hours', 0, 23, rand_seed );
+	if ((parts.length > 2) && parts[2].length) parse_crontab_part( timing, parts[2], 'days', 1, 31, rand_seed );
+	if ((parts.length > 3) && parts[3].length) parse_crontab_part( timing, parts[3], 'months', 1, 12, rand_seed );
+	if ((parts.length > 4) && parts[4].length) parse_crontab_part( timing, parts[4], 'weekdays', 0, 6, rand_seed );
+	if ((parts.length > 5) && parts[5].length) parse_crontab_part( timing, parts[5], 'years', 1970, 3000, rand_seed );
 	
 	return timing;
 };

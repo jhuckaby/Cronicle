@@ -970,7 +970,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				// validate, convert to timing object
 				var timing = null;
 				try {
-					timing = parse_crontab( cron_exp );
+					timing = parse_crontab( cron_exp, $('#fe_ee_title').val() );
 				}
 				catch (e) {
 					return app.badField('fe_ee_crontab', e.toString());
