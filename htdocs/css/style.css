@@ -523,3 +523,9 @@ span.link.abort {
 span.link.abort:hover {
 	color: red;
 }
+
+/* Dialog Fixes */
+
+div.dialog_subtitle {
+	cursor: default;
+}

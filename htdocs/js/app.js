@@ -327,6 +327,12 @@ app.extend({
 				var id = self.page_manager.current_page_id;
 				var page = self.page_manager.find(id);
 				if (page && page.onStatusUpdate) page.onStatusUpdate(data);
+				
+				// remove dialog if present
+				if (self.waitingForMaster && self.progress) {
+					self.hideProgress();
+					delete self.waitingForMaster;
+				}
 			} // master
 		} );
 		
@@ -378,6 +384,7 @@ app.extend({
 		// If slave knows who is master, switch now, otherwise go into wait loop
 		var self = this;
 		this.showProgress( 1.0, "Waiting for master server..." );
+		this.waitingForMaster = true;
 		
 		if (data.master_hostname) {
 			// reload browser which should connect to master
