@@ -22,8 +22,7 @@
 NAME="Cronicle Daemon"
 #
 # home directory
-DIR=`dirname $0`
-HOMEDIR=`dirname $DIR`
+HOMEDIR=$(cd $(dirname $0)/../ && pwd)
 cd $HOMEDIR
 #
 # the path to your binary, including options if necessary
