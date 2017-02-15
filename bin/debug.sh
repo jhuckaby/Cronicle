@@ -4,7 +4,9 @@
 # No daemon fork, and all logs emitted to stdout
 # Add --master to force instant master on startup
 
-DIR=`dirname $0`
-PDIR=`dirname $DIR`
+SCRIPT=`perl -MCwd -le 'print Cwd::abs_path(shift)' "$0"`
+DIR=`dirname $SCRIPT`
+HOMEDIR=`dirname $DIR`
 
-node --expose_gc --always_compact $PDIR/lib/main.js --debug --echo "$@"
+cd $HOMEDIR
+node --expose_gc --always_compact $HOMEDIR/lib/main.js --debug --echo "$@"

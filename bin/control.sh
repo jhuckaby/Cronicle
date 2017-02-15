@@ -22,7 +22,8 @@
 NAME="Cronicle Daemon"
 #
 # home directory
-DIR=`dirname $0`
+SCRIPT=`perl -MCwd -le 'print Cwd::abs_path(shift)' "$0"`
+DIR=`dirname $SCRIPT`
 HOMEDIR=`dirname $DIR`
 cd $HOMEDIR
 #
