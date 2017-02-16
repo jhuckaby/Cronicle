@@ -141,6 +141,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 						print( "You should now be able to start the service by typing: '/opt/cronicle/bin/control.sh start'\n" );
 						print( "Then, the web interface should be available at: http://"+hostname+":"+config.WebServer.http_port+"/\n" );
 						print( "Please allow for up to 60 seconds for the server to become master.\n\n" );
+						
+						storage.shutdown( function() { process.exit(0); } );
 					}
 				);
 			} );
@@ -178,6 +180,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (err) throw err;
 				print( "\nAdministrator '"+username+"' created successfully.\n" );
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -193,6 +197,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (storage.isBinaryKey(key)) print( data.toString() + "\n" );
 				else print( ((typeof(data) == 'object') ? JSON.stringify(data, null, "\t") : data) + "\n" );
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -227,11 +233,15 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 						storage.put( key, data, function(err, data) {
 							if (err) throw err;
 							print("Record successfully saved with your changes: "+key+"\n");
+							
+							storage.shutdown( function() { process.exit(0); } );
 						} );
 					}
 					else {
 						fs.unlinkSync( temp_file );
 						print("File has not been changed, record was not touched: "+key+"\n");
+						
+						storage.shutdown( function() { process.exit(0); } );
 					}
 				} );
 				
@@ -246,6 +256,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (err) throw err;
 				print("Record '"+key+"' deleted successfully.\n");
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -257,6 +269,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (err) throw err;
 				print("List created successfully: " + key + "\n");
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -268,6 +282,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (err) throw err;
 				print("Item popped off list: " + key + ": " + JSON.stringify(item, null, "\t") + "\n");
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -275,12 +291,15 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			// fetch items from list
 			// Usage: ./storage-cli.js list_get key idx len
 			var key = commands.shift();
-			var idx = commands.shift() || 0;
-			var len = commands.shift() || 0;
+			var idx = parseInt( commands.shift() || 0 );
+			var len = parseInt( commands.shift() || 0 );
 			storage.listGet( key, idx, len, function(err, items) {
 				if (err) throw err;
-				print("Fetched items from list: " + key + ": " + JSON.stringify(items, null, "\t") + "\n");
+				print("Got " + items.length + " items.\n");
+				print("Items from list: " + key + ": " + JSON.stringify(items, null, "\t") + "\n");
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -308,6 +327,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 						// all pages iterated
 						if (err) throw err;
 						print("\n");
+						
+						storage.shutdown( function() { process.exit(0); } );
 					} // pages complete
 				); // whilst
 			} );
@@ -321,6 +342,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				if (err) throw err;
 				print("List deleted successfully: " + key + "\n");
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -331,6 +354,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			storage.runMaintenance( commands.shift(), function() {
 				print( "Daily maintenance completed successfully.\n" );
 				print("\n");
+				
+				storage.shutdown( function() { process.exit(0); } );
 			} );
 		break;
 		
@@ -346,67 +371,9 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 			import_data(file);
 		break;
 		
-		case 'upgrade_logs':
-			// upgrade all non-compressed logs to gzip-compressed
-			// This is part of Cronicle Version 0.5 and can be discarded after that release
-			var zlib = require('zlib');
-			print( "Special Cronicle v0.5 Log Upgrade\n" );
-			print( "Compressing all job logs...\n\n" );
-			
-			storage.listEach( 'logs/completed', 
-				function(item, idx, callback) {
-					var job_path = 'jobs/' + item.id;
-					var old_path = 'jobs/' + item.id + '/log.txt';
-					var new_path = old_path + '.gz';
-					
-					storage.get( job_path, function(err, job) {
-						if (err) {
-							// silently skip -- job record deleted
-							return callback();
-						}
-						
-						storage.getStream( old_path, function(err, stream) {
-							if (err) {
-								// silently skip -- log deleted or already converted
-								return callback();
-							}
-							
-							print( "Compressing: " + old_path + "..." );
-							
-							var gzip = zlib.createGzip( config['gzip_opts'] || {} );
-							stream.pipe( gzip );
-							
-							storage.putStream( new_path, gzip, function(err) {
-								if (err) {
-									print("Failed to store job log: " + new_path + ": " + err + "\n");
-									return callback();
-								}
-								
-								// delete uncompressed log
-								storage.delete( old_path, function(err, data) {
-									if (err) {
-										print("Failed to delete job log: " + old_path + ": " + err + "\n");
-										return callback();
-									}
-									
-									// set new expiration
-									var expiration = Math.floor(job.time_end || Tools.timeNow()) + (86400 * (job.log_expire_days || config['job_data_expire_days']));
-									var dargs = Tools.getDateArgs( expiration );
-									verbose( "<<" + dargs.yyyy_mm_dd + ">>" );
-									
-									storage.expire( new_path, expiration );
-									
-									print( "OK.\n" );
-									callback();
-								} ); // delete
-							} ); // putStream
-						} ); // getStream
-					} ); // get
-				}, 
-				function(err) {
-					print( "\nAll job logs compressed.\nExiting.\n\n");
-				}
-			);
+		default:
+			print("Unknown command: " + cmd + "\n");
+			storage.shutdown( function() { process.exit(0); } );
 		break;
 		
 	} // switch
@@ -500,6 +467,8 @@ function export_data(file) {
 					verbose_warn( "\nExport completed at " + (new Date()).toString() + ".\nExiting.\n\n" );
 					
 					if (file) stream.end();
+					
+					storage.shutdown( function() { process.exit(0); } );
 				} // done done
 			); // list eachSeries
 		} // done with users
@@ -556,6 +525,8 @@ function import_data(file) {
 		// end of input stream
 		var complete = function() {
 			print( "\nImport complete. " + count + " records imported.\nExiting.\n\n" );
+			
+			storage.shutdown( function() { process.exit(0); } );
 		};
 		
 		// fire complete on queue drain
