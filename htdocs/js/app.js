@@ -261,12 +261,13 @@ app.extend({
 		}
 		
 		var socket = this.socket = io( url, {
-			forceNew: true,
-			reconnection: true,
+			// forceNew: true,
+			transports: ['websocket'],
+			reconnection: false,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 2000,
 			reconnectionAttempts: 9999,
-			timeout: 5000
+			timeout: 3000
 		} );
 		
 		socket.on('connect', function() {
@@ -305,8 +306,7 @@ app.extend({
 		
 		socket.on('disconnect', function() {
 			// unexpected disconnection
-			Debug.trace("socket.io disconnected unexpectedly, will force reconnect");
-			setTimeout( function() { app.socketConnect(); }, 1000 );
+			Debug.trace("socket.io disconnected unexpectedly");
 		} );
 		
 		socket.on('status', function(data) {
@@ -352,6 +352,16 @@ app.extend({
 			// clear event autosave data if schedule was updated
 			if (data.schedule) delete self.autosave_event;
 		} );
+		
+		// --- Keep socket.io connected forever ---
+		// This is the worst hack in history, but socket.io-client
+		// is simply not behaving, and I have tried EVERYTHING ELSE.
+		setInterval( function() {
+			if (socket && !socket.connected) {
+				Debug.trace("Forcing socket to reconnect");
+				socket.connect();
+			}
+		}, 5000 );
 	},
 	
 	updateActiveJobs: function(data) {

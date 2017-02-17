@@ -133,8 +133,8 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 					},
 					function(err) {
 						if (err) throw err;
-						if (args.verbose) print("\n");
 						
+						print("\n");
 						print( "Setup completed successfully!\n" );
 						print( "This server ("+hostname+") has been added as the single primary master server.\n" );
 						print( "An administrator account has been created with username 'admin' and password 'admin'.\n" );

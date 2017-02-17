@@ -1938,7 +1938,9 @@ By default, logging consists of several different files, each for a specific com
 | Log Filename | Description |
 |--------------|-------------|
 | `Cronicle.log` | The main component will contain most of the app logic (scheduler, jobs, startup, shutdown, etc.). |
-| `API.log` | The API component log will contain information about incoming API calls. |
+| `Error.log` | The error log will contain all errors, including job failures, server disconnects, etc. |
+| `Transaction.log` | The transaction log will contain all transactions, including API actions, job completions, etc. |
+| `API.log` | The API component log will contain information about incoming HTTP API calls. |
 | `Storage.log` | The storage component log will contain information about data reads and writes. |
 | `Filesystem.log` | Only applicable if you use the local filesystem storage back-end. |
 | `Couchbase.log` | Only applicable if you use the [Couchbase](#couchbase) storage back-end. |
