@@ -32,7 +32,7 @@ fs.chmodSync( 'logs', "755" );
 // log to file instead of console
 console.log = function(msg, data) {
 	if (data) msg += ' ' + JSON.stringify(data);
-	fs.appendFile( 'logs/install.log', msg + "\n" );
+	fs.appendFile( 'logs/install.log', msg + "\n", function() {} );
 };
 
 console.log("\nBuilding project ("+mode+")...\n");
