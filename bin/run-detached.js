@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Detached Plugin Runner for Cronicle
-// Copyright (c) 2015 Joseph Huckaby
+// Copyright (c) 2015 - 2017 Joseph Huckaby
 // Released under the MIT License
 
 var fs = require('fs');
@@ -28,7 +28,7 @@ var child_args = [];
 if (child_cmd.match(/\s+(.+)$/)) {
 	var cargs_raw = RegExp.$1;
 	child_cmd = child_cmd.replace(/\s+(.+)$/, '');
-	child_args = sqparse( cargs_raw, child_opts.env );
+	child_args = sqparse( cargs_raw, process.env );
 }
 
 var child = cp.spawn( child_cmd, child_args, { 
@@ -37,6 +37,7 @@ var child = cp.spawn( child_cmd, child_args, {
 
 var updates = { detached_pid: child.pid };
 var kill_timer = null;
+var update_timer = null;
 
 var cstream = new JSONStream( child.stdout, child.stdin );
 cstream.recordRegExp = /^\s*\{.+\}\s*$/;
@@ -59,7 +60,11 @@ cstream.on('error', function(err, text) {
 
 child.on('error', function (err) {
 	// child error
-	var queue_file = job.queue_dir + '/' + job.id + '.json';
+	updates = {};
+	if (kill_timer) clearTimeout(kill_timer);
+	if (update_timer) clearTimeout(update_timer);
+	
+	var queue_file = job.queue_dir + '/' + job.id + '-' + Date.now() + '.json';
 	fs.writeFileSync( queue_file + '.tmp', JSON.stringify({
 		action: "detachedJobUpdate",
 		id: job.id,
@@ -73,6 +78,7 @@ child.on('error', function (err) {
 child.on('exit', function (code, signal) {
 	// child exited
 	if (kill_timer) clearTimeout(kill_timer);
+	if (update_timer) clearTimeout(update_timer);
 	
 	code = (code || signal || 0);
 	if (code && !updates.code) {
@@ -85,7 +91,7 @@ child.on('exit', function (code, signal) {
 	updates.complete = 1;
 	
 	// write file atomically, just in case
-	var queue_file = job.queue_dir + '/' + job.id + '.json';
+	var queue_file = job.queue_dir + '/' + job.id + '-' + Date.now() + '.json';
 	fs.writeFileSync( queue_file + '.tmp', JSON.stringify(updates) );
 	fs.renameSync( queue_file + '.tmp', queue_file );
 } );
@@ -101,13 +107,31 @@ cstream.write( job );
 // we're done writing to the child -- don't hold open its stdin
 child.stdin.end();
 
+// send updates every minute, if the child sent us anything (i.e. progress updates)
+update_timer = setInterval( function() {
+	if (Tools.numKeys(updates) && !updates.complete) {
+		
+		updates.action = "detachedJobUpdate";
+		updates.id = job.id;
+		updates.in_progress = 1;
+		
+		// write file atomically, just in case
+		var queue_file = job.queue_dir + '/' + job.id + '-' + Date.now() + '.json';
+		fs.writeFileSync( queue_file + '.tmp', JSON.stringify(updates) );
+		fs.renameSync( queue_file + '.tmp', queue_file );
+		
+		updates = {};
+	}
+}, 1000 * 60 );
+
 // Handle termination (server shutdown or job aborted)
 process.on('SIGTERM', function() { 
-	console.log("Caught SIGTERM, killing child: " + child.pid);
+	// console.log("Caught SIGTERM, killing child: " + child.pid);
+	if (update_timer) clearTimeout(update_timer);
 	
 	kill_timer = setTimeout( function() {
 		// child didn't die, kill with prejudice
-		console.log("Child did not exit, killing harder: " + child.pid);
+		// console.log("Child did not exit, killing harder: " + child.pid);
 		child.kill('SIGKILL');
 	}, 9 * 1000 );
 	
