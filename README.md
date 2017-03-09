@@ -782,7 +782,7 @@ When Run All (Catch-Up) mode is disabled, and a job cannot run or fails due to a
 
 When Uninterruptible (Detached Mode) mode is enabled on an event, jobs are spawned as standalone background processes, which are not interrupted for things like the Cronicle daemon restarting.  This is designed mainly for critical operations that *cannot* be stopped in the middle for whatever reason.
 
-Please use this mode with caution, and only when truly needed, as there are downsides.  First of all, since the process runs detached and standalone, there are no real-time updates.  Meaning, no progress bar, and no time remaining display.  Also, when your job completes, there is a delay of up to a minute before Cronicle realizes.
+Please use this mode with caution, and only when truly needed, as there are downsides.  First of all, since the process runs detached and standalone, there are no real-time updates.  Meaning, the progress bar and time remaining displays are delayed by up to a minute.  Also, when your job completes, there is a delay of up to a minute before Cronicle realizes and marks the job as complete.
 
 It is much better to design your jobs to be interrupted, if at all possible.  Note that Cronicle will re-run interrupted jobs if they have [Run All Mode](#run-all-mode) set.  So Detached Mode should only be needed in very special circumstances.
 
