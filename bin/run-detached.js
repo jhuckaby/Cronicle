@@ -107,7 +107,8 @@ cstream.write( job );
 // we're done writing to the child -- don't hold open its stdin
 child.stdin.end();
 
-// send updates every minute, if the child sent us anything (i.e. progress updates)
+// send updates every N seconds, if the child sent us anything (i.e. progress updates)
+// randomize interval so we don't bash the queue dir when multiple detached jobs are running
 update_timer = setInterval( function() {
 	if (Tools.numKeys(updates) && !updates.complete) {
 		
@@ -122,7 +123,7 @@ update_timer = setInterval( function() {
 		
 		updates = {};
 	}
-}, 1000 * 60 );
+}, 30000 + Math.floor( Math.random() * 25000 ) );
 
 // Handle termination (server shutdown or job aborted)
 process.on('SIGTERM', function() { 
