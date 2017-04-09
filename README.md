@@ -235,6 +235,20 @@ The hostname of your SMTP server, for sending mail.  This can be set to `127.0.0
 
 The port number to use when communicating with the SMTP server.  The default is `25`.
 
+### mail_options
+
+Set specific mailer options, such as SMTP SSL and authentication, passed directly to [pixl-mail](https://www.npmjs.com/package/pixl-mail#smtp-options) (and then to [nodemailer-smtp-transport](https://www.npmjs.com/package/nodemailer-smtp-transport#usage)).  Example:
+
+```js
+"mail_options": {
+	'secure', true,
+	'auth', { user: 'fsmith', pass: '12345' },
+	connectionTimeout: 10000, // milliseconds
+	greetingTimeout: 10000, // milliseconds
+	socketTimeout: 10000 // milliseconds
+}
+```
+
 ### secret_key
 
 For multi-server setups, all your Cronicle servers need to share the same secret key.  Any randomly generated string is fine.
