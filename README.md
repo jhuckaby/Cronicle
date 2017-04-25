@@ -373,6 +373,17 @@ When using the [job_cpu_max](#job_cpu_max) feature, you can optionally specify h
 
 CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
 
+### job_env
+
+Place any key/value pairs you want into the `job_env` object, and they will become environment variables passed to all job processes, as they are spawned.  Note that these can be overridden by event parameters with the same names.  The `job_env` can be thought of as a way to specify universal default environment variables for all your jobs.  Example:
+
+```js
+"job_env": {
+	"TZ": "America/Los_Angeles",
+	"LANG": "en_US.UTF-8"
+},
+```
+
 ### server_comm_use_hostnames
 
 Setting this parameter to `1` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses.  This is mainly for special situations where your local server IP addresses may change, and you would prefer to rely on DNS instead.  The default is `0` (disabled), meaning connect using IP addresses.
