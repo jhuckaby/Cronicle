@@ -174,6 +174,14 @@ Class.add( Page.Admin, {
 					desc = 'Server shut down: <b>' + item.hostname + '</b>';
 				break;
 				
+				case 'server_disable': 
+					desc = 'Lost connectivity to server: <b>' + item.hostname + '</b>';
+					color = 'yellow';
+				break;
+				case 'server_enable': 
+					desc = 'Reconnected to server: <b>' + item.hostname + '</b>';
+				break;
+				
 				// jobs
 				case 'job_run':
 					var event = find_object( app.schedule, { id: item.event } ) || { title: 'Unknown Event' };
