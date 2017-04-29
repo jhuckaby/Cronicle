@@ -349,6 +349,29 @@ While you can specify a web hook in the UI per each category and/or per each eve
 
 Web hooks are fired at the start and the end of each job (success or fail).  A JSON record is sent in the HTTP POST body, which contains all the relevant information about the job, including an `action` property, which will be set to `job_start` at the start and `job_complete` at the end of the job.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
 
+### web_hook_custom_data
+
+If you need to include custom JSON data with the web hook HTTP POST, you can do so by specifying a `web_hook_custom_data` property, and any keys/values will be merged in with the event data as it is sent to the web hook URL.  Example:
+
+```js
+"web_hook_custom_data": {
+	"my_custom_key1": "My custom value 1",
+	"my_custom_key2": "My custom value 2"
+}
+```
+
+In this example `my_custom_key1` and `my_custom_key2` will be merged in with the event data that usually accompanies the web hook post data.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
+
+### web_hook_ssl_cert_bypass
+
+If you are having trouble getting HTTPS/SSL web hooks to work, you might need to set `web_hook_ssl_cert_bypass` to true.  This causes Node.js to blindly accept all HTTPS URLs, even when it cannot validate the SSL certificate.  This effectively sets the following environment variable at startup:
+
+```js
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+```
+
+Please only do this if you understand the security ramifications, and *completely trust* the host you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
+
 ### job_memory_max
 
 This parameter allows you to set a default memory usage limit for jobs, specified in bytes.  This is measured as the total usage of the job process *and any sub-processes spawned or forked by the main process*.  If the memory limit is exceeded, the job is aborted.  The default value is `1073741824` (1 GB).  To disable set it to `0`.
@@ -2594,7 +2617,7 @@ This updates a job that is already in progress.  Only certain job properties may
 
 | Parameter Name | Description |
 |----------------|-------------|
-| `id` | **(Required)** The ID of the event you wish to run a job for. |
+| `id` | **(Required)** The ID of the job you wish to update. |
 | `timeout` | (Optional) The total run time in seconds to allow, before the job is aborted. |
 | `retries` | (Optional) The number of retries before the job is reported a failure. |
 | `retry_delay` | (Optional) The number of seconds between retries. |
