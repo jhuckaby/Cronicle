@@ -94,7 +94,7 @@ Please note that Cronicle currently only works on POSIX-compliant operating syst
 You'll need to have [Node.js](https://nodejs.org/en/download/) pre-installed on your server.  Then become root and type this:
 
 ```
-	curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js | node
+curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js | node
 ```
 
 This will install the latest stable release of Cronicle and all of its [dependencies](#colophon) under: `/opt/cronicle/`
@@ -102,11 +102,11 @@ This will install the latest stable release of Cronicle and all of its [dependen
 If you'd rather install it manually (or something went wrong with the auto-installer), here are the raw commands:
 
 ```
-	mkdir -p /opt/cronicle
-	cd /opt/cronicle
-	curl -L https://github.com/jhuckaby/Cronicle/archive/v1.0.0.tar.gz | tar zxvf - --strip-components 1
-	npm install
-	node bin/build.js dist
+mkdir -p /opt/cronicle
+cd /opt/cronicle
+curl -L https://github.com/jhuckaby/Cronicle/archive/v1.0.0.tar.gz | tar zxvf - --strip-components 1
+npm install
+node bin/build.js dist
 ```
 
 Replace `v1.0.0` with the desired Cronicle version from the [release list](https://github.com/jhuckaby/Cronicle/releases), or `master` for the head revision (unstable).
@@ -129,7 +129,7 @@ Now then, the only other decision you have to make is what to use as a storage b
 With that out of the way, run the following script to initialize the storage system.  You only need to do this once, *and only on the master server*.  Do not run this on any slave servers:
 
 ```
-	/opt/cronicle/bin/control.sh setup
+/opt/cronicle/bin/control.sh setup
 ```
 
 Among other things, this creates an administrator user account you can use to login right away.  The username is `admin` and the password is `admin`.  It is recommended you change the password as soon as possible, for security purposes (or just create your own administrator account and delete `admin`).
@@ -137,13 +137,13 @@ Among other things, this creates an administrator user account you can use to lo
 At this point you should be able to start the service and access the web UI.  Enter this command:
 
 ```
-	/opt/cronicle/bin/control.sh start
+/opt/cronicle/bin/control.sh start
 ```
 
 Give it a minute to decide to become master, then send your browser to the server on the correct port:
 
 ```
-	http://YOUR_SERVER_HOSTNAME:3012/
+http://YOUR_SERVER_HOSTNAME:3012/
 ```
 
 You only need to include the port number in the URL if you are using a non-standard HTTP port (see [Web Server Configuration](#web-server-configuration)).
@@ -204,7 +204,7 @@ For teams setting up multi-server clusters, here are some operational concerns t
 The main Cronicle configuration file is in JSON format, and can be found here:
 
 ```
-	/opt/cronicle/conf/config.json
+/opt/cronicle/conf/config.json
 ```
 
 Please edit this file directly.  It will not be touched by any upgrades.  A pristine copy of the default configuration can always be found here: `/opt/cronicle/sample_conf/config.json`.
@@ -218,7 +218,7 @@ Here are descriptions of the top-level configuration parameters:
 This should be set to a fully-qualified URL, pointing to your Cronicle server, including the HTTP port number if non-standard.  Do not include a trailing slash.  This is used in e-mails to create self-referencing URLs.  Example:
 
 ```
-	http://local.cronicle.com:3012
+http://local.cronicle.com:3012
 ```
 
 If you are running Cronicle behind a load balancer, this should be set to the load balanced virtual hostname.
@@ -462,14 +462,14 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 You'll also need to install the npm [couchbase](https://www.npmjs.com/package/couchbase) module:
 
 ```
-	cd /opt/cronicle
-	npm install couchbase
+cd /opt/cronicle
+npm install couchbase
 ```
 
 After configuring Couchbase, you'll need to run the Cronicle setup script manually, to recreate all the base storage records needed to bootstrap the system:
 
 ```
-	/opt/cronicle/bin/control.sh setup
+/opt/cronicle/bin/control.sh setup
 ```
 
 ### Amazon S3
@@ -497,14 +497,14 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 You'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
 
 ```
-	cd /opt/cronicle
-	npm install aws-sdk
+cd /opt/cronicle
+npm install aws-sdk
 ```
 
 After configuring S3, you'll need to run the Cronicle setup script manually, to recreate all the base storage records needed to bootstrap the system:
 
 ```
-	/opt/cronicle/bin/control.sh setup
+/opt/cronicle/bin/control.sh setup
 ```
 
 If you're worried about Amazon S3 costs, you needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
@@ -1786,7 +1786,7 @@ This would allow Cronicle to show a graphical progress bar on the [Home](#home-t
 Here are all the Cronicle services available to you on the command line.  Most of these are accessed via the following shell script:
 
 ```
-	/opt/cronicle/bin/control.sh [COMMAND]
+/opt/cronicle/bin/control.sh [COMMAND]
 ```
 
 ## Starting and Stopping
@@ -1794,25 +1794,25 @@ Here are all the Cronicle services available to you on the command line.  Most o
 To start the service, use the `start` command:
 
 ```
-	/opt/cronicle/bin/control.sh start
+/opt/cronicle/bin/control.sh start
 ```
 
 And to stop it, the `stop` command:
 
 ```
-	/opt/cronicle/bin/control.sh stop
+/opt/cronicle/bin/control.sh stop
 ```
 
 You can also issue a quick stop + start with the `restart` command:
 
 ```
-	/opt/cronicle/bin/control.sh restart
+/opt/cronicle/bin/control.sh restart
 ```
 
 The `status` command will tell you if the service is running or not:
 
 ```
-	/opt/cronicle/bin/control.sh status
+/opt/cronicle/bin/control.sh status
 ```
 
 ## Storage Maintenance
@@ -1820,14 +1820,14 @@ The `status` command will tell you if the service is running or not:
 Storage maintenance automatically runs every morning at 4 AM local server time (this is [configurable](#maintenance) if you want to change it).  The operation is mainly for deleting expired records, and pruning lists that have grown too large.  However, if the Cronicle service was stopped and you missed a day or two, you can force it to run at any time.  Just execute this command on your master server:
 
 ```
-	/opt/cronicle/bin/control.sh maint
+/opt/cronicle/bin/control.sh maint
 ```
 
 This will run maintenance for the current day.  However, if the service was down for more than one day, please run the command for each missed day, providing the date in `YYYY-MM-DD` format:
 
 ```
-	/opt/cronicle/bin/control.sh maint 2015-10-29
-	/opt/cronicle/bin/control.sh maint 2015-10-30
+/opt/cronicle/bin/control.sh maint 2015-10-29
+/opt/cronicle/bin/control.sh maint 2015-10-30
 ```
 
 ## Recover Admin Access
@@ -1835,7 +1835,7 @@ This will run maintenance for the current day.  However, if the service was down
 Lost access to your admin account?  You can create a new temporary administrator account on the command-line.  Just execute this command on your master server:
 
 ```
-	/opt/cronicle/bin/control.sh admin USERNAME PASSWORD
+/opt/cronicle/bin/control.sh admin USERNAME PASSWORD
 ```
 
 Replace `USERNAME` with the desired username, and `PASSWORD` with the desired password for the new account.  Note that the new user will not show up in the master list of users in the UI.  But you will be able to login using the provided credentials.  This is more of an emergency operation, just to allow you to get back into the system.  *This is not a good way to create permanent users*.  Once you are logged back in, you should consider creating another account from the UI, then deleting the emergency admin account.
@@ -1845,20 +1845,20 @@ Replace `USERNAME` with the desired username, and `PASSWORD` with the desired pa
 Here are the instructions for making Cronicle automatically start on server boot (Linux only).  Type these commands as root:
 
 ```
-	cp /opt/cronicle/bin/cronicled.init /etc/init.d/cronicled
-	chmod 775 /etc/init.d/cronicled
+cp /opt/cronicle/bin/cronicled.init /etc/init.d/cronicled
+chmod 775 /etc/init.d/cronicled
 ```
 
 Then, if you have a RedHat-style Linux (i.e. Fedora, CentOS), type this:
 
 ```
-	chkconfig cronicled on
+chkconfig cronicled on
 ```
 
 Or, if you have Debian-style Linux (i.e. Ubuntu), type this:
 
 ```
-	update-rc.d cronicled defaults
+update-rc.d cronicled defaults
 ```
 
 For multi-server clusters, you'll need to repeat these steps on each server.
@@ -1868,7 +1868,7 @@ For multi-server clusters, you'll need to repeat these steps on each server.
 To upgrade Cronicle, you can use the built-in `upgrade` command:
 
 ```
-	/opt/cronicle/bin/control.sh upgrade
+/opt/cronicle/bin/control.sh upgrade
 ```
 
 This will upgrade the app and all dependencies to the latest stable release, if a new one is available.  It will not affect your data storage, users, or configuration settings.  All those will be preserved and imported to the new version.  For multi-server clusters, you'll need to repeat this command on each server.
@@ -1876,13 +1876,13 @@ This will upgrade the app and all dependencies to the latest stable release, if 
 Alternately, you can specify the exact version you want to upgrade (or downgrade) to:
 
 ```
-	/opt/cronicle/bin/control.sh upgrade 1.0.4
+/opt/cronicle/bin/control.sh upgrade 1.0.4
 ```
 
 If you upgrade to the `HEAD` version, this will grab the very latest from GitHub.  Note that this is primarily for developers or beta-testers, and is likely going to contain bugs.  Use at your own risk:
 
 ```
-	/opt/cronicle/bin/control.sh upgrade HEAD
+/opt/cronicle/bin/control.sh upgrade HEAD
 ```
 
 ## Data Import and Export
@@ -1892,7 +1892,7 @@ Cronicle can import and export data via the command-line, to/from a plain text f
 To export your Cronicle data, issue this command on your master server:
 
 ```
-	/opt/cronicle/bin/control.sh export /path/to/cronicle-data-backup.txt --verbose
+/opt/cronicle/bin/control.sh export /path/to/cronicle-data-backup.txt --verbose
 ```
 
 The `--verbose` flag makes it emit some extra information to the console.  Omit that if you want it to run silently.  Omit the filename if you want it to export the data to STDOUT instead of a file.
@@ -1900,7 +1900,7 @@ The `--verbose` flag makes it emit some extra information to the console.  Omit 
 To import data back into the system, **first make sure Cronicle is stopped on all servers**, and then run this command:
 
 ```
-	/opt/cronicle/bin/control.sh import /path/to/cronicle-data-backup.txt
+/opt/cronicle/bin/control.sh import /path/to/cronicle-data-backup.txt
 ```
 
 If you want daily backups of the data which auto-expire after a year, a simple shell script can do it for ya:
@@ -2045,13 +2045,13 @@ So in summary, the only time human intervention may be required is if a master s
 All API calls expect JSON as input (unless they are simple HTTP GETs), and will return JSON as output.  The main API endpoint is:
 
 ```
-	/api/app/NAME/v1
+/api/app/NAME/v1
 ```
 
 Replace `NAME` with the specific API function you are calling (see below for list).  All requests should be HTTP GET or HTTP POST as the API dictates, and should be directed at the Cronicle master server on the correct TCP port (the default is `3012` but is often reconfigured to be `80`).  Example URL:
 
 ```
-	http://myserver.com:3012/api/app/get_schedule/v1
+http://myserver.com:3012/api/app/get_schedule/v1
 ```
 
 For web browser access, [JSONP](https://en.wikipedia.org/wiki/JSONP) response style is supported for all API calls, by including a `callback` query parameter.  However, all responses include a `Access-Control-Allow-Origin: *` header, so cross-domain [XHR](https://en.wikipedia.org/wiki/XMLHttpRequest) requests will work as well.
@@ -2071,7 +2071,7 @@ To create an API Key, you must first be an administrator level user.  Login to t
 API Keys are randomly generated hexadecimal strings, and are 32 characters in length.  Example:
 
 ```
-	0095f5b664b93304d5f8b1a61df605fb
+0095f5b664b93304d5f8b1a61df605fb
 ```
 
 You must include a valid API Key with every API request.  There are three ways to do this: include a `X-API-Key` HTTP request header, an `api_key` query string parameter, or an `api_key` JSON property.
@@ -2108,7 +2108,7 @@ Here is the list of supported API calls:
 ### get_schedule
 
 ```
-	/api/app/get_schedule/v1
+/api/app/get_schedule/v1
 ```
 
 This fetches scheduled events and returns details about them.  It supports pagination to fetch chunks, with the default being the first 50 events.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
@@ -2181,7 +2181,7 @@ The `list` object contains internal metadata about the list structure in storage
 ### get_event
 
 ```
-	/api/app/get_event/v1
+/api/app/get_event/v1
 ```
 
 This fetches details about a single event, given its ID.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
@@ -2246,7 +2246,7 @@ The `event` object will contain the details for the requested event.  See the [E
 ### create_event
 
 ```
-	/api/app/create_event/v1
+/api/app/create_event/v1
 ```
 
 This creates a new event and adds it to the schedule.  API Keys require the `create_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The required parameters are as follows:
@@ -2311,7 +2311,7 @@ In addition to the [Standard Response Format](#standard-response-format), the ID
 ### update_event
 
 ```
-	/api/app/update_event/v1
+/api/app/update_event/v1
 ```
 
 This updates an existing event given its ID, replacing any properties you specify.  API Keys require the `edit_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
@@ -2385,7 +2385,7 @@ See the [Standard Response Format](#standard-response-format) for details.
 ### delete_event
 
 ```
-	/api/app/delete_event/v1
+/api/app/delete_event/v1
 ```
 
 This deletes an existing event given its ID.  Note that the event must not have any active jobs still running (or else an error will be returned).  API Keys require the `delete_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
@@ -2415,7 +2415,7 @@ See the [Standard Response Format](#standard-response-format) for details.
 ### run_event
 
 ```
-	/api/app/run_event/v1
+/api/app/run_event/v1
 ```
 
 This immediately starts an on-demand job for an event, regardless of the schedule.  This is effectively the same as a user clicking the "Run Now" button in the UI.  API Keys require the `run_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
@@ -2477,7 +2477,7 @@ In addition to the [Standard Response Format](#standard-response-format), the ID
 ### get_job_status
 
 ```
-	/api/app/get_job_status/v1
+/api/app/get_job_status/v1
 ```
 
 This fetches status for a job currently in progress, or one already completed.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
@@ -2610,7 +2610,7 @@ The memory usage is measured in bytes.  The current value can be found in `curre
 ### update_job
 
 ```
-	/api/app/update_job/v1
+/api/app/update_job/v1
 ```
 
 This updates a job that is already in progress.  Only certain job properties may be changed when the job is running, and those are listed below.  This is typically used to adjust timeouts, resource limits, or user notification settings.  API Keys require the `edit_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
@@ -2653,7 +2653,7 @@ See the [Standard Response Format](#standard-response-format) for details.
 ### abort_job
 
 ```
-	/api/app/abort_job/v1
+/api/app/abort_job/v1
 ```
 
 This aborts a running job given its ID.  API Keys require the `abort_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
@@ -2802,13 +2802,13 @@ For the client-side, the Cronicle web application is built on the [pixl-webapp](
 For Debian (Ubuntu) OSes:
 
 ```
-	apt-get install build-essential
+apt-get install build-essential
 ```
 
 For RedHat (Fedora / CentOS):
 
 ```
-	yum install gcc-c++ make
+yum install gcc-c++ make
 ```
 
 For Mac OS X, download [Apple's Xcode](https://developer.apple.com/xcode/download/), and then install the [command-line tools](https://developer.apple.com/downloads/).
@@ -2818,10 +2818,10 @@ For Mac OS X, download [Apple's Xcode](https://developer.apple.com/xcode/downloa
 Here is how you can download the very latest Cronicle dev build and install it manually (may contain bugs!):
 
 ```
-	git clone https://github.com/jhuckaby/Cronicle.git
-	cd Cronicle
-	npm install
-	node bin/build.js dev
+git clone https://github.com/jhuckaby/Cronicle.git
+cd Cronicle
+npm install
+node bin/build.js dev
 ```
 
 This will keep all JavaScript and CSS unobfuscated (original source served as separate files).
@@ -2851,7 +2851,7 @@ htdocs/css/mat*
 To start Cronicle in debug mode, issue the following command:
 
 ```
-	./bin/debug.sh
+./bin/debug.sh
 ```
 
 This will launch the service without forking a daemon process, and echo the entire debug log contents to the console.  This is great for debugging server-side issues.  Beware of file permissions if you run as a non-root user.  Hit Ctrl-C to shut down the service when in this mode.
@@ -2859,7 +2859,7 @@ This will launch the service without forking a daemon process, and echo the enti
 Also, you can force it to become the master server right away, so there is no delay before you can use the web app:
 
 ```
-	./bin/debug.sh --master
+./bin/debug.sh --master
 ```
 
 Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become master (~60 seconds after startup).
@@ -2871,13 +2871,13 @@ Please note that when starting Cronicle in debug mode, all existing events with 
 Cronicle comes with a full unit test suite, which runs via the [pixl-unit](https://www.npmjs.com/package/pixl-unit) module (which should be installed automatically).  To run the unit tests, make sure Cronicle isn't already running, and type this:
 
 ```
-	npm test
+npm test
 ```
 
 If any tests fail, please open a [GitHub issue](https://github.com/jhuckaby/Cronicle/issues) and include the full unit test log, which can be found here:
 
 ```
-	/opt/cronicle/logs/unit.log
+/opt/cronicle/logs/unit.log
 ```
 
 # Colophon
@@ -2889,6 +2889,7 @@ Cronicle was built using these awesome Node modules:
 | Module Name | Description | License |
 |-------------|-------------|---------|
 | [async](https://www.npmjs.com/package/async) | Higher-order functions and common patterns for asynchronous code. | MIT |
+| [bcrypt-node](https://www.npmjs.com/package/bcrypt-node) | Native JS implementation of BCrypt for Node. | BSD 3-clause |
 | [c3](https://www.npmjs.com/package/c3) | D3-based reusable chart library. | MIT |
 | [chart.js](https://www.npmjs.com/package/chart.js) | Simple HTML5 charts using the canvas element. | MIT |
 | [d3](https://www.npmjs.com/package/d3) | A JavaScript visualization library for HTML and SVG. | BSD-3-Clause |
