@@ -2889,7 +2889,7 @@ Cronicle was built using these awesome Node modules:
 | Module Name | Description | License |
 |-------------|-------------|---------|
 | [async](https://www.npmjs.com/package/async) | Higher-order functions and common patterns for asynchronous code. | MIT |
-| [bcrypt-node](https://www.npmjs.com/package/bcrypt-node) | Native JS implementation of BCrypt for Node. | BSD 3-clause |
+| [bcrypt-node](https://www.npmjs.com/package/bcrypt-node) | Native JS implementation of BCrypt for Node. | BSD 3-Clause |
 | [c3](https://www.npmjs.com/package/c3) | D3-based reusable chart library. | MIT |
 | [chart.js](https://www.npmjs.com/package/chart.js) | Simple HTML5 charts using the canvas element. | MIT |
 | [d3](https://www.npmjs.com/package/d3) | A JavaScript visualization library for HTML and SVG. | BSD-3-Clause |
