@@ -74,9 +74,6 @@ Class.subclass( Page.Base, "Page.History", {
 			];*/
 			
 			var event = find_object( app.schedule, { id: job.event } );
-			var cat = job.category ? find_object( app.categories, { id: job.category } ) : null;
-			var plugin = job.plugin ? find_object( app.plugins, { id: job.plugin } ) : null;
-			
 			var event_link = '(None)';
 			if (event) {
 				event_link = '<div class="td_big"><a href="#History?sub=event_history&id='+job.event+'">' + self.getNiceEvent('<b>' + (event.title || job.event) + '</b>', col_width + 40) + '</a></div>';
@@ -84,6 +81,12 @@ Class.subclass( Page.Base, "Page.History", {
 			else if (job.event_title) {
 				event_link = self.getNiceEvent(job.event_title, col_width + 40);
 			}
+			
+			var cat = job.category ? find_object( app.categories, { id: job.category } ) : null;
+			if (!cat && job.category_title) cat = { id: job.category, title: job.category_title };
+			
+			var plugin = job.plugin ? find_object( app.plugins, { id: job.plugin } ) : null;
+			if (!plugin && job.plugin_title) plugin = { id: job.plugin, title: job.plugin_title };
 			
 			var tds = [
 				'<div class="td_big"><a href="#JobDetails?id='+job.id+'">' + self.getNiceJob('<b>' + job.id + '</b>') + '</a></div>',
