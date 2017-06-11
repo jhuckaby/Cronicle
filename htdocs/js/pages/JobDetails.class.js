@@ -35,6 +35,18 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		this.tab.show();
 		this.tab[0]._page_id = Nav.currentAnchor();
 		
+		this.retry_count = 3;
+		this.go_when_ready();
+		
+		return true;
+	},
+	
+	go_when_ready: function() {
+		// make sure we're not in the limbo state between starting a manual job,
+		// and waiting for activeJobs to be updated
+		var self = this;
+		var args = this.args;
+		
 		if (this.find_job(args.id)) {
 			// job is currently active -- jump to real-time view
 			args.sub = 'live';
@@ -45,15 +57,27 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			args.sub = 'archive';
 			this.gosub_archive(args);
 		}
-		
-		return true;
 	},
 	
 	gosub_archive: function(args) {
 		// show job archive
+		var self = this;
 		Debug.trace("Showing archived job: " + args.id);
 		this.div.addClass('loading');
-		app.api.post( 'app/get_job_details', { id: args.id }, this.receive_details.bind(this) );
+		
+		app.api.post( 'app/get_job_details', { id: args.id }, this.receive_details.bind(this), function(resp) {
+			// error capture
+			if (self.retry_count >= 0) {
+				Debug.trace("Failed to get_job_details, trying again in 1s...");
+				self.retry_count--;
+				setTimeout( function() { self.go_when_ready(); }, 1000 );
+			}
+			else {
+				// show error
+				app.doError("Error: " + resp.description);
+				self.div.removeClass('loading');
+			}
+		} );
 	},
 	
 	get_job_result_banner: function(job) {
