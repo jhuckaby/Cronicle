@@ -298,6 +298,11 @@ Class.subclass( Page.Base, "Page.Home", {
 					actions.join(' | ')
 				];
 				
+				if (cat && cat.color) {
+					if (tds.className) tds.className += ' '; else tds.className = '';
+					tds.className += cat.color;
+				}
+				
 				return tds;
 			} // row callback
 		}); // table
@@ -380,6 +385,11 @@ Class.subclass( Page.Base, "Page.Home", {
 					actions.join(' | ')
 				];
 			} // active job
+			
+			if (cat && cat.color) {
+				if (tds.className) tds.className += ' '; else tds.className = '';
+				tds.className += cat.color;
+			}
 			
 			return tds;
 		} );
