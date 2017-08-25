@@ -23,10 +23,11 @@ stream.on('json', function(job) {
 	fs.writeFileSync( script_file, job.params.script, { mode: "775" } );
 	
 	var child = cp.spawn( script_file, [], { 
-		stdio: ['pipe', 'pipe', fs.openSync(job.log_file, 'a')] 
+		stdio: ['pipe', 'pipe', 'pipe'] 
 	} );
 	
 	var kill_timer = null;
+	var stderr_buffer = '';
 	
 	var cstream = new JSONStream( child.stdout, child.stdin );
 	cstream.recordRegExp = /^\s*\{.+\}\s*$/;
@@ -47,6 +48,10 @@ stream.on('json', function(job) {
 		}
 		else {
 			// otherwise just log it
+			if (job.params.annotate) {
+				var dargs = Tools.getDateArgs( new Date() );
+				line = '[' + dargs.yyyy_mm_dd + ' ' + dargs.hh_mi_ss + '] ' + line;
+			}
 			fs.appendFileSync(job.log_file, line);
 		}
 	} );
@@ -72,12 +77,26 @@ stream.on('json', function(job) {
 		if (kill_timer) clearTimeout(kill_timer);
 		code = (code || signal || 0);
 		
-		stream.write({
+		var data = {
 			complete: 1,
 			code: code,
 			description: code ? ("Script exited with code: " + code) : ""
-		});
+		};
 		
+		if (stderr_buffer.length && stderr_buffer.match(/\S/)) {
+			data.html = {
+				title: "Error Output",
+				content: "<pre>" + stderr_buffer.replace(/</g, '&lt;').trim() + "</pre>"
+			};
+			
+			if (code) {
+				// possibly augment description with first line of stderr, if not too insane
+				var stderr_line = stderr_buffer.trim().split(/\n/).shift();
+				if (stderr_line.length < 256) data.description += ": " + stderr_line;
+			}
+		}
+		
+		stream.write(data);
 		fs.unlink( script_file );
 	} ); // exit
 	
@@ -85,6 +104,16 @@ stream.on('json', function(job) {
 	child.stdin.on('error', function(err) {
 		// ignore
 	} );
+	
+	// track stderr separately for display purposes
+	child.stderr.setEncoding('utf8');
+	child.stderr.on('data', function(data) {
+		// keep first 32K in RAM, but log everything
+		if (stderr_buffer.length < 32768) stderr_buffer += data;
+		else if (!stderr_buffer.match(/\.\.\.$/)) stderr_buffer += '...';
+		
+		fs.appendFileSync(job.log_file, data);
+	});
 	
 	// pass job down to child process (harmless for shell, useful for php/perl/node)
 	cstream.write( job );
