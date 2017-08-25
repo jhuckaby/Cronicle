@@ -44,6 +44,25 @@
 				{ "id":"annotate", "type":"checkbox", "title":"Add Date/Time Stamps to Log", "value": 0 }
 			]
 		} ],
+		[ "listPush", "global/plugins", {
+			"id": "urlplug",
+			"title": "HTTP Request",
+			"enabled": 1,
+			"command": "bin/url-plugin.js",
+			"username": "admin",
+			"modified": 1434125333,
+			"created": 1434125333,
+			"params": [
+				{ "type":"select", "id":"method", "title":"Method", "items":["GET", "HEAD", "POST"], "value":"GET" }, 
+				{ "type":"textarea", "id":"url", "title":"URL", "rows":3, "value":"http://" }, 
+				{ "type":"textarea", "id":"headers", "title":"Headers", "rows":4, "value":"User-Agent: Cronicle/1.0" }, 
+				{ "type":"textarea", "id":"data", "title":"POST Data", "rows":4, "value":"" }, 
+				{ "type":"text", "id":"timeout", "title":"Timeout (Seconds)", "size":5, "value":"30" }, 
+				{ "type":"checkbox", "id":"follow", "title":"Follow Redirects", "value":0 } , 
+				{ "type":"text", "id":"success_match", "title":"Success Match", "size":20, "value":"" }, 
+				{ "type":"text", "id":"error_match", "title":"Error Match", "size":20, "value":"" }
+			]
+		} ],
 		[ "listCreate", "global/categories", {} ],
 		[ "listPush", "global/categories", {
 			"id": "general",
