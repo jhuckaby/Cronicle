@@ -124,7 +124,7 @@
 			[ "copyFile", "htdocs/index-dev.html", "htdocs/index.html" ],
 			{
 				"action": "bundleCompress",
-				"uglify": true,
+				"uglify": false,
 				"header": "/* Copyright (c) PixlCore.com, MIT License. https://github.com/jhuckaby/Cronicle */",
 				"dest_bundle": "htdocs/js/_combo.js",
 				"html_file": "htdocs/index.html",
