@@ -89,6 +89,7 @@ child.on('exit', function (code, signal) {
 	updates.action = "detachedJobUpdate";
 	updates.id = job.id;
 	updates.complete = 1;
+	updates.time_end = Tools.timeNow();
 	
 	// write file atomically, just in case
 	var queue_file = job.queue_dir + '/' + job.id + '-complete.json';
