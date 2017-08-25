@@ -18,7 +18,7 @@
 	"list_row_max": 10000,
 	"job_data_expire_days": 180,
 	"child_kill_timeout": 10,
-	"dead_job_timeout": 30,
+	"dead_job_timeout": 120,
 	"master_ping_freq": 20,
 	"master_ping_timeout": 60,
 	"udp_broadcast_port": 3014,
