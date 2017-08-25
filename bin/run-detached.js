@@ -91,7 +91,7 @@ child.on('exit', function (code, signal) {
 	updates.complete = 1;
 	
 	// write file atomically, just in case
-	var queue_file = job.queue_dir + '/' + job.id + '-' + Date.now() + '.json';
+	var queue_file = job.queue_dir + '/' + job.id + '-complete.json';
 	fs.writeFileSync( queue_file + '.tmp', JSON.stringify(updates) );
 	fs.renameSync( queue_file + '.tmp', queue_file );
 } );
