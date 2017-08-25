@@ -319,9 +319,9 @@ This is the number of seconds to allow child processes to exit after sending a T
 
 ### dead_job_timeout
 
-When the master server loses connectivity with a slave that had running jobs on it, they go into a "limbo" state for a period of time, before they are finally considered lost.  The `dead_job_timeout` parameter specifies the amount of time before these wayward jobs are aborted (and possibly retried, depending on the event settings).  The default value is `30` seconds.
+When the master server loses connectivity with a slave that had running jobs on it, they go into a "limbo" state for a period of time, before they are finally considered lost.  The `dead_job_timeout` parameter specifies the amount of time before these wayward jobs are aborted (and possibly retried, depending on the event settings).  The default value is `120` seconds.
 
-This parameter exists because certain networks may have unreliable connections between servers, and it is possible a server may drop for a few seconds, then come right back.  If a short hiccup like that occurs, you probably don't want to abort all the running jobs right away.
+This parameter exists because certain networks may have unreliable connections between servers, and it is possible a server may drop for a few seconds, then come right back.  If a short hiccup like that occurs, you probably don't want to abort all the running jobs right away.  Also, when you are upgrading Cronicle itself, you don't want detached jobs to be interrupted.
 
 The worst case scenario is that a remote server with running jobs goes MIA for longer than the `dead_job_timeout`, the master server aborts all the jobs, then the server reappears and finishes the jobs.  This creates a bit of a mess, because the jobs are reported as both errors and successes.  The latter success prevails in the end, but the errors stay in the logs and event history.
 
