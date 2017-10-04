@@ -96,7 +96,8 @@ Class.subclass( Page.Base, "Page.Home", {
 	refresh_header_stats: function() {
 		// refresh daemons stats in header fieldset
 		var html = '';
-		var stats = app.state.stats;
+		var stats = app.state ? (app.state.stats || {}) : {};
+		var servers = app.servers || {};
 		
 		html += '<fieldset style="margin-top:0px; margin-right:0px; padding-top:10px;"><legend>Server Stats</legend>';
 			
@@ -126,13 +127,13 @@ Class.subclass( Page.Base, "Page.Home", {
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">TOTAL SERVERS</div>';
-				html += '<div class="info_value">' + commify( num_keys(app.servers) ) + '</div>';
+				html += '<div class="info_value">' + commify( num_keys(servers) ) + '</div>';
 				
 				var total_cpu = 0;
 				var total_mem = 0;
-				for (var hostname in app.servers) {
+				for (var hostname in servers) {
 					// daemon process cpu, all servers
-					var server = app.servers[hostname];
+					var server = servers[hostname];
 					if (server.data && !server.disabled) {
 						total_cpu += (server.data.cpu || 0);
 						total_mem += (server.data.mem || 0);
@@ -152,7 +153,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			html += '</div>';
 			
 			html += '<div style="float:left; width:25%;">';
-				var mserver = app.servers[ app.masterHostname ] || {};
+				var mserver = servers[ app.masterHostname ] || {};
 				html += '<div class="info_label">MASTER SERVER UPTIME</div>';
 				html += '<div class="info_value">' + get_text_from_seconds( mserver.uptime || 0, false, true ) + '</div>';
 				

@@ -30,7 +30,7 @@ var warn = function(msg) {
 var die = function(msg) {
 	warn( "\nERROR: " + msg.trim() + "\n\n" );
 	process.exit(1);
-}
+};
 var logonly = function(msg) {
 	if (log_file) fs.appendFileSync(log_file, msg);
 };
@@ -81,9 +81,9 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 		warn( stderr.toString() );
 		die("Failed to fetch release list: " + gh_releases_url + ": " + err);
 	}
-	else {
+	/*else {
 		logonly( stdout.toString() + stderr.toString() );
-	}
+	}*/
 	
 	var releases = null;
 	try { releases = JSON.parse( stdout.toString() ); }
