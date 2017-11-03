@@ -106,7 +106,7 @@ Class.add( Page.Admin, {
 		html += '<div style="padding:0px 20px 50px 20px">';
 		html += '<center><table style="margin:0;">';
 		
-		this.api_key = { privileges: {} };
+		this.api_key = { privileges: {}, key: get_unique_id() };
 		
 		html += this.get_api_key_edit_html();
 		
@@ -271,8 +271,8 @@ Class.add( Page.Admin, {
 		var api_key = this.api_key;
 		
 		// API Key
-		html += get_form_table_row( 'API Key', '<div style="font-size:14px;">' + (api_key.key ? api_key.key : '(Will be generated)') + '</div>' );
-		html += get_form_table_caption( "The API Key string is used to authenticate API calls.  Once generated, it cannot be changed." );
+		html += get_form_table_row( 'API Key', '<input type="text" id="fe_ak_key" size="35" value="'+escape_text_field_value(api_key.key)+'" spellcheck="false"/>&nbsp;<span class="link addme" onMouseUp="$P().generate_key()">&laquo; Generate Random</span>' );
+		html += get_form_table_caption( "The API Key string is used to authenticate API calls." );
 		html += get_form_table_spacer();
 		
 		// status
@@ -313,9 +313,14 @@ Class.add( Page.Admin, {
 		// get api key elements from form, used for new or edit
 		var api_key = this.api_key;
 		
+		api_key.key = $('#fe_ak_key').val();
 		api_key.active = $('#fe_ak_status').val();
 		api_key.title = $('#fe_ak_title').val();
 		api_key.description = $('#fe_ak_desc').val();
+		
+		if (!api_key.key.length) {
+			return app.badField('#fe_ak_key', "Please enter an API Key string, or generate a random one.");
+		}
 		
 		for (var idx = 0, len = config.privilege_list.length; idx < len; idx++) {
 			var priv = config.privilege_list[idx];
@@ -323,6 +328,11 @@ Class.add( Page.Admin, {
 		}
 		
 		return api_key;
+	},
+	
+	generate_key: function() {
+		// generate random api key
+		$('#fe_ak_key').val( get_unique_id() );
 	}
 	
 });

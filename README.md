@@ -1161,11 +1161,11 @@ Cronicle will keep the latest [list_row_max](#list_row_max) activity log entries
 
 When you create or edit a key, you will see this screen:
 
-![Editing API Key Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-api-keys-edit.png)
+![Editing API Key Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/admin-api-keys-edit-2.png)
 
 The API Key form contains the following elements:
 
-- The **API Key** itself, which is an automatically generated 32-character hexadecimal string.  It cannot be edited, and is just displayed so you can copy & paste it into your own app.
+- The **API Key** itself, which is an automatically generated 32-character hexadecimal string.  You can manually customize this if desired, or click **Generate Random** to generate a new random key.
 - The **Status** which is either `Active` or `Disabled`.  Disable an API Key if you have a misbehaving app or an exposed key, and all API calls will be rejected.  Only active keys are allowed to make any calls.
 - The **App Title** which is the name of your app that will be using the key.  This is displayed in various places including the activity log.
 - An **App Description** which is an optional verbose description of your app, just so other users can understand what the purpose of each API key is.
@@ -2184,11 +2184,12 @@ The `list` object contains internal metadata about the list structure in storage
 /api/app/get_event/v1
 ```
 
-This fetches details about a single event, given its ID.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
+This fetches details about a single event, given its ID or exact title.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
 
 | Parameter Name | Description |
 |----------------|-------------|
-| `id` | **(Required)** The ID of the event you wish to fetch details on. |
+| `id` | The ID of the event you wish to fetch details on. |
+| `title` | The exact title of the event you wish to fetch details on (case-sensitive). |
 
 Example request:
 
@@ -2418,13 +2419,14 @@ See the [Standard Response Format](#standard-response-format) for details.
 /api/app/run_event/v1
 ```
 
-This immediately starts an on-demand job for an event, regardless of the schedule.  This is effectively the same as a user clicking the "Run Now" button in the UI.  API Keys require the `run_events` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
+This immediately starts an on-demand job for an event, regardless of the schedule.  This is effectively the same as a user clicking the "Run Now" button in the UI.  API Keys require the `run_events` privilege to use this API.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  You can specify the target event by its ID or exact title:
 
 | Parameter Name | Description |
 |----------------|-------------|
-| `id` | **(Required)** The ID of the event you wish to run a job for. |
+| `id` | The ID of the event you wish to run a job for. |
+| `title` | The exact title of the event you wish to run a job for (case-sensitive). |
 
-Include almost anything from the [Event Data Object](#event-data-format) to customize the settings for the job.  Anything omitted is pulled from the event object.  Example request:
+You can also include almost anything from the [Event Data Object](#event-data-format) to customize the settings for the job.  Anything omitted is pulled from the event object.  Example request:
 
 ```js
 {

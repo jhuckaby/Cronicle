@@ -321,6 +321,12 @@ div.activity_desc > b {
 	word-break: break-all;
 }
 
+.link {
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
 .link.addme {
 	/*font-weight: normal !important;*/
 	font-weight: bold;
