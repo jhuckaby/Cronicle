@@ -69,7 +69,7 @@ stream.on('json', function(job) {
 			description: "Script failed: " + Tools.getErrorDescription(err)
 		});
 		
-		fs.unlink( script_file );
+		fs.unlink( script_file, function(err) {;} );
 	} );
 	
 	child.on('exit', function (code, signal) {
@@ -97,7 +97,7 @@ stream.on('json', function(job) {
 		}
 		
 		stream.write(data);
-		fs.unlink( script_file );
+		fs.unlink( script_file, function(err) {;} );
 	} ); // exit
 	
 	// silence EPIPE errors on child STDIN
