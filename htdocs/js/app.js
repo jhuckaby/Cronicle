@@ -481,7 +481,8 @@ app.extend({
 	
 	checkScrollTime: function() {
 		// check page scroll, see if we need to fade in/out the scroll time widget
-		var y = $('body').scrollTop();
+		var pos = get_scroll_xy();
+		var y = pos.y;
 		var min_y = 70;
 		
 		if ((y >= min_y) && this.clock_visible) {
