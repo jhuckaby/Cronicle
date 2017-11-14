@@ -586,7 +586,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			// if certain key properties were changed and event has active jobs, ask user to update them
 			var need_update = false;
 			var updates = {};
-			var keys = ['title', 'timeout', 'retries', 'retry_delay', 'chain', 'notify_success', 'notify_fail', 'web_hook', 'cpu_limit', 'cpu_sustain', 'memory_limit', 'memory_sustain'];
+			var keys = ['title', 'timeout', 'retries', 'retry_delay', 'chain', 'chain_error', 'notify_success', 'notify_fail', 'web_hook', 'cpu_limit', 'cpu_sustain', 'memory_limit', 'memory_sustain'];
 			
 			for (var idx = 0, len = keys.length; idx < len; idx++) {
 				var key = keys[idx];
@@ -799,23 +799,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// catch-up mode (run all)
 		// method (interruptable, non-interruptable)
-		// chain reaction
-		var sorted_events = app.schedule.sort( function(a, b) {
-			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
-		} );
-		
-		html += get_form_table_row( 'Options', 
+		html += get_form_table_row( 'Misc. Options', 
 			'<div><input type="checkbox" id="fe_ee_catch_up" value="1" '+(event.catch_up ? 'checked="checked"' : '') + ' ' + (event.id ? 'onChange="$P().setGroupVisible(\'rc\',this.checked)"' : '') + ' /><label for="fe_ee_catch_up">Run All (Catch-Up)</label></div>' + 
 			'<div class="caption">Automatically run all missed events after server downtime or scheduler/event disabled.</div>' + 
 			
 			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_detached" value="1" '+(event.detached ? 'checked="checked"' : '')+'/><label for="fe_ee_detached">Uninterruptible (Detached)</label></div>' + 
-			'<div class="caption">Run event as a detached background process that is never interrupted.</div>' + 
-			
-			'<table style="margin-top:10px" cellspacing="0" cellpadding="0"><tr>' + 
-				'<td><input type="checkbox" id="fe_ee_chain_enabled" value="1" onChange="$P().set_chain_enabled(this.checked)" '+(event.chain ? 'checked="checked"' : '')+'/><label for="fe_ee_chain_enabled">Chain Reaction' + (event.chain ? ':' : '') + '</label></td>' + 
-				'<td><div id="d_ee_chain" style="'+(event.chain ? 'display:block' : 'display:none')+'"><select id="fe_ee_chain" style="margin-left:10px; font-size:12px;">' + render_menu_options( sorted_events, event.chain, false ) + '</select></div></td>' + 
-			'</tr></table>' + 
-			'<div class="caption">Select an event to run automatically after this event completes.</div>'
+			'<div class="caption">Run event as a detached background process that is never interrupted.</div>'
 		);
 		html += get_form_table_spacer();
 		
@@ -839,6 +828,26 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			"Optionally reset the internal clock for this event, to repeat past jobs, or jump over a queue."
 		);
 		html += get_form_table_spacer( rc_classes, '' );
+		
+		// chain reaction
+		var sorted_events = app.schedule.sort( function(a, b) {
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
+		var chain_expanded = !!(event.chain || event.chain_error);
+		html += get_form_table_row( 'Chain Reaction', 
+			'<div style="font-size:13px;'+(chain_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Chain Options</span></div>' + 
+			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(chain_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Chain Options</legend>' + 
+				'<div class="plugin_params_label">Run Event on Success:</div>' + 
+				'<div class="plugin_params_content"><select id="fe_ee_chain" style="margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain, false ) + '</select></div>' + 
+				
+				'<div class="plugin_params_label">Run Event on Failure:</div>' + 
+				'<div class="plugin_params_content"><select id="fe_ee_chain_error" style="margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain_error, false ) + '</select></div>' + 
+				
+			'</fieldset>'
+		);
+		html += get_form_table_caption( "Select events to run automatically after this event completes." );
+		html += get_form_table_spacer();
 		
 		// notification
 		var notif_expanded = !!(event.notify_success || event.notify_fail || event.web_hook);
@@ -899,18 +908,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		}, 1 );
 		
 		return html;
-	},
-	
-	set_chain_enabled: function(enabled) {
-		// set chain reaction menu enabled or disabled
-		if (enabled) {
-			$('#d_ee_chain').show( 250 );
-			$('#fe_ee_chain_enabled').next().html('Chain Reaction:');
-		}
-		else {
-			$('#fe_ee_chain_enabled').next().html('Chain Reaction');
-			$('#d_ee_chain').hide( 250 );
-		}
 	},
 	
 	set_event_target: function(target) {
@@ -1622,12 +1619,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		event.detached = $('#fe_ee_detached').is(':checked') ? 1 : 0;
 		
 		// chain reaction
-		if ($('#fe_ee_chain_enabled').is(':checked')) {
-			event.chain = $('#fe_ee_chain').val();
-		}
-		else {
-			event.chain = "";
-		}
+		event.chain = $('#fe_ee_chain').val();
+		event.chain_error = $('#fe_ee_chain_error').val();
 		
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {

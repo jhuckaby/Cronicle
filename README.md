@@ -836,9 +836,9 @@ It is much better to design your jobs to be interrupted, if at all possible.  No
 
 ##### Chain Reaction
 
-When Chain Reaction mode is enabled on an event, a drop-down menu will appear allowing you to select an additional event from the schedule.  This event will be launched automatically each time the current event completes a job.  You are essentially "chaining" two events together, so one always runs at the completion of the other.  This chain can be any number of events long, and the events can all run on different servers.
+Chain Reaction mode allows you to select an event which will be launched automatically each time the current event completes a job.  You are essentially "chaining" two events together, so one always runs at the completion of the other.  This chain can be any number of events long, and the events can all run on different servers.
 
-The chained event only launches a job if the current event completes with a successful result.  Meaning, if an error occurs and the job fails, the chain reaction does not activate.
+You can optionally select different events to run if the current job succeeds or fails.  For example, you may have a special error handling / notification event, which needs to run upon specific event failures.
 
 You can have more control over this process by using the JSON API in your Plugins.  See [Chain Reaction Control](#chain-reaction-control) below for details.
 
@@ -1514,15 +1514,30 @@ To enable a chain reaction, you need to know the Event ID of the event you want 
 { "chain": "e29bf12db" }
 ```
 
-Remember that your job must complete successfully in order to trigger the chain reaction, and fire off the next event.
-
-To disable chain reaction mode, set the `chain` property to false or an empty string:
+Remember that your job must complete successfully in order to trigger the chain reaction, and fire off the next event.  However, if you want to run a event only on job failure, set the `chain_error` property instead:
 
 ```js
-{ "chain": "" }
+{ "chain_error": "e29bf12db" }
+```
+
+You set both the `chain` and `chain_error` properties, to run different events on success / failure.
+
+To disable chain reaction mode, set the `chain` and `chain_error` properties to false or empty strings:
+
+```js
+{ "chain": "", "chain_error": "" }
 ```
 
 ##### Chain Data
+
+When a chained event runs, some additional information is included in the initial JSON job object sent to STDIN:
+
+| Property Name | Description |
+|---------------|-------------|
+| `source_event` | The ID of the original event that started the chain reaction. |
+| `chain_code` | The error code from the original job, or `0` for success. |
+| `chain_description` | The error description from the original job, if applicable. |
+| `chain_data` | Custom user data, if applicable (see below). |
 
 You can pass custom JSON data to the next event in the chain, when using a [Chain Reaction](#chain-reaction) event.  Simply specify a JSON property called `chain_data` in your JSON output, and pass in anything you want (can be a complex object / array tree), and the next event will receive it.  Example:
 
@@ -2623,7 +2638,8 @@ This updates a job that is already in progress.  Only certain job properties may
 | `timeout` | (Optional) The total run time in seconds to allow, before the job is aborted. |
 | `retries` | (Optional) The number of retries before the job is reported a failure. |
 | `retry_delay` | (Optional) The number of seconds between retries. |
-| `chain` | (Optional) Launch another event when the job completes (see [Chain Reaction](#chain-reaction)). |
+| `chain` | (Optional) Launch another event when the job completes successfully (see [Chain Reaction](#chain-reaction)). |
+| `chain_error` | (Optional) Launch another event when the job fails (see [Chain Reaction](#chain-reaction)). |
 | `notify_success` | (Optional) A comma-separated list of e-mail addresses to notify on job success. |
 | `notify_fail` | (Optional) A comma-separated list of e-mail addresses to notify on job failure. |
 | `web_hook` | (Optional) A fully-qualified URL to ping when the job completes. |
@@ -2692,7 +2708,8 @@ Here are descriptions of all the properties in the event object, which is common
 | `api_key` | The API Key of the application that originally created the event (if created via API). |
 | `catch_up` | Specifies whether the event has [Run All Mode](#run-all-mode) enabled or not. |
 | `category` | The Category ID to which the event is assigned.  See [Categories Tab](#categories-tab). |
-| `chain` | The chain reaction event ID to launch when jobs complete.  See [Chain Reaction](#chain-reaction). |
+| `chain` | The chain reaction event ID to launch when jobs complete successfully.  See [Chain Reaction](#chain-reaction). |
+| `chain_error` | The chain reaction event ID to launch when jobs fail.  See [Chain Reaction](#chain-reaction). |
 | `cpu_limit` | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). |
 | `cpu_sustain` | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
 | `created` | The date/time of the event's initial creation, in Epoch seconds. |
