@@ -186,13 +186,20 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			group.multiplex = 1;
 		}
 		
+		html += '<div class="subtitle" style="margin-top:7px; margin-bottom:13px;">';
+			html += 'Completed Job';
+			if (event.id && !event.multiplex) html += '<div class="subtitle_widget" style="margin-left:2px;"><span class="link" onMouseUp="$P().run_again()"><i class="fa fa-repeat">&nbsp;</i><b>Run Again</b></span></div>';
+			// html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().abort_job()"><i class="fa fa-ban">&nbsp;</i><b>Abort Job</b></span></div>';
+			html += '<div class="clear"></div>';
+		html += '</div>';
+		
 		// result banner
 		html += this.get_job_result_banner(job);
 		
 		// fieldset header
-		html += '<fieldset style="margin-top:8px; margin-right:0px; padding-top:10px; position:relative;"><legend>Completed Job Details</legend>';
+		html += '<fieldset style="margin-top:8px; margin-right:0px; padding-top:10px; position:relative;"><legend>Job Details</legend>';
 			
-			if (event.id && !event.multiplex) html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().run_again()">Run Again</div>';
+			// if (event.id && !event.multiplex) html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().run_again()">Run Again</div>';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';
@@ -693,7 +700,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<div class="subtitle" style="margin-top:7px; margin-bottom:13px;">';
 			html += 'Live Job Progress';
 			html += '<div class="subtitle_widget" style="margin-left:2px;"><span class="link abort" onMouseUp="$P().abort_job()"><i class="fa fa-ban">&nbsp;</i><b>Abort Job</b></span></div>';
-			html += '<div class="subtitle_widget"><span id="s_watch_job" class="link" onMouseUp="$P().toggle_watch()" style="' + (watch_enabled ? 'color:#3f7ed5;' : 'color:#777;') + '"><i class="fa ' + (watch_enabled ? 'fa-check-square-o' : 'fa-square-o') + '">&nbsp;</i><b>Watch Job</b></a></div>';
+			html += '<div class="subtitle_widget"><span id="s_watch_job" class="link" onMouseUp="$P().toggle_watch()" style="' + (watch_enabled ? 'color:#3f7ed5;' : 'color:#777;') + '"><i class="fa ' + (watch_enabled ? 'fa-check-square-o' : 'fa-square-o') + '">&nbsp;</i><b>Watch Job</b></span></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		

@@ -91,10 +91,16 @@ app.extend({
 		// pop version into footer
 		$('#d_footer_version').html( "Version " + this.version || 0 );
 		
-		// some css munging for safari
+		// some css classing for browser-specific adjustments
 		var ua = navigator.userAgent;
 		if (ua.match(/Safari/) && !ua.match(/(Chrome|Opera)/)) {
 			$('body').addClass('safari');
+		}
+		else if (ua.match(/Chrome/)) {
+			$('body').addClass('chrome');
+		}
+		else if (ua.match(/Firefox/)) {
+			$('body').addClass('firefox');
 		}
 		
 		// follow scroll so we can fade in/out the scroll time widget

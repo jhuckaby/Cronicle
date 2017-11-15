@@ -1,6 +1,10 @@
 /* Styles for Cronicle */
 /* Theme colors: #3f7ed5, #5890db, #7cafda, #9ccffa */
 
+div.container {
+	min-width: 750px;
+}
+
 #d_header_logo {
 	position: relative;
 	width: 40px;
@@ -169,6 +173,27 @@ div.plugin_params_content input, div.plugin_params_content select, div.plugin_pa
 }
 
 /* Pies */
+
+@media only screen and (min-width: 1020px) and (max-width: 1100px) {
+	div.pie-column {
+		transform: scale(0.9);
+	}
+}
+@media only screen and (min-width: 950px) and (max-width: 1020px) {
+	div.pie-column {
+		transform: scale(0.8);
+	}
+}
+@media only screen and (min-width: 880px) and (max-width: 950px) {
+	div.pie-column {
+		transform: scale(0.7);
+	}
+}
+@media only screen and (max-width: 880px) {
+	div.pie-column {
+		transform: scale(0.6);
+	}
+}
 
 div.pie-column {
 	width: 321px;
