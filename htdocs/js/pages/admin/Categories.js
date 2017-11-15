@@ -340,7 +340,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// description
-		html += get_form_table_row('Description:', '<textarea id="fe_ec_desc" style="width:500px; height:50px;">'+escape_text_field_value(cat.description)+'</textarea>') + 
+		html += get_form_table_row('Description:', '<textarea id="fe_ec_desc" style="width:500px; height:50px; resize:vertical;">'+escape_text_field_value(cat.description)+'</textarea>') + 
 			get_form_table_caption("Optionally enter a description for the category.") + 
 			get_form_table_spacer();
 		

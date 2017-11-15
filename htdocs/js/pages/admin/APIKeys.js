@@ -286,7 +286,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// description
-		html += get_form_table_row('App Description', '<textarea id="fe_ak_desc" style="width:550px; height:50px;">'+escape_text_field_value(api_key.description)+'</textarea>');
+		html += get_form_table_row('App Description', '<textarea id="fe_ak_desc" style="width:550px; height:50px; resize:vertical;">'+escape_text_field_value(api_key.description)+'</textarea>');
 		html += get_form_table_caption( "Optionally enter a more detailed description of the application." );
 		html += get_form_table_spacer();
 		

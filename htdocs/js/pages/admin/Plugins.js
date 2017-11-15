@@ -360,7 +360,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// command
-		html += get_form_table_row('Executable:', '<textarea id="fe_ep_command" style="width:550px; height:50px;" spellcheck="false" onkeydown="return $P().stopEnter(this,event)">'+escape_text_field_value(plugin.command)+'</textarea>');
+		html += get_form_table_row('Executable:', '<textarea id="fe_ep_command" style="width:550px; height:50px; resize:vertical;" spellcheck="false" onkeydown="return $P().stopEnter(this,event)">'+escape_text_field_value(plugin.command)+'</textarea>');
 		html += get_form_table_caption(
 			'Enter the filesystem path to your executable, including any command-line arguments.<br/>' + 
 			'Do not include any pipes or redirects -- for those, please use the <b>Shell Plugin</b>.' 
@@ -566,7 +566,7 @@ Class.add( Page.Admin, {
 				html += get_form_table_row('Rows:', '<input type="text" id="fe_epp_textarea_rows" size="5" value="'+escape_text_field_value(param.rows || 5)+'"/>');
 				html += get_form_table_caption("Enter the number of visible rows to allocate for the text box.");
 				html += get_form_table_spacer('short transparent');
-				html += get_form_table_row('Default Text:', '<textarea id="fe_epp_textarea_value" style="width:99%; height:60px;" spellcheck="false">'+escape_text_field_value(param.value)+'</textarea>');
+				html += get_form_table_row('Default Text:', '<textarea id="fe_epp_textarea_value" style="width:99%; height:60px; resize:none;" spellcheck="false">'+escape_text_field_value(param.value)+'</textarea>');
 				html += get_form_table_caption("Optionally enter default text for the text box.");
 			break;
 			

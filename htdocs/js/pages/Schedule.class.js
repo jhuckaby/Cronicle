@@ -899,7 +899,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += get_form_table_spacer();
 		
 		// notes
-		html += get_form_table_row( 'Notes', '<textarea id="fe_ee_notes" style="width:600px; height:80px;">'+escape_text_field_value(event.notes)+'</textarea>' );
+		html += get_form_table_row( 'Notes', '<textarea id="fe_ee_notes" style="width:600px; height:80px; resize:vertical;">'+escape_text_field_value(event.notes)+'</textarea>' );
 		html += get_form_table_caption( "Optionally enter notes for the event, which will be included in all e-mail notifications." );
 		html += get_form_table_spacer();
 		
@@ -1499,7 +1499,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 						case 'textarea':
 							var ta_height = parseInt(param.rows) * 15;
 							html += '<div class="plugin_params_label">' + param.title + '</div>';
-							html += '<div class="plugin_params_content"><textarea id="fe_ee_pp_'+param.id+'" style="width:99%; height:'+ta_height+'px;" spellcheck="false" onkeydown="return catchTab(this,event)">'+escape_text_field_value(value)+'</textarea></div>';
+							html += '<div class="plugin_params_content"><textarea id="fe_ee_pp_'+param.id+'" style="width:99%; height:'+ta_height+'px; resize:vertical;" spellcheck="false" onkeydown="return catchTab(this,event)">'+escape_text_field_value(value)+'</textarea></div>';
 						break;
 						
 						case 'checkbox':
