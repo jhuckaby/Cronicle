@@ -130,6 +130,11 @@ do
 		fi
 		exit
 	;;
+	version)
+		PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+		echo "$PACKAGE_VERSION"
+		exit
+	;;
     *)
 	echo "usage: $0 (start|stop|cycle|status|setup|maint|admin|export|import|upgrade|help)"
 	cat <<EOF
@@ -144,6 +149,7 @@ admin      - Creates new emergency admin account (specify user / pass).
 export     - Exports data to specified file.
 import     - Imports data from specified file.
 upgrade    - Upgrades $NAME to the latest stable (or specify version).
+version    - Outputs the current $NAME package version.
 help       - Displays this screen.
 
 EOF

@@ -1806,6 +1806,23 @@ Here are all the Cronicle services available to you on the command line.  Most o
 /opt/cronicle/bin/control.sh [COMMAND]
 ```
 
+Here are all the accepted commands:
+
+| Command | Description |
+|---------|-------------|
+| `start` | Starts Cronicle in daemon mode. See [Starting and Stopping](#starting-and-stopping). |
+| `stop` | Stops the Cronicle daemon and waits for exit. See [Starting and Stopping](#starting-and-stopping). |
+| `restart` | Calls `stop`, then `start`, in sequence. See [Starting and Stopping](#starting-and-stopping).  |
+| `status` | Checks whether Cronicle is currently running. See [Starting and Stopping](#starting-and-stopping).  |
+| `setup` | Runs initial storage setup (for first time install). See [Setup](#setup). |
+| `maint` | Runs daily storage maintenance routine. See [Storage Maintenance](#storage-maintenance). |
+| `admin` | Creates new emergency admin account (specify user / pass). See [Recover Admin Access](#recover-admin-access). |
+| `export` | Exports data to specified file. See [Data Import and Export](#data-import-and-export). |
+| `import` | Imports data from specified file. See [Data Import and Export](#data-import-and-export). |
+| `upgrade` | Upgrades Cronicle to the latest stable (or specify version). See [Upgrading Cronicle](#upgrading-cronicle). |
+| `version` | Outputs the current Cronicle package version and exits. |
+| `help` | Displays a list of available commands and exits. |
+
 ## Starting and Stopping
 
 To start the service, use the `start` command:
