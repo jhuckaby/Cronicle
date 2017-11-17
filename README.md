@@ -362,15 +362,17 @@ If you need to include custom JSON data with the web hook HTTP POST, you can do 
 
 In this example `my_custom_key1` and `my_custom_key2` will be merged in with the event data that usually accompanies the web hook post data.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
 
-### web_hook_ssl_cert_bypass
+### ssl_cert_bypass
 
-If you are having trouble getting HTTPS/SSL web hooks to work, you might need to set `web_hook_ssl_cert_bypass` to true.  This causes Node.js to blindly accept all HTTPS URLs, even when it cannot validate the SSL certificate.  This effectively sets the following environment variable at startup:
+If you are having trouble getting HTTPS web hooks or SSL SMTP e-mails to work, you might need to set `ssl_cert_bypass` to true.  This causes Node.js to blindly accept all SSL connections, even when it cannot validate the SSL certificate.  This effectively sets the following environment variable at startup:
 
 ```js
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 ```
 
-Please only do this if you understand the security ramifications, and *completely trust* the host you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
+Please only do this if you understand the security ramifications, and *completely trust* the host(s) you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
+
+For legacy compatibility, the old `web_hook_ssl_cert_bypass` property is still accepted, and has the same effect as `ssl_cert_bypass`.
 
 ### job_memory_max
 
