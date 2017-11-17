@@ -41,7 +41,8 @@
 			"created": 1434125333,
 			"params": [
 				{ "id":"script", "type":"textarea", "rows":10, "title":"Script Source", "value": "#!/bin/sh\n\n# Enter your shell script code here" },
-				{ "id":"annotate", "type":"checkbox", "title":"Add Date/Time Stamps to Log", "value": 0 }
+				{ "id":"annotate", "type":"checkbox", "title":"Add Date/Time Stamps to Log", "value": 0 },
+				{ "id":"json", "type":"checkbox", "title":"Interpret JSON in Output", "value": 0 }
 			]
 		} ],
 		[ "listPush", "global/plugins", {

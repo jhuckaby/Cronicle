@@ -33,8 +33,9 @@ stream.on('json', function(job) {
 	cstream.recordRegExp = /^\s*\{.+\}\s*$/;
 	
 	cstream.on('json', function(data) {
-		// received JSON data from child, pass along to Cronicle
-		stream.write(data);
+		// received JSON data from child, pass along to Cronicle or log
+		if (job.params.json) stream.write(data);
+		else cstream.emit('text', JSON.stringify(data) + "\n");
 	} );
 	
 	cstream.on('text', function(line) {
