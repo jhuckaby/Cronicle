@@ -1,5 +1,5 @@
 // Cronicle Auto Installer
-// Copyright (c) 2015 Joseph Huckaby, MIT License.
+// Copyright (c) 2015 - 2017 Joseph Huckaby, MIT License.
 // https://github.com/jhuckaby/Cronicle
 
 // To install, issue this command as root:
@@ -11,7 +11,7 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.0';
+var installer_version = '1.1';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
@@ -72,6 +72,16 @@ try {
 }
 catch (err) {;}
 
+var is_running = false;
+if (is_preinstalled) {
+	var pid_file = log_dir + '/cronicled.pid';
+	try {
+		var pid = fs.readFileSync(pid_file, { encoding: 'utf8' });
+		is_running = process.kill( pid, 0 );
+	}
+	catch (err) {;}
+}
+
 print( "Fetching release list...\n");
 logonly( "Releases URL: " + gh_releases_url + "\n" );
 
@@ -81,9 +91,6 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 		warn( stderr.toString() );
 		die("Failed to fetch release list: " + gh_releases_url + ": " + err);
 	}
-	/*else {
-		logonly( stdout.toString() + stderr.toString() );
-	}*/
 	
 	var releases = null;
 	try { releases = JSON.parse( stdout.toString() ); }
@@ -131,6 +138,13 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 	// proceed with installation
 	if (is_preinstalled) print("Upgrading Cronicle from v"+cur_version+" to v"+new_version+"...\n");
 	else print("Installing Cronicle v"+new_version+"...\n");
+	
+	if (is_running) {
+		print("\n");
+		try { cp.execSync( base_dir + "/bin/control.sh stop", { stdio: 'inherit' } ); }
+		catch (err) { die("Failed to stop Cronicle: " + err); }
+		print("\n");
+	}
 	
 	// download tarball and expand into current directory
 	var tarball_url = release.tarball_url;
@@ -184,6 +198,12 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 					}
 					else {
 						print("Upgrade complete.\n\n");
+						
+						if (is_running) {
+							try { cp.execSync( base_dir + "/bin/control.sh start", { stdio: 'inherit' } ); }
+							catch (err) { die("Failed to start Cronicle: " + err); }
+							print("\n");
+						}
 					}
 				} // upgrade
 				else {

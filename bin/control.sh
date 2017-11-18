@@ -121,13 +121,7 @@ do
 		exit
 	;;
 	upgrade)
-		if [ $RUNNING -eq 1 ]; then
-		    $0 stop
-		fi
-		node $HOMEDIR/bin/install.js $2
-		if [ $RUNNING -eq 1 ]; then
-		    $0 start
-		fi
+		node $HOMEDIR/bin/install.js $2 || exit 1
 		exit
 	;;
 	version)
