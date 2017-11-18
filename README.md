@@ -1632,14 +1632,43 @@ This would cause the event to be disabled, so the schedule would no longer launc
 
 ### Environment Variables
 
-When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with the following custom variables:
+When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with the following custom environment variables:
 
 | Variable | Description |
 |----------|-------------|
-| `CRONICLE` | The current Cronicle version, e.g. `1.0.0`. |
-| `JOB_ID` | The unique alphanumeric ID assigned to the job. |
-| `JOB_LOG` | The filesystem path to the job log file, which you can append to if you want.  However, STDOUT or STDERR are both piped to the log already. |
-| `JOB_NOW` | The Epoch timestamp of the job time (may be in the past if re-running a missed job). |
+| `$CRONICLE` | The current Cronicle version, e.g. `1.0.0`. |
+| `$JOB_ALGO` | Specifies the algorithm that was used for picking the server from the target group. See [Algorithm](#algorithm). |
+| `$JOB_CATCH_UP` | Will be set to `1` if the event has [Run All Mode](#run-all-mode) mode enabled, `0` otherwise. |
+| `$JOB_CATEGORY_TITLE` | The Category Title to which the event is assigned.  See [Categories Tab](#categories-tab). |
+| `$JOB_CATEGORY` | The Category ID to which the event is assigned.  See [Categories Tab](#categories-tab). |
+| `$JOB_CHAIN` | The chain reaction event ID to launch if job completes successfully.  See [Chain Reaction](#chain-reaction). |
+| `$JOB_CHAIN_ERROR` | The chain reaction event ID to launch if job fails.  See [Chain Reaction](#chain-reaction). |
+| `$JOB_COMMAND` | The command-line executable that was launched for the current Plugin. |
+| `$JOB_CPU_LIMIT` | Limits the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). |
+| `$JOB_CPU_SUSTAIN` | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
+| `$JOB_DETACHED` | Specifies whether [Detached Mode](#detached-mode) is enabled or not. |
+| `$JOB_EVENT_TITLE` | A display name for the event, shown on the [Schedule Tab](#schedule-tab) as well as in reports and e-mails. |
+| `$JOB_EVENT` | The ID of the event that launched the job. |
+| `$JOB_HOSTNAME` | The hostname of the server chosen to run the current job. |
+| `$JOB_ID` | The unique alphanumeric ID assigned to the job. |
+| `$JOB_LOG` | The filesystem path to the job log file, which you can append to if you want.  However, STDOUT or STDERR are both piped to the log already. |
+| `$JOB_MEMORY_LIMIT` | Limits the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
+| `$JOB_MEMORY_SUSTAIN` | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
+| `$JOB_MULTIPLEX` | Will be set to `1` if the event has [Multiplexing](#multiplexing) enabled, `0` otherwise. |
+| `$JOB_NOTES` | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
+| `$JOB_NOTIFY_FAIL` | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
+| `$JOB_NOTIFY_SUCCESS` | List of e-mail recipients to notify upon job success (CSV). See [Event Notification](#event-notification). |
+| `$JOB_NOW` | The Epoch timestamp of the job time (may be in the past if re-running a missed job). |
+| `$JOB_PLUGIN_TITLE` | The Plugin Title for the associated event. |
+| `$JOB_PLUGIN` | The Plugin ID for the associated event. |
+| `$JOB_RETRIES` | The number of retries to allow before reporting an error. See [Event Retries](#event-retries). |
+| `$JOB_RETRY_DELAY` | Optional delay between retries, in seconds. See [Event Retries](#event-retries). |
+| `$JOB_SOURCE` | String representing who launched the job, will be `Scheduler` or `Manual (USERNAME)`. |
+| `$JOB_STAGGER` | If [Multiplexing](#multiplexing) is enabled, this specifies the number of seconds to wait between job launches. |
+| `$JOB_TIME_START` | The starting time of the job, in Epoch seconds. |
+| `$JOB_TIMEOUT` | The event timeout (max run time) in seconds, or `0` if no timeout is set. |
+| `$JOB_TIMEZONE` | The timezone for interpreting the event timing settings. Needs to be an [IANA timezone string](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).  See [Event Timing](#event-timing). |
+| `$JOB_WEB_HOOK` | An optional URL to hit for the start and end of each job. See [Event Web Hook](#event-web-hook). |
 
 In addition, any [Plugin Parameters](#plugin-parameters) are also passed as environment variables.  The keys are converted to upper-case, as that seems to be the standard.  So for example, you can customize the `PATH` by declaring it as a Plugin Parameter:
 
