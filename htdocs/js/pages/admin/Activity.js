@@ -199,6 +199,10 @@ Class.add( Page.Admin, {
 					}
 					actions.push( '<a href="#JobDetails?id='+item.id+'">Job Details</a>' );
 				break;
+				case 'job_delete':
+					var event = find_object( app.schedule, { id: item.event } ) || { title: 'Unknown Event' };
+					desc = 'Job <b>#'+item.id+'</b> ('+event.title+') manually deleted';
+				break;
 				
 				// scheduler
 				case 'state_update':

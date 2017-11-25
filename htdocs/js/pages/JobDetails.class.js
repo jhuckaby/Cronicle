@@ -130,6 +130,24 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		return html;
 	},
 	
+	delete_job: function() {
+		// delete job, after confirmation
+		var self = this;
+		var job = this.job;
+		
+		app.confirm( '<span style="color:red">Delete Job</span>', "Are you sure you want to delete the current job log and history?", "Delete", function(result) {
+			if (result) {
+				app.showProgress( 1.0, "Deleting job..." );
+				app.api.post( 'app/delete_job', job, function(resp) {
+					app.hideProgress();
+					app.showMessage('success', "Job ID '"+job.id+"' was deleted successfully.");
+					$('#tab_History').trigger('click');
+					self.tab.hide();
+				} );
+			}
+		} );
+	},
+	
 	run_again: function() {
 		// run job again
 		var self = this;
@@ -189,7 +207,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<div class="subtitle" style="margin-top:7px; margin-bottom:13px;">';
 			html += 'Completed Job';
 			if (event.id && !event.multiplex) html += '<div class="subtitle_widget" style="margin-left:2px;"><span class="link" onMouseUp="$P().run_again()"><i class="fa fa-repeat">&nbsp;</i><b>Run Again</b></span></div>';
-			// html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().abort_job()"><i class="fa fa-ban">&nbsp;</i><b>Abort Job</b></span></div>';
+			if (app.isAdmin()) html += '<div class="subtitle_widget"><span class="link abort" onMouseUp="$P().delete_job()"><i class="fa fa-trash-o">&nbsp;</i><b>Delete Job</b></span></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		

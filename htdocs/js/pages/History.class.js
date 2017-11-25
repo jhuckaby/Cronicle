@@ -67,11 +67,17 @@ Class.subclass( Page.Base, "Page.History", {
 		html += '</div>';
 		
 		var self = this;
+		var num_visible_items = 0;
+		
 		html += this.getPaginatedTable( resp, cols, 'event', function(job, idx) {
 			/*var actions = [
 				'<a href="#JobDetails?id='+job.id+'"><b>Job&nbsp;Details</b></a>',
 				'<a href="#History?sub=event_history&id='+job.event+'"><b>Event&nbsp;History</b></a>'
 			];*/
+			
+			// suppress row view if job was deleted
+			if (job.action != 'job_complete') return null;
+			num_visible_items++;
 			
 			var event = find_object( app.schedule, { id: job.event } );
 			var event_link = '(None)';
@@ -107,6 +113,12 @@ Class.subclass( Page.Base, "Page.History", {
 			
 			return tds;
 		} );
+		
+		if (!num_visible_items) {
+			html += '<tr><td colspan="'+cols.length+'" align="center" style="padding-top:10px; padding-bottom:10px; font-weight:bold;">';
+			html += 'All items were deleted on this page.';
+			html += '</td></tr>';
+		}
 		
 		html += '</div>'; // padding
 		
@@ -557,8 +569,11 @@ col_max.push( short_float( 25 + Math.random() * 25 ) );*/
 		html += '</div>';
 		
 		var self = this;
+		var num_visible_items = 0;
+		
 		html += this.getPaginatedTable( resp, cols, 'event', function(job, idx) {
 			if (job.action != 'job_complete') return null;
+			num_visible_items++;
 			
 			var cpu_avg = 0;
 			var mem_avg = 0;
@@ -578,6 +593,12 @@ col_max.push( short_float( 25 + Math.random() * 25 ) );*/
 			
 			return tds;
 		} );
+		
+		if (!num_visible_items) {
+			html += '<tr><td colspan="'+cols.length+'" align="center" style="padding-top:10px; padding-bottom:10px; font-weight:bold;">';
+			html += 'All items were deleted on this page.';
+			html += '</td></tr>';
+		}
 		
 		html += '</div>'; // padding
 		html += '</div>'; // sidebar tabs
