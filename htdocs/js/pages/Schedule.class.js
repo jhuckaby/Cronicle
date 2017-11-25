@@ -17,7 +17,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		this.args = args;
 		
 		app.showTabBar(true);
-		this.tab[0]._page_id = Nav.currentAnchor();
+		// this.tab[0]._page_id = Nav.currentAnchor();
 		
 		this.div.addClass('loading');
 		this['gosub_'+args.sub](args);
