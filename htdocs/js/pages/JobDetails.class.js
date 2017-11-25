@@ -812,6 +812,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		// live job log tail
 		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
+		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+			// use ip if available, may work better in some setups
+			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
+		}
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
