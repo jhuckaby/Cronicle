@@ -237,17 +237,31 @@ The port number to use when communicating with the SMTP server.  The default is 
 
 ### mail_options
 
-Set specific mailer options, such as SMTP SSL and authentication, passed directly to [pixl-mail](https://www.npmjs.com/package/pixl-mail#smtp-options) (and then to [nodemailer-smtp-transport](https://www.npmjs.com/package/nodemailer-smtp-transport#usage)).  Example:
+Set specific mailer options, such as SMTP SSL and authentication, passed directly to [pixl-mail](https://www.npmjs.com/package/pixl-mail#options) (and then to [nodemailer](https://nodemailer.com/)).  Example:
 
 ```js
 "mail_options": {
-	'secure', true,
-	'auth', { user: 'fsmith', pass: '12345' },
-	connectionTimeout: 10000, // milliseconds
-	greetingTimeout: 10000, // milliseconds
-	socketTimeout: 10000 // milliseconds
+	"secure", true,
+	"auth", { user: "fsmith", pass: "12345" },
+	"connectionTimeout": 10000,
+	"greetingTimeout": 10000,
+	"socketTimeout": 10000
 }
 ```
+
+The `connectionTimeout`, `greetingTimeout` and `socketTimeout` properties are all expressed in milliseconds.
+
+You can also use `mail_options` to use local [sendmail](https://nodemailer.com/transports/sendmail/), if you have that configured on your server.  To do this, set the following properties, and tune as needed:
+
+```js
+"mail_options": {
+	"sendmail": true,
+	"newline": "unix",
+	"path": "/usr/sbin/sendmail"
+}
+```
+
+You can omit `smtp_hostname` and `smtp_port` if you are using sendmail.
 
 ### secret_key
 
