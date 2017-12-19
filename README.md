@@ -466,14 +466,17 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 	"Storage": {
 		"engine": "Couchbase",
 		"Couchbase": {
-			"connect_string": "couchbase://127.0.0.1",
+			"connectString": "couchbase://127.0.0.1",
 			"bucket": "default",
 			"password": "",
-			"serialize": false
+			"serialize": false,
+			"keyPrefix": ""
 		}
 	}
 }
 ```
+
+If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.
 
 You'll also need to install the npm [couchbase](https://www.npmjs.com/package/couchbase) module:
 
@@ -502,6 +505,7 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 			"region": "us-west-1" 
 		},
 		"S3": {
+			"keyPrefix": "",
 			"params": {
 				"Bucket": "MY_S3_BUCKET_ID"
 			}
@@ -509,6 +513,8 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 	}
 }
 ```
+
+If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.
 
 You'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
 
