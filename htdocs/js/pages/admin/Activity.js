@@ -194,7 +194,8 @@ Class.add( Page.Admin, {
 						desc = 'Job <b>#'+item.id+'</b> ('+event.title+') on server <b>'+item.hostname.replace(/\.[\w\-]+\.\w+$/, '')+'</b> completed successfully';
 					}
 					else {
-						desc = 'Job <b>#'+item.id+'</b> ('+event.title+') on server <b>'+item.hostname.replace(/\.[\w\-]+\.\w+$/, '')+'</b> failed with error: ' + (item.description || 'Unknown Error');
+						desc = 'Job <b>#'+item.id+'</b> ('+event.title+') on server <b>'+item.hostname.replace(/\.[\w\-]+\.\w+$/, '')+'</b> failed with error: ' + encode_entities(item.description || 'Unknown Error');
+						if (desc.match(/\n/)) desc = desc.split(/\n/).shift() + "...";
 						color = 'red';
 					}
 					actions.push( '<a href="#JobDetails?id='+item.id+'">Job Details</a>' );
@@ -211,13 +212,13 @@ Class.add( Page.Admin, {
 				
 				// errors
 				case 'error':
-					desc = item.description;
+					desc = encode_entities( item.description );
 					color = 'red';
 				break;
 				
 				// warnings
 				case 'warning':
-					desc = item.description;
+					desc = encode_entities( item.description );
 					color = 'yellow';
 				break;
 				
