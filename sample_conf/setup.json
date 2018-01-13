@@ -103,11 +103,7 @@
 			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.map", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js.map", "htdocs/js/external/" ],
-			[ "symlinkCompress", "node_modules/chart.js/Chart.min.js", "htdocs/js/external/" ],
-			
-			[ "symlinkCompress", "node_modules/c3/c3.min.js", "htdocs/js/external/" ],
-			[ "symlinkCompress", "node_modules/c3/c3.min.css", "htdocs/css/" ],
-			[ "symlinkCompress", "node_modules/d3/d3.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/chart.js/dist/Chart.min.js", "htdocs/js/external/" ],
 			
 			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.min.css", "htdocs/css/" ],
 			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.css.map", "htdocs/css/" ],

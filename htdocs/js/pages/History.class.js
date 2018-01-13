@@ -133,7 +133,9 @@ Class.subclass( Page.Base, "Page.History", {
 	
 	gosub_event_stats: function(args) {
 		// request event stats
-		app.api.post( 'app/get_event_history', { id: args.id, offset: 0, limit: 50 }, this.receive_event_stats.bind(this) );
+		if (!args.offset) args.offset = 0;
+		if (!args.limit) args.limit = 50;
+		app.api.post( 'app/get_event_history', copy_object(args), this.receive_event_stats.bind(this) );
 	},
 	
 	receive_event_stats: function(resp) {
@@ -249,7 +251,7 @@ Class.subclass( Page.Base, "Page.History", {
 		// graph containers
 		html += '<div style="margin-top:15px;">';
 			html += '<div class="graph-title">Performance History</div>';
-			html += '<div id="d_graph_hist_perf" style="width:100%; height:300px;"></div>';
+			html += '<div id="d_graph_hist_perf" style="position:relative; width:100%; height:300px; overflow:hidden;"><canvas id="c_graph_hist_perf"></canvas></div>';
 		html += '</div>';
 		
 		html += '<div style="margin-top:10px; margin-bottom:20px; height:1px; background:#ddd;"></div>';
@@ -258,11 +260,11 @@ Class.subclass( Page.Base, "Page.History", {
 		html += '<div style="margin-top:0px;">';
 			html += '<div style="float:left; width:50%;">';
 				html += '<div class="graph-title">CPU Usage History</div>';
-				html += '<div id="d_graph_hist_cpu" style="margin-right:5px; height:225px;"></div>';
+				html += '<div id="d_graph_hist_cpu" style="position:relative; width:100%; margin-right:5px; height:225px; overflow:hidden;"><canvas id="c_graph_hist_cpu"></canvas></div>';
 			html += '</div>';
 			html += '<div style="float:left; width:50%;">';
 				html += '<div class="graph-title">Memory Usage History</div>';
-				html += '<div id="d_graph_hist_mem" style="margin-left:5px; height:225px;"></div>';
+				html += '<div id="d_graph_hist_mem" style="position:relative; width:100%; margin-left:5px; height:225px; overflow:hidden;"><canvas id="c_graph_hist_mem"></canvas></div>';
 			html += '</div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
@@ -336,59 +338,93 @@ Class.subclass( Page.Base, "Page.History", {
 		} // foreach row
 		
 		// build up timestamp data
-		var tstamp_col = ['x'];
+		var tstamp_col = [];
 		for (var idy = 0, ley = perf_times.length; idy < ley; idy++) {
 			tstamp_col.push( perf_times[idy] * 1000 );
 		} // foreach row
 		
-		var cols = [ tstamp_col ];
 		var sorted_keys = hash_keys_to_array(perf_keys).sort();
+		var datasets = [];
 		
 		for (var idx = 0, len = sorted_keys.length; idx < len; idx++) {
 			var perf_key = sorted_keys[idx];
-			var col = [perf_key];
+			var clr = 'rgb(' + this.graph_colors[ idx % this.graph_colors.length ] + ')';
+			var dataset = {
+				label: perf_key,
+				backgroundColor: clr,
+				borderColor: clr,
+				fill: false,
+				data: []
+			};
 			
 			for (var idy = 0, ley = perf_data.length; idy < ley; idy++) {
 				var perf = perf_data[idy];
 				var value = Math.max( 0, perf[perf_key] || 0 );
-				col.push( short_float( value ) );
+				dataset.data.push({ x: tstamp_col[idy], y: short_float(value) });
 			} // foreach row
 			
-			cols.push( col );
+			datasets.push( dataset );
 		} // foreach key
 		
-		this.charts.perf = c3.generate({
-			bindto: '#d_graph_hist_perf',
-			data: {
-				x: 'x',
-				columns: cols,
-				type: 'line',
-			},
-			axis: {
-				x: {
-					show: false,
-					type : 'timeseries',
-					tick: {
-						format: function (x) {
-							var dargs = get_date_args(x);
-							return dargs.yyyy_mm_dd + ' ' + dargs.hh_mi_ss;
-						}
+		this.charts.perf = new Chart( $('#c_graph_hist_perf').get(0).getContext('2d'), {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: true,
+					position: 'bottom',
+					labels: {
+						fontStyle: 'bold',
+						padding: 15
 					}
 				},
-				y: {
-					show: true,
-					tick: {
-						format: function (y) {
-							// return '' + short_float(y) + " sec";
-							if (y < 0) return '';
-							return '' + get_text_from_seconds_round(y, true, true);
+				title:{
+					display: false,
+					text: ""
+				},
+				scales: {
+					xAxes: [{
+						type: "time",
+						display: true,
+						time: {
+							parser: 'MM/DD/YYYY HH:mm',
+							round: 'minute',
+							tooltipFormat: 'll hh:mm a'
+						},
+						scaleLabel: {
+							display: false,
+							labelString: 'Date'
+						}
+					}, ],
+					yAxes: [{
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index, values) {
+								if (value < 0) return '';
+								return '' + get_text_from_seconds_round(value, true, true);
+							}
+						},
+						scaleLabel: {
+							display: true,
+							// labelString: 'value'
+						}
+					}]
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+					callbacks: {
+						label: function(tooltip, data) {
+							var value = short_float(tooltip.yLabel);
+							if (value >= 60) value = get_text_from_seconds( Math.floor(value), 1, 0 ).replace(/&nbsp\;/ig, ' ');
+							else value = '' + value + " sec";
+							return " " + datasets[tooltip.datasetIndex].label + ": " + value;
 						}
 					}
 				}
-			},
-			grid: {
-				x: { show: false },
-				y: { show: true }
 			}
 		});
 	},
@@ -396,10 +432,10 @@ Class.subclass( Page.Base, "Page.History", {
 	render_cpu_line_chart: function() {
 		// event cpu usage over time
 		var rows = this.rows;
+		var color = Chart.helpers.color;
 		
-		var col_x = ['x'];
-		var col_avg = ['CPU Avg'];
-		var col_max = ['CPU Peak'];
+		var col_avg = [];
+		var col_max = [];
 		
 		// build data for chart
 		// read backwards as server data is unshifted (descending by date, newest first)
@@ -408,54 +444,88 @@ Class.subclass( Page.Base, "Page.History", {
 			if (job.action != 'job_complete') continue;
 			
 			if (!job.cpu) job.cpu = {};
+			var x = (job.time_end || (job.time_start + job.elapsed)) * 1000;
 			
-			col_avg.push( short_float( (job.cpu.total || 0) / (job.cpu.count || 1) ) );
-			col_max.push( short_float( job.cpu.max || 0 ) );
+			col_avg.push({
+				x: x,
+				y: short_float( (job.cpu.total || 0) / (job.cpu.count || 1) )
+			});
 			
-/*col_avg.push( short_float( Math.random() * 25 ) );
-col_max.push( short_float( 25 + Math.random() * 25 ) );*/
-			
-			col_x.push( (job.time_end || (job.time_start + job.elapsed)) * 1000 );
+			col_max.push({
+				x: x,
+				y: short_float( job.cpu.max || 0 )
+			});
 		} // foreach row
 		
-		this.charts.cpu = c3.generate({
-			bindto: '#d_graph_hist_cpu',
-			data: {
-				x: 'x',
-				columns: [ col_x, col_avg, col_max ],
-				type: 'area',
-				colors: {
-					"CPU Avg": '#888888',
-					"CPU Peak": '#3f7ed5'
-				}
+		var datasets = [
+			{
+				label: "CPU Peak",
+				borderColor: '#888888',
+				fill: false,
+				data: col_max
 			},
-			axis: {
-				x: {
-					show: false,
-					type : 'timeseries',
-					tick: {
-						format: function (x) {
-							var dargs = get_date_args(x);
-							return dargs.yyyy_mm_dd + ' ' + dargs.hh_mi_ss;
-						}
+			{
+				label: "CPU Avg",
+				borderColor: '#3f7ed5',
+				backgroundColor: color('#3f7ed5').alpha(0.5).rgbString(),
+				data: col_avg
+			}
+		];
+		
+		this.charts.cpu = new Chart( $('#c_graph_hist_cpu').get(0).getContext('2d'), {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: true,
+					position: 'bottom',
+					labels: {
+						fontStyle: 'bold',
+						padding: 15
 					}
 				},
-				y: {
-					show: true,
-					tick: {
-						format: function (y) {
-							return '' + short_float(y) + '%';
+				title:{
+					display: false,
+					text: ""
+				},
+				scales: {
+					xAxes: [{
+						type: "time",
+						display: true,
+						time: {
+							parser: 'MM/DD/YYYY HH:mm',
+							round: 'minute',
+							tooltipFormat: 'll hh:mm a'
+						},
+						scaleLabel: {
+							display: false,
+							labelString: 'Date'
+						}
+					}, ],
+					yAxes: [{
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index, values) {
+								return '' + Math.round(value) + '%';
+							}
+						},
+						scaleLabel: {
+							display: true,
+							// labelString: 'value'
+						}
+					}]
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+					callbacks: {
+						label: function(tooltip, data) {
+							return " " + datasets[tooltip.datasetIndex].label + ": " + short_float(tooltip.yLabel) + '%';
 						}
 					}
-				}
-			},
-			grid: {
-				x: { show: false },
-				y: { show: true }
-			},
-			tooltip: {
-				format: {
-					value: function(value, ratio, id, index) { return '' + short_float(value) + '%'; }
 				}
 			}
 		});
@@ -464,10 +534,10 @@ col_max.push( short_float( 25 + Math.random() * 25 ) );*/
 	render_mem_line_chart: function() {
 		// event mem usage over time
 		var rows = this.rows;
+		var color = Chart.helpers.color;
 		
-		var col_x = ['x'];
-		var col_avg = ['Mem Avg'];
-		var col_max = ['Mem Peak'];
+		var col_avg = [];
+		var col_max = [];
 		
 		// build data for chart
 		// read backwards as server data is unshifted (descending by date, newest first)
@@ -476,53 +546,88 @@ col_max.push( short_float( 25 + Math.random() * 25 ) );*/
 			if (job.action != 'job_complete') continue;
 			
 			if (!job.mem) job.mem = {};
-			col_avg.push( short_float( (job.mem.total || 0) / (job.mem.count || 1) ) );
-			col_max.push( short_float( job.mem.max || 0 ) );
-			col_x.push( (job.time_end || (job.time_start + job.elapsed)) * 1000 );
+			var x = (job.time_end || (job.time_start + job.elapsed)) * 1000;
+			
+			col_avg.push({
+				x: x,
+				y: short_float( (job.mem.total || 0) / (job.mem.count || 1) )
+			});
+			
+			col_max.push({
+				x: x,
+				y: short_float( job.mem.max || 0 )
+			});
 		} // foreach row
 		
-		this.charts.cpu = c3.generate({
-			bindto: '#d_graph_hist_mem',
-			data: {
-				x: 'x',
-				columns: [ col_x, col_avg, col_max ],
-				type: 'area',
-				/*types: {
-					"Mem Avg": 'area-spline',
-					"Mem Peak": 'spline'
-				},*/
-				colors: {
-					"Mem Avg": '#888888',
-					"Mem Peak": '#279321'
-				}
+		var datasets = [
+			{
+				label: "Mem Peak",
+				borderColor: '#888888',
+				fill: false,
+				data: col_max
 			},
-			axis: {
-				x: {
-					show: false,
-					type : 'timeseries',
-					tick: {
-						format: function (x) {
-							var dargs = get_date_args(x);
-							return dargs.yyyy_mm_dd + ' ' + dargs.hh_mi_ss;
-						}
+			{
+				label: "Mem Avg",
+				borderColor: '#279321',
+				backgroundColor: color('#279321').alpha(0.5).rgbString(),
+				data: col_avg
+			}
+		];
+		
+		this.charts.mem = new Chart( $('#c_graph_hist_mem').get(0).getContext('2d'), {
+			type: 'line',
+			data: { datasets: datasets },
+			options: {
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: true,
+					position: 'bottom',
+					labels: {
+						fontStyle: 'bold',
+						padding: 15
 					}
 				},
-				y: {
-					show: true,
-					tick: {
-						format: function (y) {
-							return '' + get_text_from_bytes(y, 1);
+				title:{
+					display: false,
+					text: ""
+				},
+				scales: {
+					xAxes: [{
+						type: "time",
+						display: true,
+						time: {
+							parser: 'MM/DD/YYYY HH:mm',
+							round: 'minute',
+							tooltipFormat: 'll hh:mm a'
+						},
+						scaleLabel: {
+							display: false,
+							labelString: 'Date'
+						}
+					}, ],
+					yAxes: [{
+						ticks: {
+							beginAtZero: true,
+							callback: function(value, index, values) {
+								return '' + get_text_from_bytes(value, 1);
+							}
+						},
+						scaleLabel: {
+							display: true,
+							// labelString: 'value'
+						}
+					}]
+				},
+				tooltips: {
+					mode: 'index',
+					intersect: false,
+					callbacks: {
+						label: function(tooltip, data) {
+							return " " + datasets[tooltip.datasetIndex].label + ": " + get_text_from_bytes(tooltip.yLabel);
 						}
 					}
-				}
-			},
-			grid: {
-				x: { show: false },
-				y: { show: true }
-			},
-			tooltip: {
-				format: {
-					value: function(value, ratio, id, index) { return get_text_from_bytes(value); }
 				}
 			}
 		});

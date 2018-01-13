@@ -294,21 +294,24 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 			html += '<div class="pie-column column-left">';
 				html += '<div class="pie-title">Performance Metrics</div>';
-				html += '<canvas id="c_arch_perf" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_arch_perf" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_arch_perf" class="pie"></canvas></div>';
+				// html += '<canvas id="c_arch_perf" width="250" height="250" class="pie"></canvas>';
 				html += '<div id="d_arch_perf_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
 			html += '<div class="pie-column column-right">';
 				html += '<div id="d_arch_mem_overlay" class="pie-overlay"></div>';
 				html += '<div class="pie-title">Memory Usage</div>';
-				html += '<canvas id="c_arch_mem" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_arch_mem" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_arch_mem" class="pie"></canvas></div>';
+				// html += '<canvas id="c_arch_mem" width="250" height="250" class="pie"></canvas>';
 				html += '<div id="d_arch_mem_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
 			html += '<div class="pie-column column-center">';
 				html += '<div id="d_arch_cpu_overlay" class="pie-overlay"></div>';
 				html += '<div class="pie-title">CPU Usage</div>';
-				html += '<canvas id="c_arch_cpu" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_arch_cpu" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_arch_cpu" class="pie"></canvas></div>';
+				// html += '<canvas id="c_arch_cpu" width="250" height="250" class="pie"></canvas>';
 				html += '<div id="d_arch_cpu_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
@@ -406,18 +409,6 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			delete job.perf.scale;
 		}
 		
-		var options = {
-			percentageInnerCutout: 0,
-			animationEasing: "easeOutQuart",
-			tooltipTemplate: '<%if (label){%><%=label%>: <%}%><%= value %>' + suffix,
-			legendTemplate : '<div class="pie-legend-container">' + 
-				'<% for (var i=0; i<segments.length; i++){%>' + 
-					'<div class="pie-legend-item" style="background-color:<%=segments[i].fillColor%>">' + 
-						'<%=segments[i].label%>' + 
-					'</div>' + 
-				'<%}%></div>'
-		};
-		
 		var perf = job.perf.perf ? job.perf.perf : job.perf;
 		
 		// remove counters from pie
@@ -459,50 +450,68 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var colors = this.graph_colors;
 		var color_idx = 0;
 		
-		var data = [];
+		var p_data = [];
+		var p_colors = [];
+		var p_labels = [];
+		
 		var perf_keys = hash_keys_to_array(perf).sort();
+		
 		for (var idx = 0, len = perf_keys.length; idx < len; idx++) {
 			var key = perf_keys[idx];
 			var value = perf[key];
-			data.push({
-				value: short_float(value),
-				label: key,
-				color: 'rgb(' + colors[color_idx] + ')',
-				// brighten colors by 1/3 for highlight
-				highlight: 'rgb(' + colors[color_idx].split(/\,\s*/).map( function(v) { v = parseInt(v); return Math.floor( v + ((255 - v) / 3) ); } ).join(',') + ')',
-			});
+			
+			p_data.push( short_float(value) );
+			p_colors.push( 'rgb(' + colors[color_idx] + ')' );
+			p_labels.push( key );
+			
 			color_idx = (color_idx + 1) % colors.length;
 		}
 		
 		var ctx = $("#c_arch_perf").get(0).getContext("2d");
-		var perf_chart = new Chart(ctx).Doughnut( data, options );
-		var perf_legend = $('#d_arch_perf_legend');
-		perf_legend.html( perf_chart.generateLegend() );
 		
-		// add mouse events to perf legend
-		// Known Chart.js Bug: Tooltip doesn't appear when you mouseover the same legend item twice
-		perf_legend.find('div.pie-legend-item').each( function(idx) {
-			$(this).on('mouseover', function(e) {
-				var seg = perf_chart.segments[idx];
-				seg.save();
-				seg.fillColor = seg.highlightColor;
-				perf_chart.showTooltip([seg]);
-				seg.restore();
-			} );
-		} );
-		perf_legend.find('div.pie-legend-item').on('mouseout', function(e) {
-			perf_chart.draw();
+		var perf_chart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				datasets: [{
+					data: p_data,
+					backgroundColor: p_colors,
+					label: ''
+				}],
+				labels: p_labels
+			},
+			options: {
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
 		});
+		
+		var legend_html = '';
+		legend_html += '<div class="pie-legend-container">';
+		for (var idx = 0, len = perf_keys.length; idx < len; idx++) {
+			legend_html += '<div class="pie-legend-item" style="background-color:' + p_colors[idx] + '">' + p_labels[idx] + '</div>';
+		}
+		legend_html += '</div>';
+		
+		var perf_legend = $('#d_arch_perf_legend');
+		perf_legend.html( legend_html );
+		
 		
 		this.charts.perf = perf_chart;
 		
 		// arch cpu pie
-		var options = {
-			percentageInnerCutout: 50,
-			animationEasing: "easeOutQuart",
-			showTooltips: false
-		};
-		
 		var cpu_avg = 0;
 		if (!job.cpu) job.cpu = {};
 		if (job.cpu.total && job.cpu.count) {
@@ -510,20 +519,44 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		
 		var jcm = 100;
-		var data = [
-			{
-				value: Math.min(cpu_avg, jcm),
-				color: (cpu_avg < jcm*0.5) ? this.pie_colors.cool : 
-					((cpu_avg < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot)
-			},
-			{
-				value: jcm - Math.min(cpu_avg, jcm),
-				color: this.pie_colors.empty
-			}
-		];
-		
 		var ctx = $("#c_arch_cpu").get(0).getContext("2d");
-		var cpu_chart = new Chart(ctx).Doughnut( data, options );
+		
+		var cpu_chart = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						Math.min(cpu_avg, jcm),
+						jcm - Math.min(cpu_avg, jcm),
+					],
+					backgroundColor: [
+						(cpu_avg < jcm*0.5) ? this.pie_colors.cool : 
+							((cpu_avg < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot),
+						this.pie_colors.empty
+					],
+					label: ''
+				}],
+				labels: []
+			},
+			options: {
+				events: [],
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		});
 		
 		// arch cpu overlay
 		var html = '';
@@ -545,12 +578,6 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		this.charts.cpu = cpu_chart;
 		
 		// arch mem pie
-		var options = {
-			percentageInnerCutout: 50,
-			animationEasing: "easeOutQuart",
-			showTooltips: false
-		};
-		
 		var mem_avg = 0;
 		if (!job.mem) job.mem = {};
 		if (job.mem.total && job.mem.count) {
@@ -558,20 +585,44 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		
 		var jmm = config.job_memory_max || 1073741824;
-		var data = [
-			{
-				value: Math.min(mem_avg, jmm),
-				color: (mem_avg < jmm*0.5) ? this.pie_colors.cool : 
-					((mem_avg < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot)
-			},
-			{
-				value: jmm - Math.min(mem_avg, jmm),
-				color: this.pie_colors.empty
-			}
-		];
-		
 		var ctx = $("#c_arch_mem").get(0).getContext("2d");
-		var mem_chart = new Chart(ctx).Doughnut( data, options );
+		
+		var mem_chart = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						Math.min(mem_avg, jmm),
+						jmm - Math.min(mem_avg, jmm),
+					],
+					backgroundColor: [
+						(mem_avg < jmm*0.5) ? this.pie_colors.cool : 
+							((mem_avg < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot),
+						this.pie_colors.empty
+					],
+					label: ''
+				}],
+				labels: []
+			},
+			options: {
+				events: [],
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		});
 		
 		// arch mem overlay
 		var html = '';
@@ -790,21 +841,24 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			html += '<div class="pie-column column-left">';
 				html += '<div id="d_live_progress_overlay" class="pie-overlay"></div>';
 				html += '<div class="pie-title">Job Progress</div>';
-				html += '<canvas id="c_live_progress" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_live_progress" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_live_progress" class="pie"></canvas></div>';
+				// html += '<canvas id="c_live_progress" width="250" height="250" class="pie"></canvas>';
 				// html += '<div id="d_live_progress_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
 			html += '<div class="pie-column column-right">';
 				html += '<div id="d_live_mem_overlay" class="pie-overlay"></div>';
 				html += '<div class="pie-title">Memory Usage</div>';
-				html += '<canvas id="c_live_mem" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_live_mem" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_live_mem" class="pie"></canvas></div>';
+				// html += '<canvas id="c_live_mem" width="250" height="250" class="pie"></canvas>';
 				html += '<div id="d_live_mem_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
 			html += '<div class="pie-column column-center">';
 				html += '<div id="d_live_cpu_overlay" class="pie-overlay"></div>';
 				html += '<div class="pie-title">CPU Usage</div>';
-				html += '<canvas id="c_live_cpu" width="250" height="250" class="pie"></canvas>';
+				html += '<div id="d_graph_live_cpu" style="position:relative; display:inline-block; width:250px; height:250px; overflow:hidden;"><canvas id="c_live_cpu" class="pie"></canvas></div>';
+				// html += '<canvas id="c_live_cpu" width="250" height="250" class="pie"></canvas>';
 				html += '<div id="d_live_cpu_legend" class="pie-legend-column"></div>';
 			html += '</div>';
 			
@@ -834,39 +888,50 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		this.start_live_log_watcher(job);
 		
 		// live progress pie
-		var options = {
-			percentageInnerCutout: 50,
-			animationEasing: "easeOutQuart",
-			showTooltips: false
-		};
-		
 		if (!job.progress) job.progress = 0;
 		var progress = Math.min(1, Math.max(0, job.progress));
 		var prog_pct = short_float( progress * 100 );
 		
-		var data = [
-			{
-				value: prog_pct,
-				color: this.pie_colors.progress
-			},
-			{
-				value: 100 - prog_pct,
-				color: this.pie_colors.empty
-			}
-		];
-		
 		var ctx = $("#c_live_progress").get(0).getContext("2d");
-		var progress_chart = new Chart(ctx).Doughnut( data, options );
+		var progress_chart = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						prog_pct,
+						100 - prog_pct
+					],
+					backgroundColor: [
+						this.pie_colors.progress,
+						this.pie_colors.empty
+					],
+					label: ''
+				}],
+				labels: []
+			},
+			options: {
+				events: [],
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		});
 		
 		this.charts.progress = progress_chart;
 		
 		// live cpu pie
-		var options = {
-			percentageInnerCutout: 50,
-			animationEasing: "easeOutQuart",
-			showTooltips: false
-		};
-		
 		if (!job.cpu) job.cpu = {};
 		if (!job.cpu.current) job.cpu.current = 0;
 		var cpu_cur = job.cpu.current;
@@ -874,32 +939,48 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		if (job.cpu.total && job.cpu.count) {
 			cpu_avg = short_float( job.cpu.total / job.cpu.count );
 		}
-		
 		var jcm = 100;
-		var data = [
-			{
-				value: Math.min(cpu_cur, jcm),
-				color: (cpu_cur < jcm*0.5) ? this.pie_colors.cool : 
-					((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot)
-			},
-			{
-				value: jcm - Math.min(cpu_cur, jcm),
-				color: this.pie_colors.empty
-			}
-		];
-		
 		var ctx = $("#c_live_cpu").get(0).getContext("2d");
-		var cpu_chart = new Chart(ctx).Doughnut( data, options );
+		var cpu_chart = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						Math.min(cpu_cur, jcm),
+						jcm - Math.min(cpu_cur, jcm),
+					],
+					backgroundColor: [
+						(cpu_cur < jcm*0.5) ? this.pie_colors.cool : 
+							((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot),
+						this.pie_colors.empty
+					],
+					label: ''
+				}],
+				labels: []
+			},
+			options: {
+				events: [],
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		});
 		
 		this.charts.cpu = cpu_chart;
 		
 		// live mem pie
-		var options = {
-			percentageInnerCutout: 50,
-			animationEasing: "easeOutQuart",
-			showTooltips: false
-		};
-		
 		if (!job.mem) job.mem = {};
 		if (!job.mem.current) job.mem.current = 0;
 		var mem_cur = job.mem.current;
@@ -907,22 +988,44 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		if (job.mem.total && job.mem.count) {
 			mem_avg = short_float( job.mem.total / job.mem.count );
 		}
-		
 		var jmm = config.job_memory_max || 1073741824;
-		var data = [
-			{
-				value: Math.min(mem_cur, jmm),
-				color: (mem_cur < jmm*0.5) ? this.pie_colors.cool : 
-					((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot)
-			},
-			{
-				value: jmm - Math.min(mem_cur, jmm),
-				color: this.pie_colors.empty
-			}
-		];
-		
 		var ctx = $("#c_live_mem").get(0).getContext("2d");
-		var mem_chart = new Chart(ctx).Doughnut( data, options );
+		var mem_chart = new Chart(ctx, {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						Math.min(mem_cur, jmm),
+						jmm - Math.min(mem_cur, jmm),
+					],
+					backgroundColor: [
+						(mem_cur < jmm*0.5) ? this.pie_colors.cool : 
+							((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot),
+						this.pie_colors.empty
+					],
+					label: ''
+				}],
+				labels: []
+			},
+			options: {
+				events: [],
+				responsive: true,
+				responsiveAnimationDuration: 0,
+				maintainAspectRatio: false,
+				legend: {
+					display: false,
+					position: 'right',
+				},
+				title: {
+					display: false,
+					text: ''
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
+		});
 		
 		this.charts.mem = mem_chart;
 		
@@ -1026,8 +1129,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		if (prog_pct != this.charts.progress.__cronicle_prog_pct) {
 			this.charts.progress.__cronicle_prog_pct = prog_pct;
-			this.charts.progress.segments[0].value = prog_pct;
-			this.charts.progress.segments[1].value = 100 - prog_pct;
+			this.charts.progress.config.data.datasets[0].data[0] = prog_pct;
+			this.charts.progress.config.data.datasets[0].data[1] = 100 - prog_pct;
 			this.charts.progress.update();
 		}
 		
@@ -1049,9 +1152,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var jcm = 100;
 		if (cpu_cur != this.charts.cpu.__cronicle_cpu_cur) {
 			this.charts.cpu.__cronicle_cpu_cur = cpu_cur;
-			this.charts.cpu.segments[0].value = Math.min(cpu_cur, jcm);
-			this.charts.cpu.segments[0].fillColor = (cpu_cur < jcm*0.5) ? this.pie_colors.cool : ((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
-			this.charts.cpu.segments[1].value = jcm - Math.min(cpu_cur, jcm);
+			
+			this.charts.cpu.config.data.datasets[0].data[0] = Math.min(cpu_cur, jcm);
+			this.charts.cpu.config.data.datasets[0].data[1] = jcm - Math.min(cpu_cur, jcm);
+			
+			this.charts.cpu.config.data.datasets[0].backgroundColor[0] = (cpu_cur < jcm*0.5) ? this.pie_colors.cool : ((cpu_cur < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
+			
 			this.charts.cpu.update();
 		}
 		
@@ -1087,9 +1193,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var jmm = config.job_memory_max || 1073741824;
 		if (mem_cur != this.charts.mem.__cronicle_mem_cur) {
 			this.charts.mem.__cronicle_mem_cur = mem_cur;
-			this.charts.mem.segments[0].value = Math.min(mem_cur, jmm);
-			this.charts.mem.segments[0].fillColor = (mem_cur < jmm*0.5) ? this.pie_colors.cool : ((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
-			this.charts.mem.segments[1].value = jmm - Math.min(mem_cur, jmm);
+			
+			this.charts.mem.config.data.datasets[0].data[0] = Math.min(mem_cur, jmm);
+			this.charts.mem.config.data.datasets[0].data[1] = jmm - Math.min(mem_cur, jmm);
+			
+			this.charts.mem.config.data.datasets[0].backgroundColor[0] = (mem_cur < jmm*0.5) ? this.pie_colors.cool : ((mem_cur < jmm*0.75) ? this.pie_colors.warm : this.pie_colors.hot);
+			
 			this.charts.mem.update();
 		}
 		

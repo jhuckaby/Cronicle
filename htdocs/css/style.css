@@ -276,9 +276,6 @@ div.pie-legend-item {
 	text-shadow: 0px 1px 1px black;
 	cursor: default;
 }
-div.pie-legend-item:hover {
-	color: #ddd;
-}
 
 /* Line Charts */
 
