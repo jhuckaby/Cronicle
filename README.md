@@ -2969,7 +2969,7 @@ If any tests fail, please open a [GitHub issue](https://github.com/jhuckaby/Cron
 
 # Colophon
 
-We stand on the shoulders of giants.  Cronicle is inspired by a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
+We stand on the shoulders of giants.  Cronicle was inspired by a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
 
 Cronicle was built using these awesome Node modules:
 
@@ -2977,9 +2977,7 @@ Cronicle was built using these awesome Node modules:
 |-------------|-------------|---------|
 | [async](https://www.npmjs.com/package/async) | Higher-order functions and common patterns for asynchronous code. | MIT |
 | [bcrypt-node](https://www.npmjs.com/package/bcrypt-node) | Native JS implementation of BCrypt for Node. | BSD 3-Clause |
-| [c3](https://www.npmjs.com/package/c3) | D3-based reusable chart library. | MIT |
 | [chart.js](https://www.npmjs.com/package/chart.js) | Simple HTML5 charts using the canvas element. | MIT |
-| [d3](https://www.npmjs.com/package/d3) | A JavaScript visualization library for HTML and SVG. | BSD-3-Clause |
 | [daemon](https://www.npmjs.com/package/daemon) | Add-on for creating \*nix daemons. | MIT |
 | [errno](https://www.npmjs.com/package/errno) | Node.js libuv errno details exposed. | MIT |
 | [font-awesome](https://www.npmjs.com/package/font-awesome) | The iconic font and CSS framework. | OFL-1.1 and MIT |
@@ -3005,7 +3003,7 @@ Cronicle was built using these awesome Node modules:
 
 The MIT License (MIT)
 
-Copyright (c) 2015 - 2017 Joseph Huckaby
+Copyright (c) 2015 - 2018 Joseph Huckaby
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
