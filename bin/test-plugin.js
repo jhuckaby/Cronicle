@@ -61,7 +61,7 @@ stream.on('json', function(job) {
 		
 		idx++;
 		if (idx % 10 == 0) {
-			logger.debug(9, "Now is the time for all good men to come to the aid of their country! " + progress);
+			logger.debug(9, "Now is the ⏱ for all good 🏃 to come to the 🏥 of their 🇺🇸! " + progress);
 		}
 		
 		if (progress >= 1.0) {
