@@ -12,6 +12,7 @@
 * Real-time job status with live log viewer.
 * Plugins can be written in any language.
 * Schedule events in multiple timezones.
+* Optionally queue up long-running events.
 * Track CPU and memory usage for each job.
 * Historical stats with performance graphs.
 * Simple JSON messaging system for Plugins.
@@ -697,9 +698,9 @@ This table lists all the currently active (running) jobs, and various informatio
 | **Remaining** | The estimated remaining time, if available. |
 | **Actions** | Click *Abort* to cancel the job. |
 
-### Upcoming Jobs
+### Upcoming Events
 
-This table lists all the upcoming scheduled jobs in the next 24 hours, and various information about them.  The table columns are:
+This table lists all the upcoming scheduled events in the next 24 hours, and various information about them.  The table columns are:
 
 | Column | Description |
 |--------|-------------|
@@ -844,17 +845,25 @@ The only time a Catch-Up job is *not* re-run is when one of the following action
 * Job is manually aborted via the Web UI or API.
 * Job fails due to error thrown from inside the Plugin (user code generated error).
 
-You can see all queued jobs on the [Home Tab](#home-tab).  They will be listed in the [Upcoming Jobs](#upcoming-jobs) table, and have their "Countdown" column set to "Now".  To jump over the queue and reset an event that has fallen behind, use the [Event Time Machine](#event-time-machine) feature.
+You can see all queued jobs on the [Home Tab](#home-tab).  They will be listed in the [Upcoming Events](#upcoming-events) table, and have their "Countdown" column set to "Now".  To jump over the queue and reset an event that has fallen behind, use the [Event Time Machine](#event-time-machine) feature.
 
 When Run All (Catch-Up) mode is disabled, and a job cannot run or fails due to any of the reasons listed above, the scheduler simply logs an error, and resumes normal operations.  The event will not run until the next scheduled time, if any.  This is more suitable for events that are not time-sensitive, such as log rotation.
 
 ##### Detached Mode
 
-When Uninterruptible (Detached Mode) mode is enabled on an event, jobs are spawned as standalone background processes, which are not interrupted for things like the Cronicle daemon restarting.  This is designed mainly for critical operations that *cannot* be stopped in the middle for whatever reason.
+When Uninterruptible (Detached) mode is enabled on an event, jobs are spawned as standalone background processes, which are not interrupted for things like the Cronicle daemon restarting.  This is designed mainly for critical operations that *cannot* be stopped in the middle for whatever reason.
 
 Please use this mode with caution, and only when truly needed, as there are downsides.  First of all, since the process runs detached and standalone, there are no real-time updates.  Meaning, the progress bar and time remaining displays are delayed by up to a minute.  Also, when your job completes, there is a delay of up to a minute before Cronicle realizes and marks the job as complete.
 
 It is much better to design your jobs to be interrupted, if at all possible.  Note that Cronicle will re-run interrupted jobs if they have [Run All Mode](#run-all-mode) set.  So Detached Mode should only be needed in very special circumstances.
+
+##### Allow Queued Jobs
+
+By default, when jobs cannot run due to concurrency settings, or other issues like an unavailable target server, an error is generated.  That is, unless you enable the event queue.  With queuing enabled, jobs that can't run immediately are queued up, and executed on a first come, first serve basis, as quickly as conditions allow.
+
+When the queue is enabled on an event, a new "Queue Limit" section will appear in the form, allowing you to set the maximum queue length per event.  If this limit is reached, no additional jobs can be queued, and an error will be generated.
+
+You can track the progress of your event queues on the [Home Tab](#home-tab).  Queued events and counts appear in a table between the [Active Jobs](#active-jobs) and [Upcoming Events](#upcoming-events) sections.  From there you can also "flush" an event queue (i.e. delete all queued jobs), in case one grows out of control.
 
 ##### Chain Reaction
 
@@ -2327,6 +2336,8 @@ In addition to the [Standard Response Format](#standard-response-format), this A
 
 The `event` object will contain the details for the requested event.  See the [Event Data Format](#event-data-format) section below for details on the event object properties themselves.
 
+If [Allow Queued Jobs](#allow-queued-jobs) is enabled on the event, the API response will also include a `queue` property, which will be set to the number of jobs currently queued up.
+
 ### create_event
 
 ```
@@ -2548,6 +2559,8 @@ Example request with everything customized:
 }
 ```
 
+Note that the `params` object can be omitted entirely, or sparsely populated, and any missing properties that are defined in the event are automatically merged in.  This allows your API client to only specify the `params` it needs to (including arbitrary new ones).
+
 Example response:
 
 ```js
@@ -2558,6 +2571,8 @@ Example response:
 ```
 
 In addition to the [Standard Response Format](#standard-response-format), the IDs of all the launched jobs will be returned in the `ids` array.  Typically only a single job is launched, but it may be multiple if the event has [Multiplexing](#multiplexing) enabled and targets a group with multiple servers.
+
+If [Allow Queued Jobs](#allow-queued-jobs) is enabled on the event, the API response will also include a `queue` property, which will be set to the number of jobs currently queued up.
 
 ### get_job_status
 
@@ -2770,40 +2785,42 @@ See the [Standard Response Format](#standard-response-format) for details.
 
 Here are descriptions of all the properties in the event object, which is common in many API calls:
 
-| Event Property | Description |
-|----------|-------------|
-| `algo` | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](#algorithm). |
-| `api_key` | The API Key of the application that originally created the event (if created via API). |
-| `catch_up` | Specifies whether the event has [Run All Mode](#run-all-mode) enabled or not. |
-| `category` | The Category ID to which the event is assigned.  See [Categories Tab](#categories-tab). |
-| `chain` | The chain reaction event ID to launch when jobs complete successfully.  See [Chain Reaction](#chain-reaction). |
-| `chain_error` | The chain reaction event ID to launch when jobs fail.  See [Chain Reaction](#chain-reaction). |
-| `cpu_limit` | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). |
-| `cpu_sustain` | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
-| `created` | The date/time of the event's initial creation, in Epoch seconds. |
-| `detached` | Specifies whether [Detached Mode](#detached-mode) is enabled or not. |
-| `enabled` | Specifies whether the event is enabled (active in the scheduler) or not. |
-| `id` | A unique ID assigned to the event when it was first created. |
-| `max_children` | The total amount of concurrent jobs allowed to run. See [Event Concurrency](#event-concurrency). |
-| `memory_limit` | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
-| `memory_sustain` | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
-| `modified` | The date/time of the event's last modification, in Epoch seconds. |
-| `multiplex` | Specifies whether the event has [Multiplexing](#multiplexing) mode is enabled or not. |
-| `notes` | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
-| `notify_fail` | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
-| `notify_success` | List of e-mail recipients to notify upon job success (CSV). See [Event Notification](#event-notification). |
-| `params` | An object containing the Plugin's custom parameters, filled out with values from the Event Editor. See [Plugins Tab](#plugins-tab). |
-| `plugin` | The ID of the Plugin which will run jobs for the event. See [Plugins Tab](#plugins-tab). |
-| `retries` | The number of retries to allow before reporting an error. See [Event Retries](#event-retries). |
-| `retry_delay` | Optional delay between retries, in seconds. See [Event Retries](#event-retries). |
-| `stagger` | If [Multiplexing](#multiplexing) is enabled, this specifies the number of seconds to wait between job launches. |
-| `target` | Events can target a [Server Group](#server-groups) (Group ID), or an individual server (hostname). |
-| `timeout` | The maximum allowed run time for jobs, specified in seconds. See [Event Timeout](#event-timeout). |
-| `timezone` | The timezone for interpreting the event timing settings. Needs to be an [IANA timezone string](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).  See [Event Timing](#event-timing). |
-| `timing` | An object describing when to run scheduled jobs.  See [Event Timing Object](#event-timing-object) below for details. |
-| `title` | A display name for the event, shown on the [Schedule Tab](#schedule-tab) as well as in reports and e-mails. |
-| `username` | The username of the user who originally created the event (if created in the UI). |
-| `web_hook` | An optional URL to hit for the start and end of each job. See [Event Web Hook](#event-web-hook). |
+| Event Property | Format | Description |
+|----------------|--------|-------------|
+| `algo` | String | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](#algorithm). |
+| `api_key` | String | The API Key of the application that originally created the event (if created via API). |
+| `catch_up` | Boolean | Specifies whether the event has [Run All Mode](#run-all-mode) enabled or not. |
+| `category` | String | The Category ID to which the event is assigned.  See [Categories Tab](#categories-tab). |
+| `chain` | String | The chain reaction event ID to launch when jobs complete successfully.  See [Chain Reaction](#chain-reaction). |
+| `chain_error` | String | The chain reaction event ID to launch when jobs fail.  See [Chain Reaction](#chain-reaction). |
+| `cpu_limit` | Number | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). |
+| `cpu_sustain` | Number | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
+| `created` | Number | The date/time of the event's initial creation, in Epoch seconds. |
+| `detached` | Boolean | Specifies whether [Detached Mode](#detached-mode) is enabled or not. |
+| `enabled` | Boolean | Specifies whether the event is enabled (active in the scheduler) or not. |
+| `id` | String | A unique ID assigned to the event when it was first created. |
+| `max_children` | Number | The total amount of concurrent jobs allowed to run. See [Event Concurrency](#event-concurrency). |
+| `memory_limit` | Number | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
+| `memory_sustain` | Number | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |
+| `modified` | Number | The date/time of the event's last modification, in Epoch seconds. |
+| `multiplex` | Boolean | Specifies whether the event has [Multiplexing](#multiplexing) mode is enabled or not. |
+| `notes` | String | Text notes saved with the event, included in e-mail notifications. See [Event Notes](#event-notes). |
+| `notify_fail` | String | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). |
+| `notify_success` | String | List of e-mail recipients to notify upon job success (CSV). See [Event Notification](#event-notification). |
+| `params` | Object | An object containing the Plugin's custom parameters, filled out with values from the Event Editor. See [Plugins Tab](#plugins-tab). |
+| `plugin` | String | The ID of the Plugin which will run jobs for the event. See [Plugins Tab](#plugins-tab). |
+| `queue` | Boolean | Allow jobs to be queued up when they can't run immediately. See [Allow Queued Jobs](#allow-queued-jobs). |
+| `queue_max` | Number | Maximum queue length, when `queue` is enabled. See [Allow Queued Jobs](#allow-queued-jobs). |
+| `retries` | Number | The number of retries to allow before reporting an error. See [Event Retries](#event-retries). |
+| `retry_delay` | Number | Optional delay between retries, in seconds. See [Event Retries](#event-retries). |
+| `stagger` | Number | If [Multiplexing](#multiplexing) is enabled, this specifies the number of seconds to wait between job launches. |
+| `target` | String | Events can target a [Server Group](#server-groups) (Group ID), or an individual server (hostname). |
+| `timeout` | Number | The maximum allowed run time for jobs, specified in seconds. See [Event Timeout](#event-timeout). |
+| `timezone` | String | The timezone for interpreting the event timing settings. Needs to be an [IANA timezone string](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).  See [Event Timing](#event-timing). |
+| `timing` | Object | An object describing when to run scheduled jobs.  See [Event Timing Object](#event-timing-object) below for details. |
+| `title` | String | A display name for the event, shown on the [Schedule Tab](#schedule-tab) as well as in reports and e-mails. |
+| `username` | String | The username of the user who originally created the event (if created in the UI). |
+| `web_hook` | String | An optional URL to hit for the start and end of each job. See [Event Web Hook](#event-web-hook). |
 
 ### Event Timing Object
 
