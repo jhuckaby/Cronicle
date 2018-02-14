@@ -227,12 +227,6 @@ Class.add( Page.Admin, {
 		} ); // app.confirm
 		
 		setTimeout( function() { 
-			$('#fe_as_hostname').keypress( function(event) {
-				if (event.keyCode == '13') { // enter key
-					event.preventDefault();
-					app.confirm_click(true);
-				}
-			} );
 			$('#fe_as_hostname').focus();
 		}, 1 );
 	},
@@ -316,12 +310,6 @@ Class.add( Page.Admin, {
 		} ); // app.confirm
 		
 		setTimeout( function() { 
-			$('#fe_eg_title').keypress( function(event) {
-				if (event.keyCode == '13') { // enter key
-					event.preventDefault();
-					app.confirm_click(true);
-				}
-			} );
 			if (!$('#fe_eg_title').val()) $('#fe_eg_title').focus();
 		}, 1 );
 	},
