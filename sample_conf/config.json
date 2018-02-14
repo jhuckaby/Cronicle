@@ -52,7 +52,8 @@
 			"timing": { "minutes": [0] },
 			"max_children": 1,
 			"timeout": 3600,
-			"catch_up": 0
+			"catch_up": 0,
+			"queue_max": 1000
 		}
 	},
 	
