@@ -157,6 +157,12 @@ div.plugin_params_content input, div.plugin_params_content select, div.plugin_pa
 	font-size: 12px;
 }
 
+body.chrome div.plugin_params_content label {
+	/* Chrome hack */
+	position: relative;
+	top: -2px;
+}
+
 .std_combo_unit_table input { font-size: 14px; }
 .std_combo_unit_table select { font-size: 12px; }
 
@@ -556,5 +562,11 @@ span.link.abort:hover {
 /* Dialog Fixes */
 
 div.dialog_subtitle {
+	cursor: default;
+}
+
+/* Cursor fix */
+
+td.table_label {
 	cursor: default;
 }
