@@ -9,6 +9,7 @@ app.extend({
 	name: '',
 	preload_images: ['loading.gif'],
 	activeJobs: {},
+	eventQueue: {},
 	state: null,
 	plain_text_post: true,
 	clock_visible: false,
