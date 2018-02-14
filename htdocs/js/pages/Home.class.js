@@ -11,30 +11,31 @@ Class.subclass( Page.Base, "Page.Home", {
 		html += '<div style="padding:10px 20px 20px 20px">';
 		
 		// header stats
-		
 		html += '<div id="d_home_header_stats"></div>';
-		
 		html += '<div style="height:20px;"></div>';
 		
 		// active jobs
-		
 		html += '<div class="subtitle">';
 			html += 'Active Jobs';
 			html += '<div class="clear"></div>';
 		html += '</div>';
-		
 		html += '<div id="d_home_active_jobs"></div>';
-		
 		html += '<div style="height:20px;"></div>';
 		
-		// upcoming events
-		
-		html += '<div id="d_home_upcoming_header" class="subtitle">';
-			
+		// queued jobs
+		html += '<div id="d_home_queue_container" style="display:none">';
+			html += '<div class="subtitle">';
+				html += 'Event Queues';
+				html += '<div class="clear"></div>';
+			html += '</div>';
+			html += '<div id="d_home_queued_jobs"></div>';
+			html += '<div style="height:20px;"></div>';
 		html += '</div>';
 		
+		// upcoming events
+		html += '<div id="d_home_upcoming_header" class="subtitle">';
+		html += '</div>';
 		html += '<div id="d_home_upcoming_events" class="loading"></div>';
-		
 		html += '</div>'; // container
 		
 		this.div.html( html );
@@ -89,6 +90,7 @@ Class.subclass( Page.Base, "Page.Home", {
 		$('#d_home_active_jobs').html( this.get_active_jobs_html() );
 		this.refresh_upcoming_events();
 		this.refresh_header_stats();
+		this.refresh_event_queues();
 		
 		return true;
 	},
@@ -398,6 +400,72 @@ Class.subclass( Page.Base, "Page.Home", {
 		return html;
 	},
 	
+	refresh_event_queues: function() {
+		// update display of event queues, if any
+		var self = this;
+		var total_count = 0;
+		for (var key in app.eventQueue) {
+			total_count += app.eventQueue[key] || 0;
+		}
+		
+		if (!total_count) {
+			$('#d_home_queue_container').hide();
+			return;
+		}
+		
+		var size = get_inner_window_size();
+		var col_width = Math.floor( ((size.width * 0.9) + 50) / 6 );
+		var cols = ['Event Name', 'Category', 'Plugin', 'Target', 'Queued Jobs', 'Actions'];
+		
+		var stubs = [];
+		var sorted_ids = hash_keys_to_array(app.eventQueue).sort( function(a, b) {
+			return (app.eventQueue[a] < app.eventQueue[b]) ? 1 : -1;
+		} );
+		sorted_ids.forEach( function(id) {
+			if (app.eventQueue[id]) stubs.push({ id: id });
+		} );
+		
+		this.queue_stubs = stubs;
+		
+		// render table
+		var html = '';
+		html += this.getBasicTable( stubs, cols, 'event', function(stub, idx) {
+			var queue_count = app.eventQueue[ stub.id ] || 0;
+			var item = find_object( app.schedule, { id: stub.id } ) || {};
+			
+			// for flush dialog
+			stub.title = item.title;
+			
+			var cat = item.category ? find_object( app.categories, { id: item.category } ) : null;
+			var group = item.target ? find_object( app.server_groups, { id: item.target } ) : null;
+			var plugin = item.plugin ? find_object( app.plugins, { id: item.plugin } ) : null;
+			
+			var actions = [
+				'<span class="link" onMouseUp="$P().flush_event_queue('+idx+')"><b>Flush Queue</b></span>'
+			];
+			
+			var tds = [
+				'<div class="td_big" style="white-space:nowrap;"><a href="#Schedule?sub=edit_event&id='+item.id+'">' + self.getNiceEvent('<b>' + item.title + '</b>', col_width) + '</a></div>',
+				self.getNiceCategory( cat, col_width ),
+				self.getNicePlugin( plugin, col_width ),
+				self.getNiceGroup( group, item.target, col_width ),
+				commify( queue_count ),
+				actions.join(' | ')
+			];
+			
+			if (cat && cat.color) {
+				if (tds.className) tds.className += ' '; else tds.className = '';
+				tds.className += cat.color;
+			}
+			
+			return tds;
+			
+		} ); // getBasicTable
+		
+		$('#d_home_queued_jobs').html( html );
+		$('#d_home_queue_container').show();
+	},
+	
 	go_job_details: function(idx) {
 		// jump to job details page
 		var job = this.jobs[idx];
@@ -414,6 +482,21 @@ Class.subclass( Page.Base, "Page.Home", {
 				app.api.post( 'app/abort_job', job, function(resp) {
 					app.hideProgress();
 					app.showMessage('success', "Job '"+job.event_title+"' was aborted successfully.");
+				} );
+			}
+		} );
+	},
+	
+	flush_event_queue: function(idx) {
+		// abort job, after confirmation
+		var stub = this.queue_stubs[idx];
+		
+		app.confirm( '<span style="color:red">Flush Event Queue</span>', "Are you sure you want to flush the queue for event &ldquo;<b>"+stub.title+"</b>&rdquo;?", "Flush", function(result) {
+			if (result) {
+				app.showProgress( 1.0, "Flushing event queue..." );
+				app.api.post( 'app/flush_event_queue', stub, function(resp) {
+					app.hideProgress();
+					app.showMessage('success', "Event queue for '"+stub.title+"' was flushed successfully.");
 				} );
 			}
 		} );
@@ -521,6 +604,10 @@ Class.subclass( Page.Base, "Page.Home", {
 				this.refresh_upcoming_events();
 				this.refresh_header_stats();
 			break;
+			
+			case 'eventQueue':
+				this.refresh_event_queues();
+			break;
 		}
 	},
 	
@@ -529,6 +616,7 @@ Class.subclass( Page.Base, "Page.Home", {
 		// so we can run more expensive redraw operations
 		$('#d_home_active_jobs').html( this.get_active_jobs_html() );
 		this.refresh_header_stats();
+		this.refresh_event_queues();
 		
 		if (this.upcoming_events) {
 			this.render_upcoming_events({
