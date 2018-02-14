@@ -277,10 +277,14 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				var num = resp.ids.length;
 				msg = 'Event "'+event.title+'" has been started ('+num+' jobs).  View their progress on the <a href="#Home">Home Tab</a>.';
 			}
-			else {
+			else if (resp.ids.length == 1) {
 				// single job
 				var id = resp.ids[0];
 				msg = 'Event "'+event.title+'" has been started.  <a href="#JobDetails?id='+id+'">Click here</a> to view its progress.';
+			}
+			else {
+				// queued
+				msg = 'Event "'+event.title+'" could not run right away, but was queued up.  View the queue progress on the <a href="#Home">Home Tab</a>.';
 			}
 			app.showMessage('success', msg);
 		} );
@@ -307,8 +311,17 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var jobs = find_objects( app.activeJobs, { event: event.id } );
 		if (jobs.length) return app.doError("Sorry, you cannot delete an event that has active jobs running.");
 		
+		var msg = "Are you sure you want to delete the event <b>"+event.title+"</b>?";
+		
+		if (event.queue && app.eventQueue[event.id]) {
+			msg += "  The event's job queue will also be flushed.";
+		}
+		else {
+			msg += "  There is no way to undo this action.";
+		}
+		
 		// proceed with delete
-		app.confirm( '<span style="color:red">Delete Event</span>', "Are you sure you want to delete the event <b>"+event.title+"</b>?  There is no way to undo this action.", "Delete", function(result) {
+		app.confirm( '<span style="color:red">Delete Event</span>', msg, "Delete", function(result) {
 			if (result) {
 				app.showProgress( 1.0, "Deleting Event..." );
 				app.api.post( 'app/delete_event', event, function(resp) {
@@ -800,11 +813,14 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// catch-up mode (run all)
 		// method (interruptable, non-interruptable)
 		html += get_form_table_row( 'Misc. Options', 
-			'<div><input type="checkbox" id="fe_ee_catch_up" value="1" '+(event.catch_up ? 'checked="checked"' : '') + ' ' + (event.id ? 'onChange="$P().setGroupVisible(\'rc\',this.checked)"' : '') + ' /><label for="fe_ee_catch_up">Run All (Catch-Up)</label></div>' + 
+			'<div><input type="checkbox" id="fe_ee_catch_up" value="1" '+(event.catch_up ? 'checked="checked"' : '') + ' ' + (event.id ? 'onChange="$P().setGroupVisible(\'rc\',this.checked)"' : '') + ' /><label for="fe_ee_catch_up">Catch-Up (Run All)</label></div>' + 
 			'<div class="caption">Automatically run all missed events after server downtime or scheduler/event disabled.</div>' + 
 			
-			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_detached" value="1" '+(event.detached ? 'checked="checked"' : '')+'/><label for="fe_ee_detached">Uninterruptible (Detached)</label></div>' + 
-			'<div class="caption">Run event as a detached background process that is never interrupted.</div>'
+			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_detached" value="1" '+(event.detached ? 'checked="checked"' : '')+'/><label for="fe_ee_detached">Detached (Uninterruptible)</label></div>' + 
+			'<div class="caption">Run event as a detached background process that is never interrupted.</div>' + 
+			
+			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_queue" value="1" '+(event.queue ? 'checked="checked"' : '')+' onChange="$P().setGroupVisible(\'eq\',this.checked)"/><label for="fe_ee_queue">Allow Queued Jobs</label></div>' + 
+			'<div class="caption">Jobs will be queued that cannot run immediately.</div>'
 		);
 		html += get_form_table_spacer();
 		
@@ -828,6 +844,18 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			"Optionally reset the internal clock for this event, to repeat past jobs, or jump over a queue."
 		);
 		html += get_form_table_spacer( rc_classes, '' );
+		
+		// event queue max
+		var eq_classes = 'eqgroup';
+		if (!event.queue) eq_classes += ' collapse';
+		
+		html += get_form_table_row( eq_classes, 'Queue Limit', 
+			'<input type="text" id="fe_ee_queue_max" size="8" value="'+escape_text_field_value(event.queue_max || 0)+'" spellcheck="false"/>'
+		);
+		html += get_form_table_caption( eq_classes, 
+			"Set the maximum number of jobs that can be queued up for this event (or '0' for no limit)."
+		);
+		html += get_form_table_spacer( eq_classes, '' );
 		
 		// chain reaction
 		var sorted_events = app.schedule.sort( function(a, b) {
@@ -1001,12 +1029,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		} ); // app.confirm
 		
 		setTimeout( function() { 
-			$('#fe_ee_crontab').keypress( function(event) {
-				if (event.keyCode == '13') { // enter key
-					event.preventDefault();
-					app.confirm_click(true);
-				}
-			} );
 			$('#fe_ee_crontab').focus();
 		}, 1 );
 	},
@@ -1073,12 +1095,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		} ); // app.confirm
 		
 		setTimeout( function() { 
-			$('#fe_ee_cat_title').keypress( function(event) {
-				if (event.keyCode == '13') { // enter key
-					event.preventDefault();
-					app.confirm_click(true);
-				}
-			} );
 			$('#fe_ee_cat_title').focus();
 		}, 1 );
 	},
@@ -1617,6 +1633,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 
 		// method (interruptable, non-interruptable)
 		event.detached = $('#fe_ee_detached').is(':checked') ? 1 : 0;
+		
+		// event queue
+		event.queue = $('#fe_ee_queue').is(':checked') ? 1 : 0;
+		event.queue_max = parseInt( $('#fe_ee_queue_max').val() || "0" );
+		if (isNaN(event.queue_max)) return quiet ? false : app.badField('fe_ee_queue_max', "Please enter an integer value for the event queue max.");
+		if (event.queue_max < 0) return quiet ? false : app.badField('fe_ee_queue_max', "Please enter a positive integer for the event queue max.");
 		
 		// chain reaction
 		event.chain = $('#fe_ee_chain').val();
