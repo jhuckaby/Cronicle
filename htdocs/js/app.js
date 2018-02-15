@@ -971,3 +971,39 @@ function catchTab(item,e){
 		return false;
 	}
 };
+
+function get_text_from_seconds_round_custom(sec, abbrev) {
+	// convert raw seconds to human-readable relative time
+	// round to nearest instead of floor, but allow one decimal point if under 10 units
+	var neg = '';
+	if (sec < 0) { sec =- sec; neg = '-'; }
+	
+	var text = abbrev ? "sec" : "second";
+	var amt = sec;
+	
+	if (sec > 59) {
+		var min = sec / 60;
+		text = abbrev ? "min" : "minute"; 
+		amt = min;
+		
+		if (min > 59) {
+			var hour = min / 60;
+			text = abbrev ? "hr" : "hour"; 
+			amt = hour;
+			
+			if (hour > 23) {
+				var day = hour / 24;
+				text = "day"; 
+				amt = day;
+			} // hour>23
+		} // min>59
+	} // sec>59
+	
+	if (amt < 10) amt = Math.round(amt * 10) / 10;
+	else amt = Math.round(amt);
+	
+	var text = "" + amt + " " + text;
+	if ((amt != 1) && !abbrev) text += "s";
+	
+	return(neg + text);
+};

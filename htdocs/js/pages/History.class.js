@@ -370,6 +370,9 @@ Class.subclass( Page.Base, "Page.History", {
 			type: 'line',
 			data: { datasets: datasets },
 			options: {
+				animation: {
+					duration: 0
+				},
 				responsive: true,
 				responsiveAnimationDuration: 0,
 				maintainAspectRatio: false,
@@ -404,7 +407,7 @@ Class.subclass( Page.Base, "Page.History", {
 							beginAtZero: true,
 							callback: function(value, index, values) {
 								if (value < 0) return '';
-								return '' + get_text_from_seconds_round(value, true, true);
+								return '' + get_text_from_seconds_round_custom(value, true);
 							}
 						},
 						scaleLabel: {
@@ -414,7 +417,7 @@ Class.subclass( Page.Base, "Page.History", {
 					}]
 				},
 				tooltips: {
-					mode: 'index',
+					mode: 'nearest',
 					intersect: false,
 					callbacks: {
 						label: function(tooltip, data) {
@@ -476,6 +479,9 @@ Class.subclass( Page.Base, "Page.History", {
 			type: 'line',
 			data: { datasets: datasets },
 			options: {
+				animation: {
+					duration: 0
+				},
 				responsive: true,
 				responsiveAnimationDuration: 0,
 				maintainAspectRatio: false,
@@ -578,6 +584,9 @@ Class.subclass( Page.Base, "Page.History", {
 			type: 'line',
 			data: { datasets: datasets },
 			options: {
+				animation: {
+					duration: 0
+				},
 				responsive: true,
 				responsiveAnimationDuration: 0,
 				maintainAspectRatio: false,
