@@ -114,7 +114,7 @@ Class.subclass( Page.Base, "Page.History", {
 			return tds;
 		} );
 		
-		if (!num_visible_items) {
+		if (resp.rows && resp.rows.length && !num_visible_items) {
 			html += '<tr><td colspan="'+cols.length+'" align="center" style="padding-top:10px; padding-bottom:10px; font-weight:bold;">';
 			html += 'All items were deleted on this page.';
 			html += '</td></tr>';
@@ -708,7 +708,7 @@ Class.subclass( Page.Base, "Page.History", {
 			return tds;
 		} );
 		
-		if (!num_visible_items) {
+		if (resp.rows && resp.rows.length && !num_visible_items) {
 			html += '<tr><td colspan="'+cols.length+'" align="center" style="padding-top:10px; padding-bottom:10px; font-weight:bold;">';
 			html += 'All items were deleted on this page.';
 			html += '</td></tr>';
