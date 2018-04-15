@@ -126,7 +126,7 @@ Class.add( Page.Admin, {
 				// events
 				case 'event_create':
 					desc = 'New event added: <b>' + item.event.title + '</b>';
-					if (item.event.timing) desc += " (" + summarize_event_timing(item.event.timing, item.event.timezone) + ")";
+					desc += " (" + summarize_event_timing(item.event.timing, item.event.timezone) + ")";
 					actions.push( '<a href="#Schedule?sub=edit_event&id='+item.event.id+'">Edit Event</a>' );
 				break;
 				case 'event_update':
