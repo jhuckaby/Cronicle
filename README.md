@@ -471,7 +471,7 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 			"bucket": "default",
 			"password": "",
 			"serialize": false,
-			"keyPrefix": ""
+			"keyPrefix": "cronicle"
 		}
 	}
 }
@@ -503,21 +503,26 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 		"AWS": {
 			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
 			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
-			"region": "us-west-1" 
+			"region": "us-west-1",
+			"correctClockSkew": true,
+			"maxRetries": 5
 		},
 		"S3": {
-			"keyPrefix": "",
+			"keyPrefix": "cronicle",
+			"fileExtensions": true,
 			"params": {
-				"Bucket": "MY_S3_BUCKET_ID"
+				"Bucket": "YOUR_S3_BUCKET_ID"
 			}
 		}
 	}
 }
 ```
 
-If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.
+If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.  A trailing slash will be automatically added to the prefix if missing.
 
-You'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
+It is recommended that you always set the S3 `fileExtensions` property to `true` for new installs.  This makes the Cronicle S3 records play nice with sync / copy tools such as [Rclone](https://rclone.org/).  See [Issue #60](https://github.com/jhuckaby/Cronicle/issues/60) for more details.  Do not change this property on existing installs -- use the [Storage Migration Tool](#storage-migration-tool).
+
+To use S3 you'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
 
 ```
 cd /opt/cronicle
@@ -530,7 +535,7 @@ After configuring S3, you'll need to run the Cronicle setup script manually, to 
 /opt/cronicle/bin/control.sh setup
 ```
 
-If you're worried about Amazon S3 costs, you needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
+If you're worried about Amazon S3 costs, you probably needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
 
 ## Web Server Configuration
 
@@ -2007,6 +2012,68 @@ mkdir -p $BACKUP_DIR
 /opt/cronicle/bin/control.sh export $BACKUP_FILE --verbose
 find $BACKUP_DIR -mtime +365 -type f -exec rm -v {} \;
 ```
+
+## Storage Migration Tool
+
+If you need to migrate your Cronicle storage data to a new location or even a new engine, a simple built-in migration tool is provided.  This tool reads *all* Cronicle storage records and writes them back out, using two different storage configurations (old and new).
+
+To use the tool, first edit your Cronicle's `conf/config.json` file on your master server, and locate the `Storage` object.  This should point to your *current* storage configuration, i.e. where we are migrating *from*.  Then, add a new object right next to it, and name it `NewStorage`.  This should point to your *new* storage location and/or storage engine, i.e. where we are migrating *to*.
+
+The contents of the `NewStorage` object should match whatever you'd typically put into `Storage`, if setting up a new install.  See the [Storage Configuration](#storage-configuration) section for details.  It can point to any of the supported engines.  Here is an example that would migrate from the local filesystem to Amazon S3:
+
+```js
+{
+	"Storage": {
+		"engine": "Filesystem",
+		"Filesystem": {
+			"base_dir": "data",
+			"key_namespaces": 1
+		}
+	},
+	
+	"NewStorage": {
+		"engine": "S3",
+		"AWS": {
+			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
+			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
+			"region": "us-west-1",
+		},
+		"S3": {
+			"keyPrefix": "cronicle",
+			"fileExtensions": true,
+			"params": {
+				"Bucket": "YOUR_S3_BUCKET_ID"
+			}
+		}
+	}
+}
+```
+
+You could also use this to migrate between two AWS regions, S3 buckets or key prefixes on S3.  Just point `Storage` and `NewStorage` to the same engine, e.g. `S3`, and change only the region, bucket or prefix in the `NewStorage` object.
+
+When you are ready to proceed, make sure you **shut down Cronicle** on all your servers.  You should not migrate storage while Cronicle is running, as it can result in corrupted data.
+
+All good?  Okay then, on your Cronicle master server as root (superuser), issue this command:
+
+```
+/opt/cronicle/bin/control.sh migrate
+```
+
+The following command-line arguments are supported:
+
+| Argument | Description |
+|----------|-------------|
+| `--debug` | Echo all debug log messages to the console.  This also disables the progress bar. |
+| `--verbose` | Print the key of each record as it is migrated.  This also disables the progress bar. |
+| `--dryrun` | Do not write any changes to new storage (except for a single test record, which is then deleted).  Used for debugging and troubleshooting. |
+
+It is recommended that you first run the migrate command with `--dryrun` to make sure that it can read and write to the two storage locations.  The script also logs all debug messages and transactions to `logs/StorageMigration.log`.
+
+Once the migration is complete and you have verified that your data is where you expect, edit the `conf/config.json` file one last time, and remove the old `Storage` object, and then rename `NewStorage` to `Storage`, effectively replacing it.  Cronicle will now access your storage data from the new location.  Make a backup of the file in case you ever need to roll back.
+
+If you have multiple Cronicle servers, make sure you sync your `conf/config.json` between all servers!  They all need to be identical.
+
+Finally, restart Cronicle, and all should be well.
 
 # Inner Workings
 
