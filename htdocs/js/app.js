@@ -631,7 +631,7 @@ function get_pretty_int_list(arr, ranges) {
 
 function summarize_event_timing(timing, timezone) {
 	// summarize event timing into human-readable string
-	if (!timing) return "On demand";
+	if (!timing) timing = {};
 	
 	// years
 	var year_str = '';

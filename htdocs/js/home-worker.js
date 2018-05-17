@@ -54,7 +54,7 @@ onmessage = function(e) {
 		margs.minutes(0).seconds(0).milliseconds(0);
 		
 		for (var epoch = min_epoch; epoch < max_epoch; epoch += 3600) {
-			if (item.timing && check_event_hour(item.timing, margs)) {
+			if (check_event_hour(item.timing, margs)) {
 				// item will run at least one time this hour
 				// so we can use the timing.minutes to populate events directly
 				var hour_start = margs.unix();
@@ -95,7 +95,6 @@ onmessage = function(e) {
 
 function check_event_hour(timing, margs) {
 	// check if event needs to run, up to the hour (do not check minute)
-	if (!timing) return false;
 	if (timing.hours && timing.hours.length && (timing.hours.indexOf(margs.hour()) == -1)) return false;
 	if (timing.weekdays && timing.weekdays.length && (timing.weekdays.indexOf(margs.day()) == -1)) return false;
 	if (timing.days && timing.days.length && (timing.days.indexOf(margs.date()) == -1)) return false;

@@ -42,7 +42,10 @@
 			"params": [
 				{ "id":"script", "type":"textarea", "rows":10, "title":"Script Source", "value": "#!/bin/sh\n\n# Enter your shell script code here" },
 				{ "id":"annotate", "type":"checkbox", "title":"Add Date/Time Stamps to Log", "value": 0 },
-				{ "id":"json", "type":"checkbox", "title":"Interpret JSON in Output", "value": 0 }
+				{ "id":"json", "type":"checkbox", "title":"Interpret JSON in Output", "value": 0 },
+				{  "type":"text","id":"TOPIC_TO_CONSUME","size":40,"value":"" , "title" : "TOPIC_TO_CONSUME"},
+				{  "type":"text","id":"TOPIC_TO_PRODUCE","size":40,"value":"" , "title" : "TOPIC_TO_PRODUCE"},
+				{  "type":"text","id":"BROKER_LIST","size":40,"value":"" , "title" : "BROKER_LIST"}
 			]
 		} ],
 		[ "listPush", "global/plugins", {
@@ -54,13 +57,13 @@
 			"modified": 1434125333,
 			"created": 1434125333,
 			"params": [
-				{ "type":"select", "id":"method", "title":"Method", "items":["GET", "HEAD", "POST"], "value":"GET" }, 
-				{ "type":"textarea", "id":"url", "title":"URL", "rows":3, "value":"http://" }, 
-				{ "type":"textarea", "id":"headers", "title":"Headers", "rows":4, "value":"User-Agent: Cronicle/1.0" }, 
-				{ "type":"textarea", "id":"data", "title":"POST Data", "rows":4, "value":"" }, 
-				{ "type":"text", "id":"timeout", "title":"Timeout (Seconds)", "size":5, "value":"30" }, 
-				{ "type":"checkbox", "id":"follow", "title":"Follow Redirects", "value":0 } , 
-				{ "type":"text", "id":"success_match", "title":"Success Match", "size":20, "value":"" }, 
+				{ "type":"select", "id":"method", "title":"Method", "items":["GET", "HEAD", "POST"], "value":"GET" },
+				{ "type":"textarea", "id":"url", "title":"URL", "rows":3, "value":"http://" },
+				{ "type":"textarea", "id":"headers", "title":"Headers", "rows":4, "value":"User-Agent: Cronicle/1.0" },
+				{ "type":"textarea", "id":"data", "title":"POST Data", "rows":4, "value":"" },
+				{ "type":"text", "id":"timeout", "title":"Timeout (Seconds)", "size":5, "value":"30" },
+				{ "type":"checkbox", "id":"follow", "title":"Follow Redirects", "value":0 } ,
+				{ "type":"text", "id":"success_match", "title":"Success Match", "size":20, "value":"" },
 				{ "type":"text", "id":"error_match", "title":"Error Match", "size":20, "value":"" }
 			]
 		} ],
@@ -96,7 +99,7 @@
 		[ "listCreate", "global/schedule", {} ],
 		[ "listCreate", "global/api_keys", {} ]
 	],
-	
+
 	"build": {
 		"common": [
 			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.js", "htdocs/js/external/" ],
@@ -104,23 +107,23 @@
 			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js.map", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/chart.js/dist/Chart.min.js", "htdocs/js/external/" ],
-			
+
 			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.min.css", "htdocs/css/" ],
 			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.css.map", "htdocs/css/" ],
 			[ "copyFiles", "node_modules/font-awesome/fonts/*", "htdocs/fonts/" ],
-			
+
 			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css", "htdocs/css/" ],
 			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css.map", "htdocs/css/" ],
 			[ "copyFiles", "node_modules/mdi/fonts/*", "htdocs/fonts/" ],
-			
+
 			[ "symlinkCompress", "node_modules/moment/min/moment.min.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/moment-timezone/builds/moment-timezone-with-data.min.js", "htdocs/js/external/" ],
 			[ "symlinkCompress", "node_modules/jstimezonedetect/dist/jstz.min.js", "htdocs/js/external/" ],
-			
+
 			[ "symlinkFile", "node_modules/pixl-webapp/js", "htdocs/js/common" ],
 			[ "symlinkFile", "node_modules/pixl-webapp/css/base.css", "htdocs/css/" ],
 			[ "copyFiles", "node_modules/pixl-webapp/fonts/*", "htdocs/fonts/" ],
-			
+
 			[ "chmodFiles", "755", "bin/*" ]
 		],
 		"dev": [

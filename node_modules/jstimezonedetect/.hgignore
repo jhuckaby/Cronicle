@@ -1,0 +1,8 @@
+syntax: glob
+*~
+*.pyc
+.settings
+.project
+node_modules/*
+.idea/*
+.DS_Store

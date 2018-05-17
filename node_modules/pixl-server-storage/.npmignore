@@ -1,0 +1,4 @@
+.gitignore
+node_modules/
+work/
+*.log
