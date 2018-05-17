@@ -748,8 +748,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// timing
 		var timing = event.timing;
 		var tmode = '';
-		if (!timing) tmode = 'demand';
-		else if (timing.years && timing.years.length) tmode = 'custom';
+		if (timing.years && timing.years.length) tmode = 'custom';
 		else if (timing.months && timing.months.length && timing.weekdays && timing.weekdays.length) tmode = 'custom';
 		else if (timing.days && timing.days.length && timing.weekdays && timing.weekdays.length) tmode = 'custom';
 		else if (timing.months && timing.months.length) tmode = 'yearly';
@@ -760,7 +759,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		else if (!num_keys(timing)) tmode = 'hourly';
 		
 		var timing_items = [
-			['demand', 'On Demand'],
 			['custom', 'Custom'],
 			['yearly', 'Yearly'],
 			['monthly', 'Monthly'],
@@ -1198,17 +1196,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// clean up timing object, add sane defaults for the new tmode
 		switch (tmode) {
-			case 'demand':
-				timing = false;
-				event.timing = false;
-			break;
-			
-			case 'custom':
-				if (!timing) timing = event.timing = {};
-			break;
-			
 			case 'yearly':
-				if (!timing) timing = event.timing = {};
 				delete timing.years;
 				if (!timing.months) timing.months = [];
 				if (!timing.months.length) timing.months.push( dargs.mon );
@@ -1221,7 +1209,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			break;
 			
 			case 'weekly':
-				if (!timing) timing = event.timing = {};
 				delete timing.years;
 				delete timing.months;
 				delete timing.days;
@@ -1233,7 +1220,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			break;
 			
 			case 'monthly':
-				if (!timing) timing = event.timing = {};
 				delete timing.years;
 				delete timing.months;
 				delete timing.weekdays;
@@ -1245,7 +1231,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			break;
 			
 			case 'daily':
-				if (!timing) timing = event.timing = {};
 				delete timing.years;
 				delete timing.months;
 				delete timing.weekdays;
@@ -1255,7 +1240,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			break;
 			
 			case 'hourly':
-				if (!timing) timing = event.timing = {};
 				delete timing.years;
 				delete timing.months;
 				delete timing.weekdays;
@@ -1264,10 +1248,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			break;
 		}
 		
-		if (timing) {
-			if (!timing.minutes) timing.minutes = [];
-			if (!timing.minutes.length) timing.minutes.push( 0 );
-		}
+		if (!timing.minutes) timing.minutes = [];
+		if (!timing.minutes.length) timing.minutes.push( 0 );
 		
 		$('#d_ee_timing_params').html( this.get_timing_params_html(tmode) );
 	},
@@ -1329,25 +1311,23 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			html += '<div class="timing_details_content">' + this.get_timing_checkbox_set( 'hour', hour_items, timing.hours || [] ) + '</div>';
 		} // hours
 		
-		// always show minutes (if timing is enabled)
-		if (timing) {
-			var min_items = [];
-			for (var idx = 0; idx < 60; idx += this.show_all_minutes ? 1 : 5) {
+		// always show minutes
+		var min_items = [];
+		for (var idx = 0; idx < 60; idx += this.show_all_minutes ? 1 : 5) {
+			var num_str = ':' + ((idx < 10) ? '0' : '') + idx;
+			min_items.push([ idx, num_str, (idx % 5 == 0) ? '' : 'plain' ]);
+		} // minutes
+		
+		html += '<div class="timing_details_label">Minutes';
+		html += ' <span class="link" style="font-weight:normal; font-size:11px" onMouseUp="$P().toggle_show_all_minutes()">(' + (this.show_all_minutes ? 'Show Less' : 'Show All') + ')</span>';
+		html += '</div>';
+		
+		html += '<div class="timing_details_content">';
+			html += this.get_timing_checkbox_set( 'minute', min_items, timing.minutes || [], function(idx) {
 				var num_str = ':' + ((idx < 10) ? '0' : '') + idx;
-				min_items.push([ idx, num_str, (idx % 5 == 0) ? '' : 'plain' ]);
-			} // minutes
-			
-			html += '<div class="timing_details_label">Minutes';
-			html += ' <span class="link" style="font-weight:normal; font-size:11px" onMouseUp="$P().toggle_show_all_minutes()">(' + (this.show_all_minutes ? 'Show Less' : 'Show All') + ')</span>';
-			html += '</div>';
-			
-			html += '<div class="timing_details_content">';
-				html += this.get_timing_checkbox_set( 'minute', min_items, timing.minutes || [], function(idx) {
-					var num_str = ':' + ((idx < 10) ? '0' : '') + idx;
-					return([ idx, num_str, (idx % 5 == 0) ? '' : 'plain' ]);
-				} );
-			html += '</div>';
-		}
+				return([ idx, num_str, (idx % 5 == 0) ? '' : 'plain' ]);
+			} );
+		html += '</div>';
 		
 		// summary
 		html += '<div class="info_label">The event will run:</div>';
@@ -1378,16 +1358,9 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	
 	change_edit_timing_param: function() {
 		// edit timing param has changed, refresh entire timing block
-		// rebuild entire event.timing object from scratch
 		var event = this.event;
 		event.timing = {};
 		var timing = event.timing;
-		
-		// if tmode is demand, wipe timing object
-		if ($('#fe_ee_timing').val() == 'demand') {
-			event.timing = false;
-			timing = false;
-		}
 		
 		$('.ccbox_timing_year.checked').each( function() {
 			if (this.id.match(/_(\d+)$/)) {

@@ -1,0 +1,13 @@
+DBG: tput reports color support: true
+DBG: Using color escape sequences from tput
+DBG: Loading module builtin (required by base) from mklove/modules/configure.builtin
+DBG: Loading module host (required by base) from mklove/modules/configure.host
+DBG: Loading module cc (required by base) from mklove/modules/configure.cc
+DBG: Loading module librdkafka (required by base) from configure.librdkafka
+DBG: Loading module cxx (required by librdkafka) from mklove/modules/configure.cxx
+DBG: Loading module lib (required by librdkafka) from mklove/modules/configure.lib
+DBG: Loading module pic (required by lib) from mklove/modules/configure.pic
+DBG: Loading module atomics (required by librdkafka) from mklove/modules/configure.atomics
+DBG: Loading module good_cflags (required by librdkafka) from mklove/modules/configure.good_cflags
+DBG: Loading module socket (required by librdkafka) from mklove/modules/configure.socket
+DBG: Loading module parseversion (required by librdkafka) from mklove/modules/configure.parseversion

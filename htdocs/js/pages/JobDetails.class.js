@@ -626,7 +626,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		// arch mem overlay
 		var html = '';
-		html += '<div class="pie-overlay-title">'+get_text_from_bytes(mem_avg, 10)+'</div>';
+		html += '<div class="pie-overlay-title">'+get_text_from_bytes(mem_avg, 1)+'</div>';
 		html += '<div class="pie-overlay-subtitle">Average</div>';
 		$('#d_arch_mem_overlay').html( html );
 		
@@ -1204,7 +1204,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		// live mem overlay
 		var html = '';
-		html += '<div class="pie-overlay-title">'+get_text_from_bytes(mem_cur, 10)+'</div>';
+		html += '<div class="pie-overlay-title">'+get_text_from_bytes(mem_cur, 1)+'</div>';
 		html += '<div class="pie-overlay-subtitle">Current</div>';
 		$('#d_live_mem_overlay').html( html );
 		

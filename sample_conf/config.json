@@ -4,7 +4,7 @@
 	"smtp_hostname": "localhost",
 	"smtp_port": 25,
 	"secret_key": "CHANGE_ME",
-	
+
 	"log_dir": "logs",
 	"log_filename": "[component].log",
 	"log_columns": ["hires_epoch", "date", "hostname", "component", "category", "code", "msg", "data"],
@@ -24,16 +24,16 @@
 	"udp_broadcast_port": 3014,
 	"scheduler_startup_grace": 10,
 	"universal_web_hook": "",
-	
+
 	"server_comm_use_hostnames": 0,
 	"web_socket_use_hostnames": 0,
-	
+
 	"job_memory_max": 1073741824,
 	"job_memory_sustain": 0,
 	"job_cpu_max": 0,
 	"job_cpu_sustain": 0,
 	"job_env": {},
-	
+
 	"client": {
 		"name": "Cronicle",
 		"debug": 1,
@@ -46,9 +46,9 @@
 			{ "id": "abort_events", "title": "Abort Events" },
 			{ "id": "state_update", "title": "Toggle Scheduler" }
 		],
-		"new_event_template": { 
-			"enabled": 1, 
-			"params": {}, 
+		"new_event_template": {
+			"enabled": 1,
+			"params": {},
 			"timing": { "minutes": [0] },
 			"max_children": 1,
 			"timeout": 3600,
@@ -56,18 +56,18 @@
 			"queue_max": 1000
 		}
 	},
-	
+
 	"Storage": {
 		"engine": "Filesystem",
 		"list_page_size": 50,
 		"concurrency": 4,
-		
+
 		"Filesystem": {
 			"base_dir": "data",
 			"key_namespaces": 1
 		}
 	},
-	
+
 	"WebServer": {
 		"http_port": 3012,
 		"http_htdocs_dir": "htdocs",
@@ -81,13 +81,13 @@
 		"http_response_headers": {
 			"Access-Control-Allow-Origin": "*"
 		},
-		
-		"https": 0,
-		"https_port": 3013,
+
+		"https": 1,
+		"https_port": 443,
 		"https_cert_file": "conf/ssl.crt",
 		"https_key_file": "conf/ssl.key",
 		"https_force": 0,
-		"https_timeout": 30,
+		"https_timeout": 60,
 		"https_header_detect": {
 			"Front-End-Https": "^on$",
 			"X-Url-Scheme": "^https$",
@@ -96,7 +96,7 @@
 			"X-Forwarded-Ssl": "^on$"
 		}
 	},
-	
+
 	"User": {
 		"session_expire_days": 30,
 		"max_failed_logins_per_hour": 5,
@@ -104,13 +104,13 @@
 		"free_accounts": 0,
 		"sort_global_users": 1,
 		"use_bcrypt": 1,
-		
+
 		"email_templates": {
 			"welcome_new_user": "conf/emails/welcome_new_user.txt",
 			"changed_password": "conf/emails/changed_password.txt",
 			"recover_password": "conf/emails/recover_password.txt"
 		},
-		
+
 		"default_privileges": {
 			"admin": 0,
 			"create_events": 1,
@@ -121,5 +121,5 @@
 			"state_update": 0
 		}
 	}
-	
+
 }

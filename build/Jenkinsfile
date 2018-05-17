@@ -1,0 +1,231 @@
+import groovy.json.JsonSlurper
+import groovy.util.XmlSlurper
+import hudson.plugins.*
+import jenkins.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+podTemplate(label: 'croniclepocpod', containers: [
+	containerTemplate(args: '${computer.jnlpmac} ${computer.name}', image: 'rxrenewalprd.azurecr.io/gcr.io/cloud-solutions-images/jenkins-k8s-slave:v4', name: 'jnlp', ttyEnabled: true, workingDir: '/home/jenkins', resourceRequestCpu: '0.5', resourceLimitCpu: '1', resourceRequestMemory: '500Mi', resourceLimitMemory: '1Gi'),
+	containerTemplate(name: 'npm', image: 'rxrenewaldev.azurecr.io/nodejsproject:1.1', ttyEnabled: true, command: 'cat'),
+	containerTemplate(name: 'docker', image: 'rxrenewalprd.azurecr.io/docker:17.10.0-ce', alwaysPullImage: true,ttyEnabled: true, command: 'cat', resourceRequestCpu: '0.5', resourceLimitCpu: '1', resourceRequestMemory: '500Mi', resourceLimitMemory: '1Gi')
+],
+  volumes: [
+      persistentVolumeClaim(mountPath: '/home/jenkins', claimName: 'jenslaveworkspacenfspvc'),
+  	  hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock')
+  ]
+)
+{
+	node('croniclepocpod') {
+
+		if ("${env.BUILD_NUMBER}" == '1') {
+				echo "Sucessfully created new branch job in jenkins, Please do configuration changes and push to Bitbucket to kick off the build"
+				currentBuild.result = 'SUCCESS'
+				return
+		}
+
+
+		stage('Checkout the Code') {
+			container('jnlp') {
+				sourceCodeCheckout()
+			}
+		}
+
+
+		stage('NPM Install') {
+			container('npm') {
+//			  sh "cp /root/.npmrc /home/jenkins"
+//
+//			  sh "nohup npm install ./custom-cronicle/Cronicle --unsafe-perm < /dev/null"
+//             sh "nohup npm run build < /dev/null"
+
+//              sh "nohup npm run gen:env < /dev/null"
+
+        //sh "nohup npm install --production < /dev/null"
+ //       sh "tar -zcf cronicle-poc.tar.gz lib/ node_modules/ package.json .env"
+
+			}
+    }
+
+//    stage('Unit testing & Sonar') {
+//          container('npm') {
+//            	withCredentials([usernamePassword(credentialsId: '2271d350-dc5a-42dd-8665-7c963fb9faf7', passwordVariable: 'sonarpassword', usernameVariable: 'sonaruser')]) {
+//                    	sh "nohup npm run sonar -- -n '${sonaruser}' -p '${sonarpassword}' -u https://oneit.walgreens.com/sonar < /dev/null"
+//                    }
+//          }
+//       }
+
+    stage('Build image and push to ACR registry') {
+    			container('docker') {
+    				buildImageandPublishtoACR()
+    			}
+
+    		}
+
+	}
+}
+
+
+/*  Methods */
+
+def sourceCodeCheckout()
+{
+	try{
+		scmUrl = scm.getUserRemoteConfigs()[0].getUrl()
+		checkout([$class: 'GitSCM', branches: [[name: "*/${env.BRANCH_NAME}"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '2271d350-dc5a-42dd-8665-7c963fb9faf7', url: "${scmUrl}"]]])
+	  initandvalBuildVariables()
+	}catch(err){
+    	 def errstring = new StringWriter()
+         err.printStackTrace(new PrintWriter(errstring))
+         def errStr = errstring.toString()
+         failureMailTrigger(errStr)
+         throw err
+     }
+}
+
+def buildImageandPublishtoACR() {
+    try{
+      initandvalImageCreationVariables()
+      if ("${skipImgcrpush}"=='true') {
+        buildStatusMailTrigger()
+        echo " Image ceration is skipped, if required update skipImgcrpush in jenkins properties file "
+        return
+      }else {
+          withCredentials([usernamePassword(credentialsId: "${acrCredentialid}", passwordVariable: 'password', usernameVariable: 'username')]) {
+
+            sh "ls -la"
+            sh "docker login ${acrRepository} -u '${username}' -p '${password}'"
+            sh "docker build -t ${repoName}:${buildVersion} ./custom-cronicle/Cronicle/"
+            sh "docker tag ${repoName}:${buildVersion} ${acrRepository}/${repoName}/${repoName}:${buildVersion}"
+            sh "docker push ${acrRepository}/${repoName}/${repoName}:${buildVersion}"
+          }
+
+      }
+      properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '15'))])
+      buildStatusMailTrigger()
+    }catch(err){
+    	 def errstring = new StringWriter()
+         err.printStackTrace(new PrintWriter(errstring))
+         def errStr = errstring.toString()
+         errstring=null
+         failureMailTrigger(errStr)
+         throw err
+    }
+}
+
+def initandvalBuildVariables(){
+	fileExistanceValidation('custom-cronicle/Cronicle/build/Jenkins.properties')
+	fileExistanceValidation('custom-cronicle/Cronicle/package.json')
+	readBuildProperties()
+	assignBuildVariables()
+	buildMailList=validateVariables(buildMailList,'buildMailList')
+}
+
+def initandvalImageCreationVariables(){
+	fileExistanceValidation('custom-cronicle/Cronicle/build/Jenkins.properties')
+	assignImageCreationVariables()
+  pomVersion=validateVariables(pomVersion,'pomVersion')
+
+  repoName=validateVariables(repoName,'repoName')
+	repoName=repoName.toLowerCase()
+	buildVersion=serviceVersion(pomVersion)
+	buildVersion=validateVariables(buildVersion,'buildVersion')
+	if ("${env.BRANCH_NAME}"=='master') {
+		acrRepository="rxrenewalprd.azurecr.io"
+		acrCredentialid="7b6530ea-418e-422a-9a76-0fbd77acef1f"
+	}else{
+		acrRepository="rxrenewaldev.azurecr.io"
+		acrCredentialid="8a36b5c0-35c1-40ae-86ce-d7f54f218c4e"
+	}
+    skipImgcrpush=validateVariables(skipImgcrpush,'skipImgcrpush')
+	if ("${skipImgcrpush}".toLowerCase()!='true' && "${skipImgcrpush}".toLowerCase()!='false'){
+		failureMailTrigger("'${skipImgcrpush}' Variable should be either true or false.")
+		error "'${skipImgcrpush}' Variable should be either true or false. EXITING"
+	}
+
+
+}
+
+def fileExistanceValidation(fileName){
+	if (!fileExists(fileName)) {
+		failureMailTrigger("'${fileName}' doesnot exist")
+		error "'${fileName}' file doesnot exist. EXITING"
+	}
+}
+
+
+def readBuildProperties(){
+	props = readProperties  file:'custom-cronicle/Cronicle/build/Jenkins.properties'
+}
+
+def readImageCreationProperties(){
+	pom = readMavenPom file: 'pom.xml'
+}
+
+def assignBuildVariables(){
+	buildMailList=props['buildMailList']
+}
+
+def assignImageCreationVariables(){
+	repoName=props['repoName']
+	skipImgcrpush=props['skipImgcrpush']
+	skipMockImgcrPush=props['skipMockImgcrPush']
+	skipSBImgcrPush=props['skipSBImgcrPush']
+	def json = readFile(file:'./custom-cronicle/Cronicle/package.json')
+  def data = new JsonSlurper().parseText(json)
+  pomVersion=data.version
+	buildMailList=props['buildMailList']
+}
+
+def serviceVersion(version) {
+
+    if ("${env.BRANCH_NAME}"=='master'  && !version.contains('SNAPSHOT') ) {
+     	versionNumber = version
+    }else if ("${env.BRANCH_NAME}".startsWith('develop') && version.contains('SNAPSHOT') ) {
+			def Version= version.split('-')
+	        Date date = new Date()
+	    	String datePart = date.format("MMddyyyy")
+			String timePart = date.format("HHmmss")
+			versionNumber = Version[0]
+	        versionNumber= "${versionNumber}" + "." + "${env.BUILD_NUMBER}" + "-" + datePart + "-SNAPSHOT"
+    }else{
+			def Version= version.split('-')
+	        Date date = new Date()
+	    	String datePart = date.format("MMddyyyy")
+			String timePart = date.format("HHmmss")
+			versionNumber = Version[0]
+			def branchname=env.BRANCH_NAME
+			branchname=branchname.replace("/","-")
+	        versionNumber= "${versionNumber}" + "." + "${env.BUILD_NUMBER}" + "-" + datePart + "-" + "${branchname}"
+	}
+
+    return versionNumber
+}
+
+
+def validateVariables(parameter,parameterName){
+	if (parameter?.trim()) {
+	    parameter=parameter.trim()
+	    return parameter
+	}else{
+		failureMailTrigger("'${parameterName}' variable cannot able to read")
+	    error "'${parameterName}' variable cannot able to read. EXITING"
+	}
+}
+
+
+def buildStatusMailTrigger() {
+	if(currentBuild.currentResult == 'SUCCESS') {
+		mail subject: "Build successfully completed on branch name: ${env.BRANCH_NAME} and Build Numer ${env.BUILD_NUMBER} ", to: "${buildMailList}",body: "Hi,\n \nBuild succeeded, Jenkins Job Link : ${env.BUILD_URL}console \n \n repository URL:  ${scmUrl}  \n\n  Thanks \n Devops Team "
+    }
+}
+
+def failureMailTrigger(errStr) {
+	if (buildMailList?.trim()) {
+	    buildMailList=buildMailList.trim()
+	    mail subject: "Build Failure on branch name: ${env.BRANCH_NAME} and Build Numer ${env.BUILD_NUMBER} ", to: "${buildMailList}",body: "Hi,\n \nBuild failed, please check Jenkins Job Link : ${env.BUILD_URL}console \n \n repository URL:  ${scmUrl}  \n\n  Failed: ${errStr} \n\n Thanks \n Devops Team "
+	}else{
+		buildMailList="PharmacyRenewal-DevOps@walgreens.com"
+		mail subject: "Build Failure on branch name: ${env.BRANCH_NAME} and Build Numer ${env.BUILD_NUMBER} ", to: "${buildMailList}",body: "Hi,\n \nBuild failed, please check Jenkins Job Link : ${env.BUILD_URL}console \n \n repository URL:  ${scmUrl}  \n\n  Failed: ${errStr} \n\n Thanks \n Devops Team "
+	}
+}
