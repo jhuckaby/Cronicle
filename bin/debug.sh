@@ -9,4 +9,4 @@ DIR=`dirname $SCRIPT`
 HOMEDIR=`dirname $DIR`
 
 cd $HOMEDIR
-node --expose_gc --always_compact --trace-warnings $HOMEDIR/lib/main.js --debug --echo "$@"
+node --expose_gc --always_compact $HOMEDIR/lib/main.js --debug --echo "$@"

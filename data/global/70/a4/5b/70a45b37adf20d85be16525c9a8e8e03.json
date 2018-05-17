@@ -1,0 +1,1 @@
+{"type":"list_page","items":[{"id":"maingrp","title":"Master Group","regexp":"^(osboxes)$","master":1},{"id":"allgrp","title":"All Servers","regexp":".+","master":0}]}

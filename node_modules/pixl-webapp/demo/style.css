@@ -1,0 +1,9 @@
+/* Styles for Demo App */
+
+#d_header_logo {
+	position: relative;
+	width: 40px;
+	height: 40px;
+	background: url(logo.png) no-repeat center center;
+	background-size: 32px 32px;
+}

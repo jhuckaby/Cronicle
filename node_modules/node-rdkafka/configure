@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# This file is intended to be run on unix systems to configure librdkafka
+# inside the submodules
+
+# This does not get run on windows which uses the build in solutions file
+
+pushd ./deps/librdkafka &> /dev/null
+
+./configure $*
+
+popd &> /dev/null

@@ -22,158 +22,53 @@
 
 ## Table of Contents
 
-<!-- toc -->
-* [Glossary](#glossary)
-- [Installation](#installation)
-- [Setup](#setup)
-	* [Single Server](#single-server)
-	* [Single Master with Slaves](#single-master-with-slaves)
-	* [Multi-Server Cluster](#multi-server-cluster)
-		+ [Load Balancers](#load-balancers)
-		+ [Ops Notes](#ops-notes)
-- [Configuration](#configuration)
-	* [Basics](#basics)
-		+ [base_app_url](#base_app_url)
-		+ [email_from](#email_from)
-		+ [smtp_hostname](#smtp_hostname)
-		+ [smtp_port](#smtp_port)
-		+ [mail_options](#mail_options)
-		+ [secret_key](#secret_key)
-		+ [log_dir](#log_dir)
-		+ [log_filename](#log_filename)
-		+ [log_columns](#log_columns)
-		+ [log_archive_path](#log_archive_path)
-		+ [copy_job_logs_to](#copy_job_logs_to)
-		+ [queue_dir](#queue_dir)
-		+ [pid_file](#pid_file)
-		+ [debug_level](#debug_level)
-		+ [maintenance](#maintenance)
-		+ [list_row_max](#list_row_max)
-		+ [job_data_expire_days](#job_data_expire_days)
-		+ [child_kill_timeout](#child_kill_timeout)
-		+ [dead_job_timeout](#dead_job_timeout)
-		+ [master_ping_freq](#master_ping_freq)
-		+ [master_ping_timeout](#master_ping_timeout)
-		+ [udp_broadcast_port](#udp_broadcast_port)
-		+ [scheduler_startup_grace](#scheduler_startup_grace)
-		+ [universal_web_hook](#universal_web_hook)
-		+ [web_hook_custom_data](#web_hook_custom_data)
-		+ [ssl_cert_bypass](#ssl_cert_bypass)
-		+ [job_memory_max](#job_memory_max)
-		+ [job_memory_sustain](#job_memory_sustain)
-		+ [job_cpu_max](#job_cpu_max)
-		+ [job_cpu_sustain](#job_cpu_sustain)
-		+ [job_env](#job_env)
-		+ [server_comm_use_hostnames](#server_comm_use_hostnames)
-		+ [web_socket_use_hostnames](#web_socket_use_hostnames)
-	* [Storage Configuration](#storage-configuration)
-		+ [Filesystem](#filesystem)
-		+ [Couchbase](#couchbase)
-		+ [Amazon S3](#amazon-s3)
-	* [Web Server Configuration](#web-server-configuration)
-	* [User Configuration](#user-configuration)
-	* [Email Configuration](#email-configuration)
-- [Web UI](#web-ui)
-	* [Home Tab](#home-tab)
-		+ [General Stats](#general-stats)
-		+ [Active Jobs](#active-jobs)
-		+ [Upcoming Events](#upcoming-events)
-	* [Schedule Tab](#schedule-tab)
-		+ [Edit Event Tab](#edit-event-tab)
-			- [Event ID](#event-id)
-			- [Event Name](#event-name)
-			- [Event Enabled](#event-enabled)
-			- [Event Category](#event-category)
-			- [Event Target](#event-target)
-				* [Algorithm](#algorithm)
-				* [Multiplexing](#multiplexing)
-			- [Event Plugin](#event-plugin)
-			- [Event Timing](#event-timing)
-			- [Event Concurrency](#event-concurrency)
-			- [Event Timeout](#event-timeout)
-			- [Event Retries](#event-retries)
-			- [Event Options](#event-options)
-				* [Run All Mode](#run-all-mode)
-				* [Detached Mode](#detached-mode)
-				* [Allow Queued Jobs](#allow-queued-jobs)
-				* [Chain Reaction](#chain-reaction)
-			- [Event Time Machine](#event-time-machine)
-			- [Event Notification](#event-notification)
-				* [Event Web Hook](#event-web-hook)
-			- [Event Resource Limits](#event-resource-limits)
-			- [Event Notes](#event-notes)
-			- [Run Now](#run-now)
-	* [Completed Jobs Tab](#completed-jobs-tab)
-		+ [Event History Tab](#event-history-tab)
-		+ [Event Stats Tab](#event-stats-tab)
-	* [Job Details Tab](#job-details-tab)
-	* [My Account Tab](#my-account-tab)
-	* [Administration Tab](#administration-tab)
-		+ [Activity Log Tab](#activity-log-tab)
-		+ [API Keys Tab](#api-keys-tab)
-		+ [Categories Tab](#categories-tab)
-		+ [Plugins Tab](#plugins-tab)
-			- [Plugin Parameters](#plugin-parameters)
-			- [Advanced Plugin Options](#advanced-plugin-options)
-		+ [Servers Tab](#servers-tab)
-			- [Server Groups](#server-groups)
-		+ [Users Tab](#users-tab)
-- [Plugins](#plugins)
-	* [Writing Plugins](#writing-plugins)
-		+ [JSON Input](#json-input)
-		+ [JSON Output](#json-output)
-			- [Reporting Progress](#reporting-progress)
-			- [Performance Metrics](#performance-metrics)
-				* [Nested Metrics](#nested-metrics)
-			- [Changing Notification Settings](#changing-notification-settings)
-			- [Chain Reaction Control](#chain-reaction-control)
-				* [Chain Data](#chain-data)
-			- [Custom Data Tables](#custom-data-tables)
-			- [Custom HTML Content](#custom-html-content)
-			- [Updating The Event](#updating-the-event)
-		+ [Environment Variables](#environment-variables)
-	* [Sample Node Plugin](#sample-node-plugin)
-	* [Sample Perl Plugin](#sample-perl-plugin)
-	* [Sample PHP Plugin](#sample-php-plugin)
-	* [Built-in Shell Plugin](#built-in-shell-plugin)
-- [Command Line](#command-line)
-	* [Starting and Stopping](#starting-and-stopping)
-	* [Storage Maintenance](#storage-maintenance)
-	* [Recover Admin Access](#recover-admin-access)
-	* [Server Startup](#server-startup)
-	* [Upgrading Cronicle](#upgrading-cronicle)
-	* [Data Import and Export](#data-import-and-export)
-	* [Storage Migration Tool](#storage-migration-tool)
-- [Inner Workings](#inner-workings)
-	* [Storage](#storage)
-	* [Logs](#logs)
-	* [Keeping Time](#keeping-time)
-	* [Master Server Failover](#master-server-failover)
-		+ [Unclean Shutdown](#unclean-shutdown)
-- [API Reference](#api-reference)
-	* [JSON REST API](#json-rest-api)
-		+ [Redirects](#redirects)
-	* [API Keys](#api-keys)
-	* [Standard Response Format](#standard-response-format)
-	* [API Calls](#api-calls)
-		+ [get_schedule](#get_schedule)
-		+ [get_event](#get_event)
-		+ [create_event](#create_event)
-		+ [update_event](#update_event)
-		+ [delete_event](#delete_event)
-		+ [run_event](#run_event)
-		+ [get_job_status](#get_job_status)
-		+ [update_job](#update_job)
-		+ [abort_job](#abort_job)
-	* [Event Data Format](#event-data-format)
-		+ [Event Timing Object](#event-timing-object)
-- [Development](#development)
-	* [Installing Dev Tools](#installing-dev-tools)
-	* [Manual Installation](#manual-installation)
-	* [Starting in Debug Mode](#starting-in-debug-mode)
-	* [Running Unit Tests](#running-unit-tests)
-- [Colophon](#colophon)
-- [License](#license)
+- **[Installation](#installation)**
+- **[Setup](#setup)**
+	- [Single Server](#single-server)
+	- [Single Master with Slaves](#single-master-with-slaves)
+	- [Multi-Server Cluster](#multi-server-cluster)
+- **[Configuration](#configuration)**
+	- [Basics](#basics)
+	- [Storage Configuration](#storage-configuration)
+	- [Web Server Configuration](#web-server-configuration)
+	- [User Configuration](#user-configuration)
+	- [Email Configuration](#email-configuration)
+- **[Web UI](#web-ui)**
+	- [Home Tab](#home-tab)
+	- [Schedule Tab](#schedule-tab)
+	- [Completed Jobs Tab](#completed-jobs-tab)
+	- [Job Details Tab](#job-details-tab)
+	- [My Account Tab](#my-account-tab)
+	- [Administration Tab](#administration-tab)
+- **[Plugins](#plugins)**
+	- [Writing Plugins](#writing-plugins)
+	- [Sample Node Plugin](#sample-node-plugin)
+	- [Sample Perl Plugin](#sample-perl-plugin)
+	- [Sample PHP Plugin](#sample-php-plugin)
+	- [Built-in Shell Plugin](#built-in-shell-plugin)
+- **[Command Line](#command-line)**
+	- [Starting and Stopping](#starting-and-stopping)
+	- [Storage Maintenance](#storage-maintenance)
+	- [Recover Admin Access](#recover-admin-access)
+	- [Server Startup](#server-startup)
+	- [Upgrading Cronicle](#upgrading-cronicle)
+- **[Inner Workings](#inner-workings)**
+	- [Storage](#storage)
+	- [Logs](#logs)
+	- [Keeping Time](#keeping-time)
+	- [Master Server Failover](#master-server-failover)
+- **[API Reference](#api-reference)**
+	- [JSON REST API](#json-rest-api)
+	- [API Keys](#api-keys)
+	- [Standard Response Format](#standard-response-format)
+	- [API Calls](#api-calls)
+	- [Event Data Format](#event-data-format)
+- **[Development](#development)**
+	- [Installing Dev Tools](#installing-dev-tools)
+	- [Manual Installation](#manual-installation)
+	- [Starting in Debug Mode](#starting-in-debug-mode)
+- **[Colophon](#colophon)**
+- **[License](#license)**
 
 ## Glossary
 
@@ -576,7 +471,7 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 			"bucket": "default",
 			"password": "",
 			"serialize": false,
-			"keyPrefix": "cronicle"
+			"keyPrefix": ""
 		}
 	}
 }
@@ -608,26 +503,21 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 		"AWS": {
 			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
 			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
-			"region": "us-west-1",
-			"correctClockSkew": true,
-			"maxRetries": 5
+			"region": "us-west-1" 
 		},
 		"S3": {
-			"keyPrefix": "cronicle",
-			"fileExtensions": true,
+			"keyPrefix": "",
 			"params": {
-				"Bucket": "YOUR_S3_BUCKET_ID"
+				"Bucket": "MY_S3_BUCKET_ID"
 			}
 		}
 	}
 }
 ```
 
-If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.  A trailing slash will be automatically added to the prefix if missing.
+If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.
 
-It is recommended that you always set the S3 `fileExtensions` property to `true` for new installs.  This makes the Cronicle S3 records play nice with sync / copy tools such as [Rclone](https://rclone.org/).  See [Issue #60](https://github.com/jhuckaby/Cronicle/issues/60) for more details.  Do not change this property on existing installs -- use the [Storage Migration Tool](#storage-migration-tool).
-
-To use S3 you'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
+You'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
 
 ```
 cd /opt/cronicle
@@ -640,7 +530,7 @@ After configuring S3, you'll need to run the Cronicle setup script manually, to 
 /opt/cronicle/bin/control.sh setup
 ```
 
-If you're worried about Amazon S3 costs, you probably needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
+If you're worried about Amazon S3 costs, you needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
 
 ## Web Server Configuration
 
@@ -2117,68 +2007,6 @@ mkdir -p $BACKUP_DIR
 /opt/cronicle/bin/control.sh export $BACKUP_FILE --verbose
 find $BACKUP_DIR -mtime +365 -type f -exec rm -v {} \;
 ```
-
-## Storage Migration Tool
-
-If you need to migrate your Cronicle storage data to a new location or even a new engine, a simple built-in migration tool is provided.  This tool reads *all* Cronicle storage records and writes them back out, using two different storage configurations (old and new).
-
-To use the tool, first edit your Cronicle's `conf/config.json` file on your master server, and locate the `Storage` object.  This should point to your *current* storage configuration, i.e. where we are migrating *from*.  Then, add a new object right next to it, and name it `NewStorage`.  This should point to your *new* storage location and/or storage engine, i.e. where we are migrating *to*.
-
-The contents of the `NewStorage` object should match whatever you'd typically put into `Storage`, if setting up a new install.  See the [Storage Configuration](#storage-configuration) section for details.  It can point to any of the supported engines.  Here is an example that would migrate from the local filesystem to Amazon S3:
-
-```js
-{
-	"Storage": {
-		"engine": "Filesystem",
-		"Filesystem": {
-			"base_dir": "data",
-			"key_namespaces": 1
-		}
-	},
-	
-	"NewStorage": {
-		"engine": "S3",
-		"AWS": {
-			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
-			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
-			"region": "us-west-1",
-		},
-		"S3": {
-			"keyPrefix": "cronicle",
-			"fileExtensions": true,
-			"params": {
-				"Bucket": "YOUR_S3_BUCKET_ID"
-			}
-		}
-	}
-}
-```
-
-You could also use this to migrate between two AWS regions, S3 buckets or key prefixes on S3.  Just point `Storage` and `NewStorage` to the same engine, e.g. `S3`, and change only the region, bucket or prefix in the `NewStorage` object.
-
-When you are ready to proceed, make sure you **shut down Cronicle** on all your servers.  You should not migrate storage while Cronicle is running, as it can result in corrupted data.
-
-All good?  Okay then, on your Cronicle master server as root (superuser), issue this command:
-
-```
-/opt/cronicle/bin/control.sh migrate
-```
-
-The following command-line arguments are supported:
-
-| Argument | Description |
-|----------|-------------|
-| `--debug` | Echo all debug log messages to the console.  This also disables the progress bar. |
-| `--verbose` | Print the key of each record as it is migrated.  This also disables the progress bar. |
-| `--dryrun` | Do not write any changes to new storage (except for a single test record, which is then deleted).  Used for debugging and troubleshooting. |
-
-It is recommended that you first run the migrate command with `--dryrun` to make sure that it can read and write to the two storage locations.  The script also logs all debug messages and transactions to `logs/StorageMigration.log`.
-
-Once the migration is complete and you have verified that your data is where you expect, edit the `conf/config.json` file one last time, and remove the old `Storage` object, and then rename `NewStorage` to `Storage`, effectively replacing it.  Cronicle will now access your storage data from the new location.  Make a backup of the file in case you ever need to roll back.
-
-If you have multiple Cronicle servers, make sure you sync your `conf/config.json` between all servers!  They all need to be identical.
-
-Finally, restart Cronicle, and all should be well.
 
 # Inner Workings
 

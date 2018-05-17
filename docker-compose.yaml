@@ -1,0 +1,34 @@
+version: '3'
+
+# docker network create -d overlay cronicle-net
+services:
+  # MY APP
+  cronicle-master:
+    image: pioardi/dev-cronicle
+    hostname : cronicle
+    #networks:
+    # - cronicle-net
+    ports:
+      - '3012:3012'
+      - '443:443'
+    networks:
+      - cronicle-net
+    #volumes:
+    #  - nfs:/opt/cronicle/data
+    command: --master
+    deploy:
+      replicas: 3
+
+
+#volumes:
+#  nfs:
+#    driver: local
+#    driver_opts:
+#      type: nfs
+#      o: addr=192.168.1.1,rw
+#      device: ":/home/osboxes/Desktop/cronicle-data"
+
+networks:
+  cronicle-net:
+    external:
+      name: cronicle-net

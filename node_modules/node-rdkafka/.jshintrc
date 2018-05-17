@@ -1,0 +1,23 @@
+{
+  "node": true,
+  "mocha": true,
+  "browser": false,
+  "boss": true,
+  "curly": true,
+  "debug": false,
+  "devel": false,
+  "eqeqeq": true,
+  "evil": true,
+  "forin": false,
+  "latedef": false,
+  "noarg": true,
+  "nonew": true,
+  "nomen": false,
+  "onevar": false,
+  "plusplus": false,
+  "regexp": false,
+  "undef": true,
+  "strict": false,
+  "white": false,
+  "eqnull": true
+}
