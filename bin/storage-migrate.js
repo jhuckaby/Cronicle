@@ -346,9 +346,13 @@ var StorageMigrator = {
 						}
 						
 						if (args.dryrun) {
-							verbose("DRY RUN: Copied binary record: " + key + "\n");
-							self.numRecords++;
-							return callback();
+							stream.on('end', function() {
+								verbose("DRY RUN: Copied binary record: " + key + "\n");
+								self.numRecords++;
+								callback();
+							});
+							stream.resume();
+							return;
 						}
 						
 						self.newStorage.putStream(key, stream, function(err) {
