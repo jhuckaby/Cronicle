@@ -19,10 +19,15 @@ process.stdout.setEncoding('utf8');
 var stream = new JSONStream( process.stdin, process.stdout );
 stream.on('json', function(job) {
 	// got job from parent 
-	var script_file = path.join( os.tmpdir(), 'cronicle-script-temp-' + job.id + '.sh' );
+	var iswin = process.platform === "win32";
+	var script_file = path.join( os.tmpdir(), 'cronicle-script-temp-' + job.id + (iswin ? '.bat' : '.sh') );
 	fs.writeFileSync( script_file, job.params.script, { mode: "775" } );
 	
-	var child = cp.spawn( script_file, [], { 
+	var child = null;
+	if(!iswin) child = cp.spawn( script_file, [], { 
+		stdio: ['pipe', 'pipe', 'pipe'] 
+	} );
+	else child = cp.spawn( "cmd.exe", ["/c", script_file], { 
 		stdio: ['pipe', 'pipe', 'pipe'] 
 	} );
 	
