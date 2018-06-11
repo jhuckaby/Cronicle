@@ -27,6 +27,7 @@
 	
 	"server_comm_use_hostnames": 0,
 	"web_socket_use_hostnames": 0,
+	"web_socket_port": 0,
 	
 	"job_memory_max": 1073741824,
 	"job_memory_sustain": 0,
