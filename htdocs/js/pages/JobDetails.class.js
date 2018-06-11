@@ -865,10 +865,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 		
 		// live job log tail
-		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
+		var remote_api_url = app.proto + job.hostname + ':' + (config.web_socket_port || app.port) + config.base_api_uri;
 		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
+			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + (config.web_socket_port || app.port) + config.base_api_uri;
 		}
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
@@ -1039,10 +1039,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var $cont = null;
 		var chunk_count = 0;
 		
-		var url = app.proto + job.hostname + ':' + app.port;
+		var url = app.proto + job.hostname + ':' + (config.web_socket_port || app.port);
 		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
+			url = app.proto + app.servers[job.hostname].ip + ':' + (config.web_socket_port || app.port);
 		}
 		
 		this.socket = io( url, {
