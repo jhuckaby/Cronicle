@@ -63,6 +63,7 @@
 		+ [job_memory_sustain](#job_memory_sustain)
 		+ [job_cpu_max](#job_cpu_max)
 		+ [job_cpu_sustain](#job_cpu_sustain)
+		+ [job_log_max_size](#job_log_max_size)
 		+ [job_env](#job_env)
 		+ [server_comm_use_hostnames](#server_comm_use_hostnames)
 		+ [web_socket_use_hostnames](#web_socket_use_hostnames)
@@ -616,7 +617,11 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
 			"region": "us-west-1",
 			"correctClockSkew": true,
-			"maxRetries": 5
+			"maxRetries": 5,
+			"httpOptions": {
+				"connectTimeout": 5000,
+				"timeout": 5000
+			}
 		},
 		"S3": {
 			"keyPrefix": "cronicle",
@@ -2516,6 +2521,8 @@ In addition to the [Standard Response Format](#standard-response-format), this A
 The `event` object will contain the details for the requested event.  See the [Event Data Format](#event-data-format) section below for details on the event object properties themselves.
 
 If [Allow Queued Jobs](#allow-queued-jobs) is enabled on the event, the API response will also include a `queue` property, which will be set to the number of jobs currently queued up.
+
+If there are any active jobs currently running for the event, they will also be included in the response, in a `jobs` array.  Each job object will contain detailed information about the running job.  See [get_job_status](#get_job_status) below for more details.
 
 ### create_event
 
