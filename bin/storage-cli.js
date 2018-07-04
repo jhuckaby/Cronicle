@@ -69,7 +69,9 @@ var ip = '';
 var ifaces = os.networkInterfaces();
 var addrs = [];
 for (var key in ifaces) {
-	addrs = addrs.concat( addrs, ifaces[key] );
+	if (ifaces[key] && ifaces[key].length) {
+		Array.from(ifaces[key]).forEach( function(item) { addrs.push(item); } );
+	}
 }
 var addr = Tools.findObject( addrs, { family: 'IPv4', internal: false } );
 if (addr && addr.address && addr.address.match(/^\d+\.\d+\.\d+\.\d+$/)) {
