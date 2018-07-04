@@ -382,7 +382,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// default resource limits
-		var res_expanded = !!(cat.memory_limit || cat.memory_sustain || cat.cpu_limit || cat.cpu_sustain);
+		var res_expanded = !!(cat.memory_limit || cat.memory_sustain || cat.cpu_limit || cat.cpu_sustain || cat.log_max_size);
 		html += get_form_table_row( 'Limits', 
 			'<div style="font-size:13px;'+(res_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Default Resource Limits</span></div>' + 
 			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(res_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Default Resource Limits</legend>' + 
@@ -405,10 +405,17 @@ Class.add( Page.Admin, {
 					'<td>' + this.get_relative_time_combo_box( 'fe_ec_memory_sustain', cat.memory_sustain, 'fieldset_params_table' ) + '</td>' + 
 				'</tr></table></div>' + 
 				
+				'<div class="plugin_params_label">Default Log Size Limit:</div>' + 
+				'<div class="plugin_params_content"><table cellspacing="0" cellpadding="0" class="fieldset_params_table"><tr>' + 
+					'<td style="padding-right:2px"><input type="checkbox" id="fe_ec_log_enabled" value="1" '+(cat.log_max_size ? 'checked="checked"' : '')+' /></td>' + 
+					'<td><label for="fe_ec_log_enabled">Abort job if log file exceeds</label></td>' + 
+					'<td>' + this.get_relative_size_combo_box( 'fe_ec_log_limit', cat.log_max_size, 'fieldset_params_table' ) + '</td>' + 
+				'</tr></table></div>' + 
+				
 			'</fieldset>'
 		);
 		html += get_form_table_caption( 
-			"Optionally set default CPU load and memory usage limits for the category.<br/>Note that events can override any of these limits."
+			"Optionally set default CPU load, memory usage and log size limits for the category.<br/>Note that events can override any of these limits."
 		);
 		html += get_form_table_spacer();
 		
@@ -470,6 +477,16 @@ Class.add( Page.Admin, {
 		else {
 			category.memory_limit = 0;
 			category.memory_sustain = 0;
+		}
+		
+		// job log file size limit
+		if ($('#fe_ec_log_enabled').is(':checked')) {
+			category.log_max_size = parseInt( $('#fe_ec_log_limit').val() ) * parseInt( $('#fe_ec_log_limit_units').val() );
+			if (isNaN(category.log_max_size)) return app.badField('fe_ec_log_limit', "Please enter an integer value for the log size limit.");
+			if (category.log_max_size < 0) return app.badField('fe_ec_log_limit', "Please enter a positive integer for the log size limit.");
+		}
+		else {
+			category.log_max_size = 0;
 		}
 		
 		return category;

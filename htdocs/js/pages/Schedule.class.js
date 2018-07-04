@@ -599,7 +599,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			// if certain key properties were changed and event has active jobs, ask user to update them
 			var need_update = false;
 			var updates = {};
-			var keys = ['title', 'timeout', 'retries', 'retry_delay', 'chain', 'chain_error', 'notify_success', 'notify_fail', 'web_hook', 'cpu_limit', 'cpu_sustain', 'memory_limit', 'memory_sustain'];
+			var keys = ['title', 'timeout', 'retries', 'retry_delay', 'chain', 'chain_error', 'notify_success', 'notify_fail', 'web_hook', 'cpu_limit', 'cpu_sustain', 'memory_limit', 'memory_sustain', 'log_max_size'];
 			
 			for (var idx = 0, len = keys.length; idx < len; idx++) {
 				var key = keys[idx];
@@ -898,7 +898,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += get_form_table_spacer();
 		
 		// resource limits
-		var res_expanded = !!(event.memory_limit || event.memory_sustain || event.cpu_limit || event.cpu_sustain);
+		var res_expanded = !!(event.memory_limit || event.memory_sustain || event.cpu_limit || event.cpu_sustain || event.log_max_size);
 		html += get_form_table_row( 'Limits', 
 			'<div style="font-size:13px;'+(res_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Resource Limits</span></div>' + 
 			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(res_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Resource Limits</legend>' + 
@@ -921,10 +921,17 @@ Class.subclass( Page.Base, "Page.Schedule", {
 					'<td>' + this.get_relative_time_combo_box( 'fe_ee_memory_sustain', event.memory_sustain, 'fieldset_params_table' ) + '</td>' + 
 				'</tr></table></div>' + 
 				
+				'<div class="plugin_params_label">Log Size Limit:</div>' + 
+				'<div class="plugin_params_content"><table cellspacing="0" cellpadding="0" class="fieldset_params_table"><tr>' + 
+					'<td style="padding-right:2px"><input type="checkbox" id="fe_ee_log_enabled" value="1" '+(event.log_max_size ? 'checked="checked"' : '')+' /></td>' + 
+					'<td><label for="fe_ee_log_enabled">Abort job if log file exceeds</label></td>' + 
+					'<td>' + this.get_relative_size_combo_box( 'fe_ee_log_limit', event.log_max_size, 'fieldset_params_table' ) + '</td>' + 
+				'</tr></table></div>' + 
+				
 			'</fieldset>'
 		);
 		html += get_form_table_caption( 
-			"Optionally set CPU load and memory usage limits for the event."
+			"Optionally set CPU load, memory usage and log size limits for the event."
 		);
 		html += get_form_table_spacer();
 		
@@ -1712,6 +1719,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		else {
 			event.memory_limit = 0;
 			event.memory_sustain = 0;
+		}
+		
+		// log file size limit
+		if ($('#fe_ee_log_enabled').is(':checked')) {
+			event.log_max_size = parseInt( $('#fe_ee_log_limit').val() ) * parseInt( $('#fe_ee_log_limit_units').val() );
+			if (isNaN(event.log_max_size)) return quiet ? false : app.badField('fe_ee_log_limit', "Please enter an integer value for the log size limit.");
+			if (event.log_max_size < 0) return quiet ? false : app.badField('fe_ee_log_limit', "Please enter a positive integer for the log size limit.");
+		}
+		else {
+			event.log_max_size = 0;
 		}
 		
 		// notes

@@ -518,6 +518,12 @@ When using the [job_cpu_max](#job_cpu_max) feature, you can optionally specify h
 
 CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
 
+### job_log_max_size
+
+This parameter allows you to set a default log file size limit for jobs, specified in bytes.  If the file size limit is exceeded, the job is aborted.  The default value is `0` (disabled).
+
+Job log file size limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+
 ### job_env
 
 Place any key/value pairs you want into the `job_env` object, and they will become environment variables passed to all job processes, as they are spawned.  Note that these can be overridden by event parameters with the same names.  The `job_env` can be thought of as a way to specify universal default environment variables for all your jobs.  Example:
@@ -1123,9 +1129,9 @@ Only a small subset of the properties shown above will be included with a `job_l
 
 #### Event Resource Limits
 
-![Resource Limits Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/edit-event-res-limits.png)
+![Resource Limits Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/edit-event-res-limits-new.png)
 
-Cronicle can automatically limit the server resource consumption of your jobs, by monitoring their CPU and RAM usage, and aborting them if the limits are exceeded.  You can also specify "sustain" times, so no action is taken until the limits are exceeded for a certain amount of time.
+Cronicle can automatically limit the server resource consumption of your jobs, by monitoring their CPU, memory and/or log file size, and aborting them if your limits are exceeded.  You can also specify "sustain" times for CPU and memory, so no action is taken until the limits are exceeded for a certain amount of time.
 
 CPU and RAM usage are measured every 10 seconds, by looking at the process spawned for the job, *and any child processes that may have also been spawned by your code*.  So if you fork your own child subprocess, or shell out to a command-line utility, all the memory is totaled up, and compared against the resource limits for the job.
 
@@ -2499,6 +2505,7 @@ Example response:
 		"cpu_sustain": 0,
 		"memory_limit": 0,
 		"memory_sustain": 0,
+		"log_max_size": 0,
 		"timezone": "America/Los_Angeles"
 	}
 }
@@ -2536,6 +2543,7 @@ In addition to the required parameters, almost anything in the [Event Data Objec
 	"cpu_sustain": 0,
 	"detached": 0,
 	"enabled": 1,
+	"log_max_size": 0,
 	"max_children": 1,
 	"memory_limit": 0,
 	"memory_sustain": 0,
@@ -2611,6 +2619,7 @@ Example request with everything updated:
 	"cpu_sustain": 0,
 	"detached": 0,
 	"enabled": 1,
+	"log_max_size": 0,
 	"max_children": 1,
 	"memory_limit": 0,
 	"memory_sustain": 0,
@@ -2709,6 +2718,7 @@ Example request with everything customized:
 	"cpu_limit": 100,
 	"cpu_sustain": 0,
 	"detached": 0,
+	"log_max_size": 0,
 	"max_children": 1,
 	"memory_limit": 0,
 	"memory_sustain": 0,
@@ -2792,6 +2802,7 @@ Example response:
 		"memory_sustain": 0,
 		"cpu_limit": 0,
 		"cpu_sustain": 0,
+		"log_max_size": 0,
 		"retry_delay": 30,
 		"timezone": "America/New_York",
 		"source": "Manual (admin)",
@@ -2902,6 +2913,7 @@ This updates a job that is already in progress.  Only certain job properties may
 | `cpu_sustain` | (Optional) The number of seconds to allow the max CPU to be exceeded. |
 | `memory_limit` | (Optional) The maximum allowed memory usage (in bytes) before the job is aborted. |
 | `memory_sustain` | (Optional) The number of seconds to allow the max memory to be exceeded. |
+| `log_max_size` | (Optional) The maximum allowed job log file size (in bytes) before the job is aborted. |
 
 As shown above, you can include *some* of the properties from the [Event Data Object](#event-data-format) to customize the job in progress.  Example request:
 
@@ -2971,6 +2983,7 @@ Here are descriptions of all the properties in the event object, which is common
 | `detached` | Boolean | Specifies whether [Detached Mode](#detached-mode) is enabled or not. |
 | `enabled` | Boolean | Specifies whether the event is enabled (active in the scheduler) or not. |
 | `id` | String | A unique ID assigned to the event when it was first created. |
+| `log_max_size` | Number | Limit the job log file size to the specified amount, in bytes.  See [Event Resource Limits](#event-resource-limits). |
 | `max_children` | Number | The total amount of concurrent jobs allowed to run. See [Event Concurrency](#event-concurrency). |
 | `memory_limit` | Number | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). |
 | `memory_sustain` | Number | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). |

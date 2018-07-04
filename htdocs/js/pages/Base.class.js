@@ -259,8 +259,9 @@ Class.subclass( Page, "Page.Base", {
 		var TB = 1024 * 1024 * 1024 * 1024;
 		var GB = 1024 * 1024 * 1024;
 		var MB = 1024 * 1024;
+		var KB = 1024;
 		
-		return this.get_custom_combo_unit_box( id, value, [[MB,'MB'], [GB,'GB'], [TB,'TB']], class_name );
+		return this.get_custom_combo_unit_box( id, value, [[KB, 'KB'], [MB,'MB'], [GB,'GB'], [TB,'TB']], class_name );
 	},
 	
 	expand_fieldset: function($span) {
