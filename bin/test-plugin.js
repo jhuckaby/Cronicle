@@ -38,18 +38,33 @@ stream.on('json', function(job) {
 	logger.debug(9, "The current date/time for our job is: " + (new Date(job.now * 1000)).toString() );
 	
 	// use some memory so we show up on the mem graph
-	var buf = new Buffer( 1024 * 1024 * Math.floor( 128 + (Math.random() * 128) ) );
+	var buf = null;
+	if (job.params.burn) {
+		buf = Buffer.alloc( 1024 * 1024 * Math.floor( 128 + (Math.random() * 128) ) );
+	}
 	
 	var start = Tools.timeNow();
-	var duration = parseInt( job.params.duration );
 	var idx = 0;
+	var duration = 0;
+	
+	if (job.params.duration.toString().match(/^(\d+)\-(\d+)$/)) {
+		var low = RegExp.$1;
+		var high = RegExp.$2;
+		low = parseInt(low);
+		high = parseInt(high);
+		duration = Math.round( low + (Math.random() * (high - low)) );
+		logger.debug(9, "Chosen random duration: " + duration + " seconds");
+	}
+	else {
+		duration = parseInt( job.params.duration );
+	}
 	
 	var timer = setInterval( function() {
 		var now = Tools.timeNow();
 		var elapsed = now - start;
 		var progress = Math.min( elapsed / duration, 1.0 );
 		
-		buf.fill( String.fromCharCode( Math.floor( Math.random() * 256 ) ) );
+		if (buf) buf.fill( String.fromCharCode( Math.floor( Math.random() * 256 ) ) );
 		
 		if (job.params.progress) {
 			// report progress
@@ -142,10 +157,12 @@ stream.on('json', function(job) {
 			// process.exit(0);
 		}
 		else {
-			// chew up some CPU so we show up on the chart
-			var temp = Tools.timeNow();
-			while (Tools.timeNow() - temp < 0.10) {
-				var x = Math.PI * 32768 / 100.3473847384 * Math.random();
+			// burn up some CPU so we show up on the chart
+			if (job.params.burn) {
+				var temp = Tools.timeNow();
+				while (Tools.timeNow() - temp < 0.10) {
+					var x = Math.PI * 32768 / 100.3473847384 * Math.random();
+				}
 			}
 		}
 		

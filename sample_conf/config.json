@@ -62,6 +62,7 @@
 		"engine": "Filesystem",
 		"list_page_size": 50,
 		"concurrency": 4,
+		"log_event_types": { "all":1 },
 		
 		"Filesystem": {
 			"base_dir": "data",

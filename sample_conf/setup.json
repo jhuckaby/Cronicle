@@ -27,6 +27,7 @@
 			"params": [
 				{ "id":"duration", "type":"text", "size":10, "title":"Test Duration (seconds)", "value": 60 },
 				{ "id":"progress", "type":"checkbox", "title":"Report Progress", "value": 1 },
+				{ "id":"burn", "type":"checkbox", "title":"Burn Memory/CPU", "value": 0 },
 				{ "id":"action", "type":"select", "title":"Simulate Action", "items":["Success","Failure","Crash"], "value": "Success" },
 				{ "id":"secret", "type":"hidden", "value":"Will not be shown in Event UI" }
 			]
