@@ -96,6 +96,17 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 		process.setuid( config.uid );
 	}
 	
+	// custom job data expire handler
+	storage.addRecordType( 'cronicle_job', {
+		'delete': function(key, value, callback) {
+			storage.delete( key, function(err) {
+				storage.delete( key + '/log.txt.gz', function(err) {
+					callback();
+				} ); // delete
+			} ); // delete
+		}
+	} );
+	
 	// process command
 	var cmd = commands.shift();
 	verbose("\n");

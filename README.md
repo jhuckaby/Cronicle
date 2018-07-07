@@ -2153,6 +2153,12 @@ The contents of the `NewStorage` object should match whatever you'd typically pu
 			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
 			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
 			"region": "us-west-1",
+			"correctClockSkew": true,
+			"maxRetries": 5,
+			"httpOptions": {
+				"connectTimeout": 5000,
+				"timeout": 5000
+			}
 		},
 		"S3": {
 			"keyPrefix": "cronicle",

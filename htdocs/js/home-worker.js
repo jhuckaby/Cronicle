@@ -25,6 +25,7 @@ onmessage = function(e) {
 	var categories = data.categories;
 	var plugins = data.plugins;
 	var events = [];
+	var max_events = 1000;
 	
 	var now = normalize_time( time_now(), { sec: 0 } );
 	var max_epoch = now + 86400 + 3600;
@@ -66,6 +67,7 @@ onmessage = function(e) {
 						var actual = hour_start + (min * 60);
 						if ((actual >= min_epoch) && (actual < max_epoch)) {
 							events.push({ epoch: actual, id: item.id });
+							if (events.length >= max_events) { idy = ley; epoch = max_epoch; idx = len; }
 						}
 					} // foreach minute
 				} // individual minutes
@@ -75,6 +77,7 @@ onmessage = function(e) {
 						var actual = hour_start + (idy * 60);
 						if ((actual >= min_epoch) && (actual < max_epoch)) {
 							events.push({ epoch: actual, id: item.id });
+							if (events.length >= max_events) { idy = ley; epoch = max_epoch; idx = len; }
 						}
 					} // foreach minute
 				} // every minute
