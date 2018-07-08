@@ -1068,9 +1068,15 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		} );
 		this.socket.on('connect_error', function(err) {
 			Debug.trace("JobDetails socket.io connect error: " + err);
+			$('#d_live_job_log').append( 
+				'<pre class="log_chunk">Server Connect Error: ' + err + '</pre>' 
+			);
 		} );
 		this.socket.on('connect_timeout', function(err) {
 			Debug.trace("JobDetails socket.io connect timeout");
+			$('#d_live_job_log').append( 
+				'<pre class="log_chunk">Server Connect Timeout: ' + err + '</pre>' 
+			);
 		} );
 		this.socket.on('reconnect', function() {
 			Debug.trace("JobDetails socket.io reconnected successfully");
