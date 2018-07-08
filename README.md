@@ -146,6 +146,7 @@
 	* [Data Import and Export](#data-import-and-export)
 	* [Storage Migration Tool](#storage-migration-tool)
 - [Inner Workings](#inner-workings)
+	* [Cron Noncompliance](#cron-noncompliance)
 	* [Storage](#storage)
 	* [Logs](#logs)
 	* [Keeping Time](#keeping-time)
@@ -305,6 +306,7 @@ For teams setting up multi-server clusters, here are some operational concerns t
 * All servers need to have at least one active IPv4 interface.
 * For the "live log" feature in the UI to work, the user needs a network route to the server running the job, via its hostname.
 * If you have to change any server IP addresses, they'll have to be removed and re-added to the cluster.
+* See the [Cron Noncompliance](#cron-noncompliance) section for differences in how Cronicle schedules events, versus the Unix Cron standard.
 
 # Configuration
 
@@ -2200,6 +2202,21 @@ Finally, restart Cronicle, and all should be well.
 # Inner Workings
 
 This section contains details on some of the inner workings of Cronicle.
+
+## Cron Noncompliance
+
+Cronicle has a custom-built scheduling system that is *loosely* based on Unix [Cron](https://en.wikipedia.org/wiki/Cron).  It does not, however, conform to the [specification](https://linux.die.net/man/5/crontab) written by [Paul Vixie](https://en.wikipedia.org/wiki/Paul_Vixie).  Namely, it differs in the following ways:
+
+- Month days and weekdays are intersected when both are present
+	-  If you specify both month days and weekdays, *both must match* for Cronicle to fire an event.  Vixie Cron behaves differently, in that it will fire if *either* matches.  This was a deliberate design decision to enable more flexibility in scheduling.
+
+When importing Crontab syntax:
+
+- Cronicle does not support the concept of running jobs on reboot, so the `@reboot` macro is disallowed.
+- If a 6th column is specified, it is assumed to be years.
+- Weekdays `0` and `7` are both considered to be Sunday.
+
+For more details on Cronicle's scheduler implementation, see the [Event Timing Object](#event-timing-object).
 
 ## Storage
 
