@@ -22,9 +22,7 @@
 NAME="Cronicle Daemon"
 #
 # home directory
-SCRIPT=`perl -MCwd -le 'print Cwd::abs_path(shift)' "$0"`
-DIR=`dirname $SCRIPT`
-HOMEDIR=`dirname $DIR`
+HOMEDIR="$(dirname "$(cd -- "$(dirname "$0")" && (pwd -P 2>/dev/null || pwd))")"
 cd $HOMEDIR
 #
 # the path to your binary, including options if necessary
