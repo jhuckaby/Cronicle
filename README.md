@@ -1979,6 +1979,80 @@ echo "75%"
 
 This would allow Cronicle to show a graphical progress bar on the [Home](#home-tab) and [Job Details](#job-details-tab) tabs, and estimate the time remaining based on the elapsed time and current progress.
 
+**Pro-Tip:** The Shell Plugin actually supports any interpreted scripting language, including Node.js, PHP, Perl, Python, and more.  Basically, any language that supports a [Shebang](https://en.wikipedia.org/wiki/Shebang_%28Unix%29) line will work in the Shell Plugin.  Just change the `#!/bin/sh` to point to your interpreter binary of choice.
+
+## Built-in HTTP Request Plugin
+
+Cronicle ships with a built-in "HTTP Request" Plugin, which you can use to send simple GET, HEAD or POST requests to any URL, and log the response.  You can specify custom HTTP request headers, and also supply regular expressions to match a successful response based on the content.  Here is the user interface when selected:
+
+![HTTP Request Plugin](https://pixlcore.com/software/cronicle/screenshots-new/http-request-plugin.png)
+
+Here are descriptions of the parameters:
+
+| Plugin Parameter | Description |
+|------------------|-------------|
+| **Method** | Select the HTTP request method, either GET, HEAD or POST. |
+| **URL** | Enter your fully-qualified URL here, which must begin with either `http://` or `https://`. |
+| **Headers** | Optionally include any custom request headers here, one per line. |
+| **POST Data** | If you are sending a HTTP POST, enter the raw POST data here. |
+| **Timeout** | Enter the timeout in seconds, which is measured as the time to first byte in the response. |
+| **Follow Redirects** | Check this box to automatically follow HTTP redirect responses (up to 32 of them). |
+| **SSL Cert Bypass** | Check this box if you need to make HTTPS requests to servers with invalid SSL certificates (self-signed or other). |
+| **Success Match** | Optionally enter a regular expression here, which is matched against the response body.  If specified, this must match to consider the job a success. |
+| **Error Match** | Optionally enter a regular expression here, which is matched against the response body.  If this matches the response body, then the job is aborted with an error. |
+
+### HTTP Request Chaining
+
+The HTTP Request Plugin supports Cronicle's [Chain Reaction](#chain-reaction) system in two ways.  First, information about the HTTP response is passed into the [Chain Data](#chain-data) object, so downstream chained events can read and act on it.  Specifically, all the HTTP response headers, and possibly even the content body itself (if formatted as JSON and smaller than 1 MB) are included.  Example:
+
+```js
+"chain_data": {
+	"headers": {
+		"date": "Sat, 14 Jul 2018 20:14:01 GMT",
+		"server": "Apache/2.4.28 (Unix) LibreSSL/2.2.7 PHP/5.6.30",
+		"last-modified": "Sat, 14 Jul 2018 20:13:54 GMT",
+		"etag": "\"2b-570fb3c47e480\"",
+		"accept-ranges": "bytes",
+		"content-length": "43",
+		"connection": "close",
+		"content-type": "application/json",
+		"x-uuid": "7617a494-823f-4566-8f8b-f479c2a6e707"
+	},
+	"json": {
+		"key1": "value1",
+		"key2": 12345
+	}
+}
+```
+
+In this example an HTTP request was made that returned those specific response headers (the header names are converted to lower-case), and the body was also formatted as JSON, so the JSON data itself is parsed and included in a property named `json`.  Downstream events that are chain-linked to the HTTP Request event can read these properties and act on them.
+
+Secondly, you can chain an HTTP Request into *another* HTTP Request, and use the chained data values from the previous response in the next request.  To do this, you need to utilize a special `[/bracket/slash]` placeholder syntax in the second request, to lookup values in the `chain_data` object from the first one.  You can use these placeholders in the **URL**, **Request Headers** and **POST Data** text fields.  Example:
+
+![HTTP Request Chain Data](https://pixlcore.com/software/cronicle/screenshots-new/http-request-chained.png)
+
+Here you can see we are using two placeholders, one in the URL and another in the HTTP request headers.  These are looking up values from a *previous* HTTP Request event, and passing them into the next request.  Specifically, we are using:
+
+| Placeholder | Description |
+|-------------|-------------|
+| `[/chain_data/json/key1]` | This placeholder is looking up the `key` value from the JSON data (body content) of the previous HTTP response.  Using our example response shown above, this would resolve to `value1`. |
+| `[/chain_data/headers/x-uuid]` | This placeholder is looking up the `X-UUID` response header from the previous HTTP response.  Using our example response shown above, this would resolve to `7617a494-823f-4566-8f8b-f479c2a6e707`. |
+
+So once the second request is sent off, after placeholder expansion the URL would actually resolve to:
+
+```
+http://myserver.com/test.json?key=value1
+```
+
+And the headers would expand to:
+
+```
+User-Agent: Mozilla/5.0
+X-UUID: 7617a494-823f-4566-8f8b-f479c2a6e707
+```
+
+You can chain as many requests together as you like, but note that each request can only see and act on chain data from the *previous* request (the one that directly chained to it).
+
 # Command Line
 
 Here are all the Cronicle services available to you on the command line.  Most of these are accessed via the following shell script:
