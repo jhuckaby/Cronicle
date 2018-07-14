@@ -137,6 +137,8 @@
 	* [Sample Perl Plugin](#sample-perl-plugin)
 	* [Sample PHP Plugin](#sample-php-plugin)
 	* [Built-in Shell Plugin](#built-in-shell-plugin)
+	* [Built-in HTTP Request Plugin](#built-in-http-request-plugin)
+		+ [HTTP Request Chaining](#http-request-chaining)
 - [Command Line](#command-line)
 	* [Starting and Stopping](#starting-and-stopping)
 	* [Storage Maintenance](#storage-maintenance)
