@@ -77,7 +77,7 @@ onmessage = function(e) {
 						var actual = hour_start + (idy * 60);
 						if ((actual >= min_epoch) && (actual < max_epoch)) {
 							events.push({ epoch: actual, id: item.id });
-							if (events.length >= max_events) { idy = ley; epoch = max_epoch; idx = len; }
+							if (events.length >= max_events) { idy = 60; epoch = max_epoch; idx = len; }
 						}
 					} // foreach minute
 				} // every minute
