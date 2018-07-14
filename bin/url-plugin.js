@@ -43,10 +43,16 @@ stream.on('json', function(job) {
 		return;
 	}
 	
+	// allow URL to be substituted using [placeholders]
+	params.url = Tools.sub( params.url, job );
+	
 	print("Sending HTTP " + params.method + " to URL:\n" + params.url + "\n");
 	
 	// headers
 	if (params.headers) {
+		// allow headers to be substituted using [placeholders]
+		params.headers = Tools.sub( params.headers, job );
+		
 		print("\nRequest Headers:\n" + params.headers.trim() + "\n");
 		params.headers.replace(/\r\n/g, "\n").trim().split(/\n/).forEach( function(pair) {
 			if (pair.match(/^([^\:]+)\:\s*(.+)$/)) {
@@ -64,6 +70,9 @@ stream.on('json', function(job) {
 	
 	// post data
 	if (opts.method == 'POST') {
+		// allow POST data to be substituted using [placeholders]
+		params.data = Tools.sub( params.data, job );
+		
 		print("\nPOST Data:\n" + params.data.trim() + "\n");
 		opts.data = Buffer.from( params.data || '' );
 	}
@@ -125,6 +134,13 @@ stream.on('json', function(job) {
 			};
 		}
 		
+		// add response headers to chain_data if applicable
+		if (job.chain) {
+			update.chain_data = {
+				headers: resp.headers
+			};
+		}
+		
 		// add raw response content, if text (and not too long)
 		if (text && resp.headers['content-type'] && resp.headers['content-type'].match(/(text|javascript|json|css|html)/i)) {
 			print("\nRaw Response Content:\n" + text.trim() + "\n");
@@ -134,6 +150,16 @@ stream.on('json', function(job) {
 					title: "Raw Response Content",
 					content: "<pre>" + text.replace(/</g, '&lt;').trim() + "</pre>"
 				};
+			}
+			
+			// if response was JSON and chain mode is enabled, chain parsed data
+			if (job.chain && (text.length < 1024 * 1024) && resp.headers['content-type'].match(/(application|text)\/json/i)) {
+				var json = null;
+				try { json = JSON.parse(text); }
+				catch (e) {
+					print("\nWARNING: Failed to parse JSON response: " + e + " (could not include JSON in chain_data)\n");
+				}
+				if (json) update.chain_data.json = json;
 			}
 		}
 		
