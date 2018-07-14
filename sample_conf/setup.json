@@ -57,10 +57,11 @@
 			"params": [
 				{ "type":"select", "id":"method", "title":"Method", "items":["GET", "HEAD", "POST"], "value":"GET" }, 
 				{ "type":"textarea", "id":"url", "title":"URL", "rows":3, "value":"http://" }, 
-				{ "type":"textarea", "id":"headers", "title":"Headers", "rows":4, "value":"User-Agent: Cronicle/1.0" }, 
+				{ "type":"textarea", "id":"headers", "title":"Request Headers", "rows":4, "value":"User-Agent: Cronicle/1.0" }, 
 				{ "type":"textarea", "id":"data", "title":"POST Data", "rows":4, "value":"" }, 
 				{ "type":"text", "id":"timeout", "title":"Timeout (Seconds)", "size":5, "value":"30" }, 
-				{ "type":"checkbox", "id":"follow", "title":"Follow Redirects", "value":0 } , 
+				{ "type":"checkbox", "id":"follow", "title":"Follow Redirects", "value":0 }, 
+				{ "type":"checkbox", "id":"ssl_cert_bypass", "title":"SSL Cert Bypass", "value":0 }, 
 				{ "type":"text", "id":"success_match", "title":"Success Match", "size":20, "value":"" }, 
 				{ "type":"text", "id":"error_match", "title":"Error Match", "size":20, "value":"" }
 			]
