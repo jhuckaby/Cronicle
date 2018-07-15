@@ -9,7 +9,7 @@
 	"log_filename": "[component].log",
 	"log_columns": ["hires_epoch", "date", "hostname", "component", "category", "code", "msg", "data"],
 	"log_archive_path": "logs/archives/[yyyy]/[mm]/[dd]/[filename]-[yyyy]-[mm]-[dd].log.gz",
-	"log_crashes": "1",
+	"log_crashes": true,
 	"copy_job_logs_to": "",
 	"queue_dir": "queue",
 	"pid_file": "logs/cronicled.pid",
@@ -26,8 +26,9 @@
 	"universal_web_hook": "",
 	"track_manual_jobs": false,
 	
-	"server_comm_use_hostnames": 0,
-	"web_socket_use_hostnames": 0,
+	"server_comm_use_hostnames": false,
+	"web_direct_connect": false,
+	"web_socket_use_hostnames": false,
 	
 	"job_memory_max": 1073741824,
 	"job_memory_sustain": 0,
@@ -78,18 +79,18 @@
 		"http_static_ttl": 3600,
 		"http_static_index": "index.html",
 		"http_server_signature": "Cronicle 1.0",
-		"http_gzip_text": 1,
+		"http_gzip_text": true,
 		"http_timeout": 30,
 		"http_regex_json": "(text|javascript|js|json)",
 		"http_response_headers": {
 			"Access-Control-Allow-Origin": "*"
 		},
 		
-		"https": 0,
+		"https": false,
 		"https_port": 3013,
 		"https_cert_file": "conf/ssl.crt",
 		"https_key_file": "conf/ssl.key",
-		"https_force": 0,
+		"https_force": false,
 		"https_timeout": 30,
 		"https_header_detect": {
 			"Front-End-Https": "^on$",
@@ -104,9 +105,9 @@
 		"session_expire_days": 30,
 		"max_failed_logins_per_hour": 5,
 		"max_forgot_passwords_per_hour": 3,
-		"free_accounts": 0,
-		"sort_global_users": 1,
-		"use_bcrypt": 1,
+		"free_accounts": false,
+		"sort_global_users": true,
+		"use_bcrypt": true,
 		
 		"email_templates": {
 			"welcome_new_user": "conf/emails/welcome_new_user.txt",
