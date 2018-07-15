@@ -182,7 +182,7 @@ app.extend({
 			$('#d_tab_master').html( '' );
 			
 			$('div.header_clock_layer').fadeTo( 1000, 0 );
-			$('#d_tab_time').html( '' );
+			$('#d_tab_time > span').html( '' );
 			self.clock_visible = false;
 			self.checkScrollTime();
 			
@@ -467,9 +467,15 @@ app.extend({
 		
 		// date/time in tab bar
 		// $('#d_tab_time, #d_scroll_time > span').html( get_nice_date_time( when, true, true ) );
-		$('#d_tab_time, #d_scroll_time > span').html(
-			get_nice_date_time( when, true, true ) + ' ' + 
-			moment.tz( when * 1000, app.tz).format("z") 
+		var num_active = num_keys( app.activeJobs || {} );
+		var nice_active = commify(num_active) + ' ' + pluralize('Job', num_active);
+		if (!num_active) nice_active = "Idle";
+		
+		$('#d_tab_time > span, #d_scroll_time > span').html(
+			// get_nice_date_time( when, true, true ) + ' ' + 
+			get_nice_time(when, true) + ' ' + 
+			moment.tz( when * 1000, app.tz).format("z") + ' - ' + 
+			nice_active
 		);
 	},
 	
