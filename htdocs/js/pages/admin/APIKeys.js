@@ -6,13 +6,11 @@ Class.add( Page.Admin, {
 		// show API Key list
 		app.setWindowTitle( "API Keys" );
 		this.div.addClass('loading');
-		if (!args.offset) args.offset = 0;
-		if (!args.limit) args.limit = 25;
 		app.api.post( 'app/get_api_keys', copy_object(args), this.receive_keys.bind(this) );
 	},
 	
 	receive_keys: function(resp) {
-		// receive page of API Keys from server, render it
+		// receive all API Keys from server, render them sorted
 		this.lastAPIKeysResp = resp;
 		
 		var html = '';
@@ -21,8 +19,12 @@ Class.add( Page.Admin, {
 		var size = get_inner_window_size();
 		var col_width = Math.floor( ((size.width * 0.9) + 200) / 7 );
 		
-		this.api_keys = [];
-		if (resp.rows) this.api_keys = resp.rows;
+		if (!resp.rows) resp.rows = [];
+		
+		// sort by title ascending
+		this.api_keys = resp.rows.sort( function(a, b) {
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
 		
 		html += this.getSidebarTabs( 'api_keys',
 			[
@@ -45,7 +47,7 @@ Class.add( Page.Admin, {
 		html += '</div>';
 		
 		var self = this;
-		html += this.getPaginatedTable( resp, cols, 'key', function(item, idx) {
+		html += this.getBasicTable( this.api_keys, cols, 'key', function(item, idx) {
 			var actions = [
 				'<span class="link" onMouseUp="$P().edit_api_key('+idx+')"><b>Edit</b></span>',
 				'<span class="link" onMouseUp="$P().delete_api_key('+idx+')"><b>Delete</b></span>'
