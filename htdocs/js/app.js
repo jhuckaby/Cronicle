@@ -258,6 +258,9 @@ app.extend({
 			// use ip instead of hostname if available
 			url = this.proto + this.servers[this.masterHostname].ip + ':' + this.port;
 		}
+		if (!config.web_direct_connect) {
+			url = this.proto + location.host;
+		}
 		Debug.trace("Websocket Connect: " + url);
 		
 		if (this.socket) {
@@ -414,10 +417,15 @@ app.extend({
 		Debug.trace("New Master Hostname: " + hostname);
 		this.masterHostname = hostname;
 		
-		this.base_api_url = this.proto + this.masterHostname + ':' + this.port + config.base_api_uri;
-		if (!config.web_socket_use_hostnames && this.servers && this.servers[this.masterHostname] && this.servers[this.masterHostname].ip) {
-			// use ip instead of hostname if available
-			this.base_api_url = this.proto + this.servers[this.masterHostname].ip + ':' + this.port + config.base_api_uri;
+		if (config.web_direct_connect) {
+			this.base_api_url = this.proto + this.masterHostname + ':' + this.port + config.base_api_uri;
+			if (!config.web_socket_use_hostnames && this.servers && this.servers[this.masterHostname] && this.servers[this.masterHostname].ip) {
+				// use ip instead of hostname if available
+				this.base_api_url = this.proto + this.servers[this.masterHostname].ip + ':' + this.port + config.base_api_uri;
+			}
+		}
+		else {
+			this.base_api_url = this.proto + location.host + config.base_api_uri;
 		}
 		
 		Debug.trace("API calls now going to: " + this.base_api_url);
