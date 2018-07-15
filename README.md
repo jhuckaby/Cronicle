@@ -66,6 +66,7 @@
 		+ [job_log_max_size](#job_log_max_size)
 		+ [job_env](#job_env)
 		+ [server_comm_use_hostnames](#server_comm_use_hostnames)
+		+ [web_direct_connect](#web_direct_connect)
 		+ [web_socket_use_hostnames](#web_socket_use_hostnames)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
@@ -293,6 +294,8 @@ You can run Cronicle behind a load balancer, as long as you ensure that only the
 You can then set the [base_app_url](#base_app_url) configuration parameter to point to the load balancer, instead of an individual server, and also use that hostname when loading the UI in your browser.
 
 Note that Web UI needs to make API calls and open [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connections to the master server directly, so it needs to also be accessible directly via its hostname.
+
+You must set the [web_direct_connect](#web_direct_connect) configuration property to `true`.  This ensures that the Web UI will make API and WebSocket connections directly to the master server, rather than via the load balancer hostname.
 
 ### Ops Notes
 
@@ -542,11 +545,21 @@ Place any key/value pairs you want into the `job_env` object, and they will beco
 
 ### server_comm_use_hostnames
 
-Setting this parameter to `1` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses.  This is mainly for special situations where your local server IP addresses may change, and you would prefer to rely on DNS instead.  The default is `0` (disabled), meaning connect using IP addresses.
+Setting this parameter to `true` will force the Cronicle servers to connect to each other using hostnames rather than LAN IP addresses.  This is mainly for special situations where your local server IP addresses may change, and you would prefer to rely on DNS instead.  The default is `false` (disabled), meaning connect using IP addresses.
+
+### web_direct_connect
+
+When this property is set to `false` (which is the default), the Cronicle Web UI will connect to whatever hostname/port is on the URL.  It is expected that this hostname/port will always resolve to your master server.  This is useful for single server setups, situations when your users do not have direct access to your Cronicle servers via their IPs or hostnames, or if you are running behind some kind of reverse proxy.
+
+If you set this parameter to `true`, then the Cronicle web application will connect *directly* to your individual Cronicle servers.  This is more for multi-server configurations, especially when running behind a [load balancer](#load-balancers) with multiple backup servers.  The Web UI must always connect to the master server, so if you have multiple backup servers, it needs a direct connection.
+
+Note that the ability to watch live logs for active jobs requires a direct web socket connection to the server running the job.  For that feature, this setting has no effect (it always attempts to connect directly).
 
 ### web_socket_use_hostnames
 
-Setting this parameter to `1` will force Cronicle's Web UI to connect to the back-end servers using their hostnames rather than IP addresses.  This includes both AJAX API calls and Websocket streams.  You should only need to enable this in special situations where your users cannot access your servers via their LAN IPs, and you need to proxy them through a hostname (DNS) instead.  The default is `0` (disabled), meaning connect using IP addresses.
+Setting this parameter to `true` will force Cronicle's Web UI to connect to the back-end servers using their hostnames rather than IP addresses.  This includes both AJAX API calls and Websocket streams.  You should only need to enable this in special situations where your users cannot access your servers via their LAN IPs, and you need to proxy them through a hostname (DNS) instead.  The default is `false` (disabled), meaning connect using IP addresses.
+
+This property only takes effect if [web_direct_connect](#web_direct_connect) is also set to `true`.
 
 ## Storage Configuration
 
