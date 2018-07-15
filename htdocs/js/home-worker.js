@@ -1,6 +1,7 @@
 // Cronicle App
 // Author: Joseph Huckaby
-// Copyright (c) 2015 Joseph Huckaby and PixlCore.com
+// Copyright (c) 2015 - 2018 Joseph Huckaby and PixlCore.com
+// MIT License
 
 // Worker thread for the Home tab
 // Processes schedule to predict upcoming jobs
@@ -29,6 +30,7 @@ onmessage = function(e) {
 	
 	var now = normalize_time( time_now(), { sec: 0 } );
 	var max_epoch = now + 86400 + 3600;
+	var time_start = hires_time_now();
 	
 	for (var idx = 0, len = schedule.length; idx < len; idx++) {
 		var item = schedule[idx];
@@ -85,6 +87,9 @@ onmessage = function(e) {
 			
 			// advance moment.js by one hour
 			margs.add( 1, "hours" );
+			
+			// make sure we don't run amok (3s max run time)
+			if (hires_time_now() - time_start >= 3.0) { epoch = max_epoch; idx = len; }
 		} // foreach hour
 		
 	} // foreach schedule item
