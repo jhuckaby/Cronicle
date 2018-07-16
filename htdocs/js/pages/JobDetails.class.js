@@ -1038,12 +1038,17 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		var $cont = null;
 		var chunk_count = 0;
+		var error_shown = false;
 		
 		var url = app.proto + job.hostname + ':' + app.port;
 		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
 			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
 		}
+		
+		$('#d_live_job_log').append( 
+			'<pre class="log_chunk" style="color:#888">Log Watcher: Connecting to server: ' + url + '...</pre>' 
+		);
 		
 		this.socket = io( url, {
 			forceNew: true,
@@ -1060,6 +1065,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			// cache this for later
 			$cont = $('#d_live_job_log');
 			
+			$cont.append( 
+				'<pre class="log_chunk" style="color:#888; margin-bottom:14px;">Log Watcher: Connected successfully!</pre>' 
+			);
+			
 			// request log stream + authenticate
 			self.socket.emit( 'watch_job_log', {
 				token: app.getPref('session_id'),
@@ -1069,13 +1078,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		this.socket.on('connect_error', function(err) {
 			Debug.trace("JobDetails socket.io connect error: " + err);
 			$('#d_live_job_log').append( 
-				'<pre class="log_chunk">Server Connect Error: ' + err + '</pre>' 
+				'<pre class="log_chunk">Log Watcher: Server Connect Error: ' + err + ' (' + url + ')</pre>' 
 			);
+			error_shown = true;
 		} );
 		this.socket.on('connect_timeout', function(err) {
 			Debug.trace("JobDetails socket.io connect timeout");
-			$('#d_live_job_log').append( 
-				'<pre class="log_chunk">Server Connect Timeout: ' + err + '</pre>' 
+			if (!error_shown) $('#d_live_job_log').append( 
+				'<pre class="log_chunk">Log Watcher: Server Connect Timeout: ' + err + ' (' + url + ')</pre>' 
 			);
 		} );
 		this.socket.on('reconnect', function() {
