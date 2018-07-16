@@ -1,0 +1,24 @@
+<job>
+<script language="JScript">
+var strComputer = ".";
+var wmi = GetObject("winmgmts:{impersonationLevel=impersonate}!\\\\" + strComputer + "\\root\\cimv2");
+var items = wmi.ExecQuery("SELECT ParentProcessId,ProcessId,WorkingSetSize FROM Win32_Process");
+var permItems = wmi.ExecQuery("SELECT IDProcess,PercentProcessorTime FROM win32_perfformatteddata_perfproc_process");
+
+var pct = {};
+for (var e=new Enumerator(permItems); !e.atEnd(); e.moveNext()) { 
+	pct[e.item().IDProcess] = {PercentProcessorTime: e.item().PercentProcessorTime};
+}
+permItems = null;
+	
+WScript.Echo("PPID\tPID\t%CPU\tRSS");
+for (var e=new Enumerator(items); !e.atEnd(); e.moveNext()) {
+	var s = e.item();   
+	//WorkingSetSize = Amount of memory in bytes that a process needs to execute efficiently—for an operating system that uses page-based memory management
+	//PrivateBytes = Current value, in bytes, that this process has allocated that cannot be shared with other processes.
+	var perf = pct[s.ProcessId] || {}
+	WScript.Echo(s.ParentProcessId + "\t" + s.ProcessId + "\t" + perf["PercentProcessorTime"] + "\t" + parseInt(s.WorkingSetSize/1000));
+}
+items = null;
+</script>
+</job>
