@@ -85,6 +85,9 @@ else {
 // util.isArray is DEPRECATED??? Nooooooooode!
 var isArray = Array.isArray || util.isArray;
 
+// prevent logging transactions to STDOUT
+config.Storage.log_event_types = {};
+
 // construct standalone storage server
 var storage = new StandaloneStorage(config.Storage, function(err) {
 	if (err) throw err;
@@ -163,11 +166,12 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 		
 		case 'admin':
 			// create or replace admin account
-			// Usage: ./storage-cli.js admin USERNAME PASSWORD
+			// Usage: ./storage-cli.js admin USERNAME PASSWORD [EMAIL]
 			var username = commands.shift();
 			var password = commands.shift();
+			var email = commands.shift() || 'admin@localhost';
 			if (!username || !password) {
-				print( "\nUsage: bin/storage-cli.js admin USERNAME PASSWORD\n\n" );
+				print( "\nUsage: bin/storage-cli.js admin USERNAME PASSWORD [EMAIL]\n\n" );
 				process.exit(1);
 			}
 			if (!username.match(/^[\w\-\.]+$/)) {
@@ -180,7 +184,7 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				username: username,
 				password: password,
 				full_name: "Administrator",
-				email: "admin@cronicle.com"
+				email: email
 			};
 			
 			user.active = 1;
@@ -213,6 +217,37 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 				
 				storage.shutdown( function() { process.exit(0); } );
 			} );
+		break;
+		
+		case 'put':
+		case 'save':
+		case 'store':
+			// put storage key (read data from STDIN)
+			// Usage: cat USER.json | ./storage-cli.js put users/jhuckaby
+			var key = commands.shift();
+			var json_raw = '';
+			var rl = require('readline').createInterface({ input: process.stdin });
+			rl.on('line', function(line) { json_raw += line; });
+			rl.on('close', function() {
+				print( "Writing record from STDIN: " + key + "\n" );
+				
+				var data = null;
+				try { data = JSON.parse(json_raw); }
+				catch (err) {
+					warn( "Failed to parse JSON for key: " + key + ": " + err + "\n" );
+					process.exit(1);
+				}
+				
+				storage.put( key, data, function(err) {
+					if (err) {
+						warn( "Failed to store record: " + key + ": " + err + "\n" );
+						process.exit(1);
+					}
+					print("Record successfully saved: "+key+"\n");
+					
+					storage.shutdown( function() { process.exit(0); } );
+				} );
+			});
 		break;
 		
 		case 'edit':
