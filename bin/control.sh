@@ -99,6 +99,13 @@ do
 		node $HOMEDIR/bin/storage-cli.js setup
 		exit
 	;;
+	setup_and_start)
+		# one entrypoint that initialises the filesystem only if needed.
+		if [ ! -e $HOMEDIR/data/_temp ]; then
+			$HOMEDIR/bin/control.sh setup
+		fi
+		exec $HOMEDIR/bin/debug.sh start
+	;;
 	maint)
 		node $HOMEDIR/bin/storage-cli.js maint $2
 		exit
