@@ -272,7 +272,7 @@ app.extend({
 		
 		var socket = this.socket = io( url, {
 			// forceNew: true,
-			transports: ['websocket'],
+			transports: ['polling', 'websocket'],
 			reconnection: false,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 2000,
