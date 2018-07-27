@@ -253,6 +253,12 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 		case 'edit':
 		case 'vi':
 			var key = commands.shift();
+			
+			if ((cmd == 'edit') && !process.env.EDITOR) {
+				warn( "No EDITOR environment variable is set.\n" );
+				process.exit(1);
+			}
+			
 			storage.get( key, function(err, data) {
 				if (err) data = {};
 				print("Spawning editor to edit record: " + key + "\n");
