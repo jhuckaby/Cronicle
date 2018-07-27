@@ -561,6 +561,22 @@ Setting this parameter to `true` will force Cronicle's Web UI to connect to the 
 
 This property only takes effect if [web_direct_connect](#web_direct_connect) is also set to `true`.
 
+### socket_io_transports
+
+This is an advanced configuration property that you will probably never need to worry about.  This allows you to customize the [socket.io transports](https://socket.io/docs/client-api/) used to connect to the server for real-time updates.  By default, this property is set internally to an array containing the `websocket` transport only, e.g.
+
+```js
+"socket_io_transports": ["websocket"]
+```
+
+However, if you are trying to run Cronicle in an environment where WebSockets are not allowed (perhaps an ancient firewall or proxy), you can change this array to contain the `polling` transport first, e.g.
+
+```js
+"socket_io_transports": ["polling", "websocket"]
+```
+
+However, please only do this if you know exactly what you are doing, and why.
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
