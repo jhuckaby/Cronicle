@@ -26,7 +26,7 @@ onmessage = function(e) {
 	var categories = data.categories;
 	var plugins = data.plugins;
 	var events = [];
-	var max_events = 1000;
+	var max_events = 10000;
 	
 	var now = normalize_time( time_now(), { sec: 0 } );
 	var max_epoch = now + 86400 + 3600;
