@@ -1052,6 +1052,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		this.socket = io( url, {
 			forceNew: true,
+			transports: config.socket_io_transports || ['websocket'],
 			reconnection: true,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
