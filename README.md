@@ -68,6 +68,7 @@
 		+ [server_comm_use_hostnames](#server_comm_use_hostnames)
 		+ [web_direct_connect](#web_direct_connect)
 		+ [web_socket_use_hostnames](#web_socket_use_hostnames)
+		+ [socket_io_transports](#socket_io_transports)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
 		+ [Couchbase](#couchbase)
