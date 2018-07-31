@@ -100,9 +100,30 @@ do
 		exit
 	;;
 	setup_and_start)
-		# one entrypoint that initialises the filesystem only if needed.
-		if [ ! -e $HOMEDIR/data/_temp ]; then
+		# Only run setup when setup needs to be done
+		if [ ! -f $HOMEDIR/data/.setup_done ]; then
 			$HOMEDIR/bin/control.sh setup
+
+			mv $HOMEDIR/conf/config.json $HOMEDIR/conf/config.json.origin
+
+			if [ -f $HOMEDIR/data/config.json.import ]; then
+				# Move in custom configuration
+				cp $HOMEDIR/data/config.json.import $HOMEDIR/conf/config.json
+			else
+				# Use default configuration with changes through ENV variables
+				_WEBSERVER_HTTP_PORT=${WEBSERVER_HTTP_PORT:-3012}
+
+				cat $HOMEDIR/conf/config.json.origin | \
+					jq ".web_socket_use_hostnames = ${WEB_SOCKET_USE_HOSTNAMES:-1}" | \
+					jq ".server_comm_use_hostnames = ${SERVER_COMM_USE_HOSTNAMES:-1}" | \
+					jq ".WebServer.http_port = ${_WEBSERVER_HTTP_PORT}" | \
+					jq ".WebServer.https_port = ${WEBSERVER_HTTPS_PORT:-443}" | \
+					jq ".base_app_url = \"${BASE_APP_URL:-http://${HOSTNAME}:${WEBSERVER_HTTP_PORT}}\"" \
+					> $HOMEDIR/conf/config.json
+			fi
+
+			# Marking setup done
+			touch $HOMEDIR/data/.setup_done
 		fi
 		exec $HOMEDIR/bin/debug.sh start
 	;;
