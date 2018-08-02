@@ -291,6 +291,12 @@ Class.add( Page.Admin, {
 				if (!group.title) return app.badField('fe_eg_title', "Please enter a title for the server group.");
 				group.regexp = $('#fe_eg_regexp').val().replace(/^\/(.+)\/$/, '$1');
 				if (!group.regexp) return app.badField('fe_eg_regexp', "Please enter a regular expression for the server group.");
+				
+				try { new RegExp(group.regexp); }
+				catch(err) {
+					return app.badField('fe_eg_regexp', "Invalid regular expression: " + err);
+				}
+				
 				group.master = parseInt( $('#fe_eg_master').val() );
 				Dialog.hide();
 				
