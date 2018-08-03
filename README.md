@@ -1988,7 +1988,7 @@ The Shell Plugin determines success or failure based on the [exit code](https://
 /usr/local/bin/my-task-3.bin || exit 1
 ```
 
-You can still report intermediate progress with the Shell Plugin.  It can accept JSON in the [standard output format](#json-output) if enabled, but there is also a shorthand.  You can echo a single number on its own line, from 0 to 100, optionally with a `%` suffix, and that will be interpreted as the current progress.  Example:
+You can still report intermediate progress with the Shell Plugin.  It can accept JSON in the [standard output format](#json-output) if enabled, but there is also a shorthand.  You can echo a single number on its own line, from 0 to 100, with a `%` suffix, and that will be interpreted as the current progress.  Example:
 
 ```sh
 #!/bin/bash

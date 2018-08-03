@@ -41,7 +41,7 @@ stream.on('json', function(job) {
 	cstream.on('text', function(line) {
 		// received non-json text from child
 		// look for plain number from 0 to 100, treat as progress update
-		if (line.match(/^\s*(\d+)\%?\s*$/)) {
+		if (line.match(/^\s*(\d+)\%\s*$/)) {
 			var progress = Math.max( 0, Math.min( 100, parseInt( RegExp.$1 ) ) ) / 100;
 			stream.write({
 				progress: progress

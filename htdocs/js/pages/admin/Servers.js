@@ -276,7 +276,7 @@ Class.add( Page.Admin, {
 			get_form_table_row('Group Title:', '<input type="text" id="fe_eg_title" size="25" value="'+escape_text_field_value(group.title)+'"/>') + 
 			get_form_table_caption("Enter a title for the server group, short and sweet.") + 
 			get_form_table_spacer() + 
-			get_form_table_row('Hostname Match:', '<input type="text" id="fe_eg_regexp" size="30" style="font-family:monospace; font-size:13px;" value="'+escape_text_field_value(group.regexp)+'"/>') + 
+			get_form_table_row('Hostname Match:', '<input type="text" id="fe_eg_regexp" size="30" style="font-family:monospace; font-size:13px;" value="'+escape_text_field_value(group.regexp)+'" spellcheck="false"/>') + 
 			get_form_table_caption("Enter a regular expression to auto-assign servers to this group by their hostnames, e.g. \"^mtx\\d+\\.\".") + 
 			get_form_table_spacer() + 
 			get_form_table_row('Server Class:', '<select id="fe_eg_master">' + render_menu_options([ [1,'Master Eligible'], [0,'Slave Only'] ], group.master, false) + '</select>') + 
@@ -323,6 +323,17 @@ Class.add( Page.Admin, {
 	delete_group: function(idx) {
 		// delete selected server group
 		var group = this.server_groups[idx];
+		
+		// make sure user isn't deleting final master group
+		if (group.master) {
+			var num_masters = 0;
+			for (var idx = 0, len = this.server_groups.length; idx < len; idx++) {
+				if (this.server_groups[idx].master) num_masters++;
+			}
+			if (num_masters == 1) {
+				return app.doError("Sorry, you cannot delete the last Master Eligible server group.");
+			}
+		}
 		
 		// check for events first
 		var group_events = find_objects( app.schedule, { target: group.id } );
