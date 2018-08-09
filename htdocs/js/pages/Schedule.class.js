@@ -163,7 +163,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			
 			var tds = [
 				'<input type="checkbox" style="cursor:pointer" onChange="$P().change_event_enabled('+idx+')" '+(item.enabled ? 'checked="checked"' : '')+'/>', 
-				'<div class="td_big"><span class="link" onMouseUp="$P().edit_event('+idx+')">' + self.getNiceEvent(item.title, col_width) + '</span></div>',
+				'<div class="td_big"><span class="link" onMouseUp="$P().edit_event('+idx+')">' + self.getNiceEvent(item, col_width) + '</span></div>',
 				self.getNiceCategory( cat, col_width ),
 				self.getNicePlugin( plugin, col_width ),
 				self.getNiceGroup( group, item.target, col_width ),

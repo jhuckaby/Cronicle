@@ -63,8 +63,12 @@ Class.subclass( Page, "Page.Base", {
 	getNiceEvent: function(title, width) {
 		if (!width) width = 500;
 		if (!title) return '(None)';
-		if (typeof(title) == 'object') title = title.title;
-		return '<div class="ellip" style="max-width:'+width+'px;"><i class="fa fa-clock-o">&nbsp;</i>' + title + '</div>';
+		var icon_class = 'fa fa-clock-o';
+		if (typeof(title) == 'object') {
+			if (title.chain || title.chain_error) icon_class = 'fa fa-link';
+			title = title.title;
+		}
+		return '<div class="ellip" style="max-width:'+width+'px;"><i class="' + icon_class + '">&nbsp;</i>' + title + '</div>';
 	},
 	
 	getNiceCategory: function(cat, width) {
