@@ -491,6 +491,23 @@ If you need to include custom JSON data with the web hook HTTP POST, you can do 
 
 In this example `my_custom_key1` and `my_custom_key2` will be merged in with the event data that usually accompanies the web hook post data.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
 
+### web_hook_text_templates
+
+The web hook JSON POST data includes a `text` property which is a simple summary of the action taking place, which is compatible with [Slack Webhook Integrations](https://api.slack.com/incoming-webhooks).  These text strings are generated based on the action, and use the following templates:
+
+```js
+"web_hook_text_templates": {
+	"job_start": "Job started on [hostname]: [event_title] [job_details_url]",
+	"job_complete": "Job completed successfully on [hostname]: [event_title] [job_details_url]",
+	"job_failure": "Job failed on [hostname]: [event_title]: Error [code]: [description] [job_details_url]",
+	"job_launch_failure": "Failed to launch scheduled event: [event_title]: [description] [edit_event_url]"
+}
+```
+
+You can customize these text strings by including a `web_hook_text_templates` object in your configuration, and setting each of the action properties within.  Also, you can use this to *disable* any of the web hook actions, by simply removing certain action keys.  For example, if you don't want to fire a web hook for starting a job, remove the `job_start` key.  If you only want web hooks to fire for errors, remove both the `job_start` and `job_complete` keys.
+
+The text string templates can use any data values from the web hook JSON data by inserting `[square_bracket]` placeholders.  See the [Web Hooks](#event-web-hook) section below for more on the data format, and which values are available.
+
 ### ssl_cert_bypass
 
 If you are having trouble getting HTTPS web hooks or SSL SMTP e-mails to work, you might need to set `ssl_cert_bypass` to true.  This causes Node.js to blindly accept all SSL connections, even when it cannot validate the SSL certificate.  This effectively sets the following environment variable at startup:
@@ -1095,16 +1112,19 @@ You can determine if the request represents a start or the end of a job by looki
 | JSON Property | Description |
 |---------------|-------------|
 | `action` | Specifies whether the web hook signifies the start (`job_start`) or end (`job_complete`) of a job. |
+| `base_app_url` | The [base_app_url](#base_app_url) configuration property. |
 | `category` | The Category ID to which the event is assigned. |
 | `category_title` | The title of the Category to which the event is assigned. |
 | `code` | The response code as specified by your Plugin (only applicable for `job_complete` hooks). |
 | `cpu` | An object representing the min, max, average and latest CPU usage for the job (only applicable for `job_complete` hooks). |
 | `description` | A custom text string populated by your Plugin, typically contains the error message on failure. |
+| `edit_event_url` | A fully-qualified URL to edit the event in the Cronicle UI. |
 | `elapsed` | The total elapsed time for the job, in seconds (only applicable for `job_complete` hooks). |
 | `event` | The ID of the event which spawned the job. |
 | `event_title` | The title of the event which spawned the job. |
 | `hostname` | The hostname of the server which ran (or is about to run) the event. |
 | `id` | An auto-assigned unique ID for the job, which can be used in API calls to query for status. |
+| `job_details_url` | A fully-qualified URL to view the job details in the Cronicle UI. |
 | `log_file_size` | The size of the job's log file in bytes (only applicable for `job_complete` hooks). |
 | `mem` | An object representing the min, max, average and latest memory usage for the job (only applicable for `job_complete` hooks). |
 | `nice_target` | Will be set to the title of the target server group, or exact server hostname, depending on how the event is configured. |
@@ -1114,6 +1134,7 @@ You can determine if the request represents a start or the end of a job by looki
 | `plugin` | The ID of the Plugin assigned to the event. |
 | `plugin_title` | The title of the Plugin assigned to the event. |
 | `source` | A string describing who or what started the job (user or API).  Will be blank if launched normally by the scheduler. |
+| `text` | A simple text string describing the action that took place.  Useful for [Slack Webhook Integrations](https://api.slack.com/incoming-webhooks). |
 | `time_end` | The Epoch timestamp of when the job ended (only applicable for `job_complete` hooks). |
 | `time_start` | The Epoch timestamp of when the job started. |
 
@@ -1122,6 +1143,7 @@ Here is an example web hook JSON record (`job_complete` version shown):
 ```js
 {
 	"action": "job_complete",
+	"base_app_url": "http://localhost:3012",
 	"category": "general",
 	"category_title": "General",
 	"code": 0,
@@ -1133,11 +1155,13 @@ Here is an example web hook JSON record (`job_complete` version shown):
 		"current": 23.4
 	},
 	"description": "Success!",
+	"edit_event_url": "http://localhost:3012/#Schedule?sub=edit_event&id=3c182051",
 	"elapsed": 90.414,
 	"event": "3c182051",
 	"event_title": "Test Event 2",
 	"hostname": "joeretina.local",
 	"id": "jihuyalli01",
+	"job_details_url": "http://localhost:3012/#JobDetails?id=jihuyalli01",
 	"log_file_size": 25119,
 	"mem": {
 		"min": 190459904,
@@ -1157,6 +1181,7 @@ Here is an example web hook JSON record (`job_complete` version shown):
 	"plugin": "test",
 	"plugin_title": "Test Plugin",
 	"source": "Manual (admin)",
+	"text": "Job completed successfully on joeretina.local: Test Event 2 http://localhost:3012/#JobDetails?id=jihuyalli01",
 	"time_end": 1449431930.628,
 	"time_start": 1449431840.214
 }
