@@ -37,6 +37,13 @@
 	"job_log_max_size": 0,
 	"job_env": {},
 	
+	"web_hook_text_templates": {
+		"job_start": "Job started on [hostname]: [event_title] [job_details_url]",
+		"job_complete": "Job completed successfully on [hostname]: [event_title] [job_details_url]",
+		"job_failure": "Job failed on [hostname]: [event_title]: Error [code]: [description] [job_details_url]",
+		"job_launch_failure": "Failed to launch scheduled event: [event_title]: [description] [edit_event_url]"
+	},
+	
 	"client": {
 		"name": "Cronicle",
 		"debug": 1,
