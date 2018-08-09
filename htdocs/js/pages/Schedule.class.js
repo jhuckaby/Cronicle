@@ -374,7 +374,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += '<div style="padding:0px 20px 50px 20px">';
 		html += '<center><table style="margin:0;">';
 		
-		if (config.new_event_template) {
+		if (this.event_copy) {
+			// copied from existing event
+			this.event = this.event_copy;
+			delete this.event_copy;
+		}
+		else if (config.new_event_template) {
 			// app has a custom event template
 			this.event = deep_copy_object( config.new_event_template );
 			if (!this.event.timezone) this.event.timezone = app.tz;
@@ -512,15 +517,19 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				// cancel
 				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().cancel_event_edit()">Cancel</div></td>';
 				// delete
-				html += '<td width="40">&nbsp;</td>';
-				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().delete_event(\'edit\')">Delete...</div></td>';
+				html += '<td width="30">&nbsp;</td>';
+				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().delete_event(\'edit\')">Delete Event...</div></td>';
+				
+				// copy
+				html += '<td width="30">&nbsp;</td>';
+				html += '<td><div class="button" style="width:120px; font-weight:normal;" onMouseUp="$P().do_copy_event()">Copy Event...</div></td>';
 				
 				// run
-				html += '<td width="40">&nbsp;</td>';
+				html += '<td width="30">&nbsp;</td>';
 				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event_from_edit(event)">Run Now</div></td>';
 				
 				// save
-				html += '<td width="40">&nbsp;</td>';
+				html += '<td width="30">&nbsp;</td>';
 				html += '<td><div class="button" style="width:130px;" onMouseUp="$P().do_save_event()"><i class="fa fa-floppy-o">&nbsp;&nbsp;</i>Save Changes</div></td>';
 			html += '</tr></table>';
 			
@@ -533,6 +542,24 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += '</div>'; // sidebar tabs
 		
 		this.div.html( html );
+	},
+	
+	do_copy_event: function() {
+		// make copy of event and jump into new workflow
+		app.clearError();
+		
+		var event = this.get_event_form_json();
+		if (!event) return; // error
+		
+		delete event.id;
+		delete event.created;
+		delete event.modified;
+		delete event.username;
+		
+		event.title = "Copy of " + event.title;
+		
+		this.event_copy = event;
+		Nav.go('Schedule?sub=new_event');
 	},
 	
 	run_event_from_edit: function(e) {
@@ -1764,6 +1791,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	leavesub_edit_event: function(args) {
 		// special hook fired when leaving edit_event sub-page
 		// try to save edited state of event in mem cache
+		if (this.event_copy) return; // in middle of edit --> copy operation
+		
 		var event = this.get_event_form_json(true); // quiet mode
 		if (event) {
 			app.autosave_event = event;
