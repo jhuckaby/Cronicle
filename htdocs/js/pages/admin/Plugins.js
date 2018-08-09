@@ -147,7 +147,13 @@ Class.add( Page.Admin, {
 		html += '<div style="padding:0px 20px 50px 20px">';
 		html += '<center><table style="margin:0;">';
 		
-		this.plugin = { params: [], enabled: 1 };
+		if (this.plugin_copy) {
+			this.plugin = this.plugin_copy;
+			delete this.plugin_copy;
+		}
+		else {
+			this.plugin = { params: [], enabled: 1 };
+		}
 		
 		html += this.get_plugin_edit_html();
 		
@@ -277,17 +283,8 @@ Class.add( Page.Admin, {
 		
 		plugin.title = "Copy of " + plugin.title;
 		
-		app.showProgress( 1.0, "Copying plugin..." );
-		app.api.post( 'app/create_plugin', plugin, function(resp) {
-			app.hideProgress();
-			
-			// Nav.go('Admin?sub=edit_plugin&id=' + resp.id);
-			Nav.go('Admin?sub=plugins');
-			
-			setTimeout( function() {
-				app.showMessage('success', "The plugin was copied successfully to: " + plugin.title);
-			}, 150 );
-		} );
+		this.plugin_copy = plugin;
+		Nav.go('Admin?sub=new_plugin');
 	},
 	
 	do_save_plugin: function() {
