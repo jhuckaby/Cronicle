@@ -524,9 +524,15 @@ app.extend({
 		}
 	},
 	
+	get_password_type: function() {
+		// get user's pref for password field type, defaulting to config
+		return this.getPref('password_type') || config.default_password_type || 'password';
+	},
+	
 	get_password_toggle_html: function() {
 		// get html for a password toggle control
-		return '<span class="link password_toggle" onMouseUp="app.toggle_password_field(this)">Hide</span>';
+		var text = (this.get_password_type() == 'password') ? 'Show' : 'Hide';
+		return '<span class="link password_toggle" onMouseUp="app.toggle_password_field(this)">' + text + '</span>';
 	},
 	
 	toggle_password_field: function(span) {
@@ -536,10 +542,12 @@ app.extend({
 		if ($field.attr('type') == 'password') {
 			$field.attr('type', 'text');
 			$span.html( 'Hide' );
+			this.setPref('password_type', 'text');
 		}
 		else {
 			$field.attr('type', 'password');
 			$span.html( 'Show' );
+			this.setPref('password_type', 'password');
 		}
 	},
 	

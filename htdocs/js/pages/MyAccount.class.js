@@ -50,12 +50,12 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 		html += get_form_table_spacer();
 		
 		// current password
-		html += get_form_table_row( 'Current Password', '<input type="text" id="fe_ma_old_password" size="30" value=""/>' + app.get_password_toggle_html() );
+		html += get_form_table_row( 'Current Password', '<input type="' + app.get_password_type() + '" id="fe_ma_old_password" size="30" value=""/>' + app.get_password_toggle_html() );
 		html += get_form_table_caption( "Enter your current account password to make changes." );
 		html += get_form_table_spacer();
 		
 		// reset password
-		html += get_form_table_row( 'New Password', '<input type="text" id="fe_ma_new_password" size="30" value=""/>' + app.get_password_toggle_html() );
+		html += get_form_table_row( 'New Password', '<input type="' + app.get_password_type() + '" id="fe_ma_new_password" size="30" value=""/>' + app.get_password_toggle_html() );
 		html += get_form_table_caption( "If you need to change your password, enter the new one here." );
 		html += get_form_table_spacer();
 		

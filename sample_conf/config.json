@@ -47,6 +47,7 @@
 	"client": {
 		"name": "Cronicle",
 		"debug": 1,
+		"default_password_type": "password",
 		"privilege_list": [
 			{ "id": "admin", "title": "Administrator" },
 			{ "id": "create_events", "title": "Create Events" },

@@ -45,7 +45,7 @@ Class.subclass( Page.Base, "Page.Login", {
 					html += '<tr><td colspan="2"><div class="table_spacer"></div></td></tr>';
 					html += '<tr>';
 						html += '<td align="right" class="table_label">Password:</td>';
-						html += '<td align="left" class="table_value"><div><input type="text" name="password" id="fe_login_password" size="30" spellcheck="false" value=""/>' + app.get_password_toggle_html() + '</div></td>';
+						html += '<td align="left" class="table_value"><div><input type="' + app.get_password_type() + '" name="password" id="fe_login_password" size="30" spellcheck="false" value=""/>' + app.get_password_toggle_html() + '</div></td>';
 					html += '</tr>';
 					html += '<tr><td colspan="2"><div class="table_spacer"></div></td></tr>';
 				html += '</table></center>';
@@ -171,7 +171,7 @@ Class.subclass( Page.Base, "Page.Login", {
 				
 				html += get_form_table_caption('Choose a unique alphanumeric username for your account.') + 
 				get_form_table_spacer() + 
-				get_form_table_row('Password:', '<input type="text" id="fe_ca_password" size="30" value="" spellcheck="false"/>' + app.get_password_toggle_html()) + 
+				get_form_table_row('Password:', '<input type="' + app.get_password_type() + '" id="fe_ca_password" size="30" value="" spellcheck="false"/>' + app.get_password_toggle_html()) + 
 				get_form_table_caption('Enter a secure password that you will not forget.') + 
 				get_form_table_spacer() + 
 				get_form_table_row('Full Name:', '<input type="text" id="fe_ca_fullname" size="30" value="" spellcheck="false"/>') + 
@@ -346,7 +346,7 @@ Class.subclass( Page.Base, "Page.Login", {
 					html += '<tr><td colspan="2"><div class="table_spacer"></div></td></tr>';
 					html += '<tr>';
 						html += '<td align="right" class="table_label">New Password:</td>';
-						html += '<td align="left" class="table_value"><div><input type="text" name="password" id="fe_reset_password" size="30" spellcheck="false" value=""/>' + app.get_password_toggle_html() + '</div></td>';
+						html += '<td align="left" class="table_value"><div><input type="' + app.get_password_type() + '" name="password" id="fe_reset_password" size="30" spellcheck="false" value=""/>' + app.get_password_toggle_html() + '</div></td>';
 					html += '</tr>';
 					html += '<tr><td colspan="2"><div class="table_spacer"></div></td></tr>';
 				html += '</table></center>';
