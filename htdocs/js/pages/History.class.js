@@ -81,7 +81,7 @@ Class.subclass( Page.Base, "Page.History", {
 			
 			var event = find_object( app.schedule, { id: job.event } );
 			var event_link = '(None)';
-			if (event) {
+			if (event && job.id) {
 				event_link = '<div class="td_big"><a href="#History?sub=event_history&id='+job.event+'">' + self.getNiceEvent('<b>' + (event.title || job.event) + '</b>', col_width + 40) + '</a></div>';
 			}
 			else if (job.event_title) {
@@ -94,8 +94,11 @@ Class.subclass( Page.Base, "Page.History", {
 			var plugin = job.plugin ? find_object( app.plugins, { id: job.plugin } ) : null;
 			if (!plugin && job.plugin_title) plugin = { id: job.plugin, title: job.plugin_title };
 			
+			var job_link = '<div class="td_big">--</div>';
+			if (job.id) job_link = '<div class="td_big"><a href="#JobDetails?id='+job.id+'">' + self.getNiceJob('<b>' + job.id + '</b>') + '</a></div>';
+			
 			var tds = [
-				'<div class="td_big"><a href="#JobDetails?id='+job.id+'">' + self.getNiceJob('<b>' + job.id + '</b>') + '</a></div>',
+				job_link,
 				event_link,
 				self.getNiceCategory( cat, col_width ),
 				self.getNicePlugin( plugin, col_width ),
@@ -105,6 +108,8 @@ Class.subclass( Page.Base, "Page.History", {
 				get_text_from_seconds( job.elapsed, true, false )
 				// actions.join(' | ')
 			];
+			
+			if (!job.id) tds.className = 'disabled';
 			
 			if (cat && cat.color) {
 				if (tds.className) tds.className += ' '; else tds.className = '';
