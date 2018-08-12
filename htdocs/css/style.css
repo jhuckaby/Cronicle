@@ -47,14 +47,18 @@ div.container {
 }
 
 #d_tab_time {
+	cursor: default;
 	opacity: 0;
 	color: #888;
 }
 
 #d_tab_master {
+	cursor: default;
+}
+#d_tab_master.active {
 	cursor: pointer;
 }
-#d_tab_master:hover {
+#d_tab_master.active:hover {
 	color: #036 !important;
 	text-decoration: underline;
 }
@@ -569,4 +573,10 @@ div.dialog_subtitle {
 
 td.table_label {
 	cursor: default;
+}
+
+/* User Category Privilege Checkbox Label Augmentation */
+
+#fe_eu_priv_cat_limit:checked + label:after {
+	content: ':'
 }
