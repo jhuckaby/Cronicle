@@ -137,6 +137,12 @@ app.extend({
 			this[key] = resp[key];
 		}
 		
+		if (this.isCategoryLimited()) {
+			this.pruneSchedule();
+			this.pruneCategories();
+			this.pruneActiveJobs();
+		}
+		
 		this.setPref('username', resp.username);
 		this.setPref('session_id', resp.session_id);
 		
@@ -147,6 +153,7 @@ app.extend({
 		
 		// show scheduler master switch
 		this.updateMasterSwitch();
+		if (this.hasPrivilege('state_update')) $('#d_tab_master').addClass('active');
 		
 		// show admin tab if user is worthy
 		if (this.isAdmin()) $('#tab_Admin').show();
@@ -348,8 +355,15 @@ app.extend({
 		
 		socket.on('update', function(data) {
 			// receive data update (global list contents)
+			var cat_limited = self.isCategoryLimited();
+			
 			for (var key in data) {
 				self[key] = data[key];
+				
+				if (cat_limited) {
+					if (key == 'schedule') self.pruneSchedule();
+					else if (key == 'categories') self.pruneCategories();
+				}
 				
 				var id = self.page_manager.current_page_id;
 				var page = self.page_manager.find(id);
@@ -382,21 +396,75 @@ app.extend({
 		// determine if jobs have been added or deleted
 		for (var id in jobs) {
 			// check for new jobs added
-			if (!this.activeJobs[id]) {
-				// this.activeJobs[id] = jobs[id];
-				changed = true;
-			}
+			if (!this.activeJobs[id]) changed = true;
 		}
 		for (var id in this.activeJobs) {
 			// check for jobs completed
-			if (!jobs[id]) {
-				// delete this.activeJobs[id];
-				changed = true;
-			}
+			if (!jobs[id]) changed = true;
 		}
 		
 		this.activeJobs = jobs;
+		if (this.isCategoryLimited()) this.pruneActiveJobs();
 		data.jobs_changed = changed;
+	},
+	
+	pruneActiveJobs: function() {
+		// remove active jobs that the user should not see, due to category privs
+		if (!this.activeJobs) return;
+		
+		for (var id in this.activeJobs) {
+			var job = this.activeJobs[id];
+			if (!this.hasCategoryAccess(job.category)) delete this.activeJobs[id];
+		}
+	},
+	
+	pruneSchedule: function() {
+		// remove schedule items that the user should not see, due to category privs
+		if (!this.schedule || !this.schedule.length) return;
+		var new_items = [];
+		
+		for (var idx = 0, len = this.schedule.length; idx < len; idx++) {
+			var item = this.schedule[idx];
+			if (this.hasCategoryAccess(item.category)) new_items.push(item);
+		}
+		
+		this.schedule = new_items;
+	},
+	
+	pruneCategories: function() {
+		// remove categories that the user should not see, due to category privs
+		if (!this.categories || !this.categories.length) return;
+		var new_items = [];
+		
+		for (var idx = 0, len = this.categories.length; idx < len; idx++) {
+			var item = this.categories[idx];
+			if (this.hasCategoryAccess(item.id)) new_items.push(item);
+		}
+		
+		this.categories = new_items;
+	},
+	
+	isCategoryLimited: function() {
+		// return true if user is limited to specific categories, false otherwise
+		if (this.isAdmin()) return false;
+		return( app.user && app.user.privileges && app.user.privileges.cat_limit );
+	},
+	
+	hasCategoryAccess: function(cat_id) {
+		// check if user has access to specific category
+		if (!app.user || !app.user.privileges) return false;
+		if (app.user.privileges.admin) return true;
+		if (!app.user.privileges.cat_limit) return true;
+		
+		var priv_id = 'cat_' + cat_id;
+		return( !!app.user.privileges[priv_id] );
+	},
+	
+	hasPrivilege: function(priv_id) {
+		// check if user has privilege
+		if (!app.user || !app.user.privileges) return false;
+		if (app.user.privileges.admin) return true;
+		return( !!app.user.privileges[priv_id] );
 	},
 	
 	recalculateMaster: function(data) {
@@ -481,15 +549,26 @@ app.extend({
 	
 	updateMasterSwitch: function() {
 		// update master switch display
+		var html = '';
+		if (this.hasPrivilege('state_update')) {
+			html = '<i '+(this.state.enabled ? 'class="fa fa-check-square-o">' : 'class="fa fa-square-o">')+'</i>&nbsp;<b>Scheduler Enabled</b>';
+		}
+		else {
+			if (this.state.enabled) html = '<i class="fa fa-check">&nbsp;</i><b>Scheduler Enabled</b>';
+			else html = '<i class="fa fa-times">&nbsp;</i><b>Scheduler Disabled</b>';
+		}
+		
 		$('#d_tab_master')
 			.css( 'color', this.state.enabled ? '#3f7ed5' : '#777' )
-			.html( '<i '+(this.state.enabled ? 'class="fa fa-check-square-o">' : 'class="fa fa-square-o">')+'</i>&nbsp;<b>Scheduler Enabled</b>' );
+			.html( html );
 	},
 	
 	toggleMasterSwitch: function() {
 		// toggle master scheduler switch on/off
 		var self = this;
 		var enabled = this.state.enabled ? 0 : 1;
+		
+		if (!this.hasPrivilege('state_update')) return;
 		
 		// $('#d_tab_master > i').removeClass().addClass('fa fa-spin fa-spinner');
 		
