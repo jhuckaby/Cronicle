@@ -408,7 +408,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// password
-		html += get_form_table_row( user.password ? 'Change Password' : 'Password', '<input type="text" id="fe_eu_password" size="20" value=""/>&nbsp;<span class="link addme" onMouseUp="$P().generate_password()">&laquo; Generate Random</span>' );
+		html += get_form_table_row( user.password ? 'Change Password' : 'Password', '<input type="text" id="fe_eu_password" size="20" value="" spellcheck="false"/>&nbsp;<span class="link addme" onMouseUp="$P().generate_password()">&laquo; Generate Random</span>' );
 		html += get_form_table_caption( user.password ? "Optionally enter a new password here to reset it.  Please make it secure." : "Enter a password for the account.  Please make it secure." );
 		html += get_form_table_spacer();
 		
@@ -429,6 +429,40 @@ Class.add( Page.Admin, {
 			priv_html += '</div>';
 		}
 		
+		// user can be limited to certain categories
+		var priv = { id: "cat_limit", title: "Limit to Categories" };
+		var has_priv = !!user.privileges[ priv.id ];
+		var priv_visible = !user_is_admin;
+		
+		priv_html += '<div class="priv_group_other" style="margin-top:4px; margin-bottom:4px; '+(priv_visible ? '' : 'display:none;')+'">';
+		priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" ' + 
+			(has_priv ? 'checked="checked" ' : '') + 'onChange="$P().change_cat_checkbox()"' + '>';
+		priv_html += '<label for="fe_eu_priv_'+priv.id+'">'+priv.title+'</label>';
+		priv_html += '</div>';
+		
+		priv_html += '<div class="priv_group_other">';
+		
+		// sort by title ascending
+		var categories = app.categories.sort( function(a, b) {
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
+		for (var idx = 0, len = categories.length; idx < len; idx++) {
+			var cat = categories[idx];
+			var priv = { id: 'cat_' + cat.id, title: cat.title };
+			var has_priv = !!user.privileges[ priv.id ];
+			var priv_visible = !!user.privileges.cat_limit;
+			
+			priv_html += '<div class="priv_group_cat" style="margin-top:4px; margin-bottom:4px; margin-left:20px; '+(priv_visible ? '' : 'display:none;')+'">';
+			priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" ' + 
+				(has_priv ? 'checked="checked" ' : '') + '>';
+			priv_html += '<label for="fe_eu_priv_'+priv.id+'" style="font-weight:normal"><i class="fa fa-folder-open-o">&nbsp;</i>'+priv.title+'</label>';
+			priv_html += '</div>';
+		}
+		
+		priv_html += '</div>';
+		
 		html += get_form_table_row( 'Privileges', priv_html );
 		html += get_form_table_caption( "Select which privileges the user account should have. Administrators have all privileges." );
 		html += get_form_table_spacer();
@@ -443,6 +477,13 @@ Class.add( Page.Admin, {
 		else $('div.priv_group_other').show(250);
 	},
 	
+	change_cat_checkbox: function() {
+		// toggle category limit checkbox
+		var is_checked = $('#fe_eu_priv_cat_limit').is(':checked');
+		if (is_checked) $('div.priv_group_cat').show(250);
+		else $('div.priv_group_cat').hide(250);
+	},
+	
 	get_user_form_json: function() {
 		// get user elements from form, used for new or edit
 		var user = {
@@ -454,10 +495,31 @@ Class.add( Page.Admin, {
 			privileges: {}
 		};
 		
-		for (var idx = 0, len = config.privilege_list.length; idx < len; idx++) {
-			var priv = config.privilege_list[idx];
-			user.privileges[ priv.id ] = $('#fe_eu_priv_'+priv.id).is(':checked') ? 1 : 0;
-		}
+		user.privileges.admin = $('#fe_eu_priv_admin').is(':checked') ? 1 : 0;
+		
+		if (!user.privileges.admin) {
+			for (var idx = 0, len = config.privilege_list.length; idx < len; idx++) {
+				var priv = config.privilege_list[idx];
+				user.privileges[ priv.id ] = $('#fe_eu_priv_'+priv.id).is(':checked') ? 1 : 0;
+			}
+			
+			// category limit privs
+			user.privileges.cat_limit = $('#fe_eu_priv_cat_limit').is(':checked') ? 1 : 0;
+			
+			if (user.privileges.cat_limit) {
+				var num_cat_privs = 0;
+				for (var idx = 0, len = app.categories.length; idx < len; idx++) {
+					var cat = app.categories[idx];
+					var priv = { id: 'cat_' + cat.id };
+					if ($('#fe_eu_priv_'+priv.id).is(':checked')) {
+						user.privileges[ priv.id ] = 1;
+						num_cat_privs++;
+					}
+				}
+				
+				if (!num_cat_privs) return app.doError("Please select at least one category privilege.");
+			} // cat limit
+		} // not admin
 		
 		return user;
 	},
