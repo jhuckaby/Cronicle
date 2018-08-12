@@ -200,10 +200,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			return tds;
 		} );
 		
-		html += '<div style="height:30px;"></div>';
-		html += '<center><table><tr>';
-			html += '<td><div class="button" style="width:130px;" onMouseUp="$P().edit_event(-1)"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>Add Event...</div></td>';
-		html += '</tr></table></center>';
+		if (app.hasPrivilege('create_events')) {
+			html += '<div style="height:30px;"></div>';
+			html += '<center><table><tr>';
+				html += '<td><div class="button" style="width:130px;" onMouseUp="$P().edit_event(-1)"><i class="fa fa-plus-circle">&nbsp;&nbsp;</i>Add Event...</div></td>';
+			html += '</tr></table></center>';
+		}
 		
 		html += '</div>'; // padding
 		// html += '</div>'; // sidebar tabs
@@ -478,13 +480,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		app.setWindowTitle( "Editing Event \"" + event.title + "\"" );
 		this.div.removeClass('loading');
 		
-		html += this.getSidebarTabs( 'edit_event',
-			[
-				['events', "Schedule"],
-				['new_event', "Add New Event"],
-				['edit_event', "Edit Event"]
-			]
-		);
+		var side_tabs = [];
+		side_tabs.push( ['events', "Schedule"] );
+		if (app.hasPrivilege('create_events')) side_tabs.push( ['new_event', "Add New Event"] );
+		side_tabs.push( ['edit_event', "Edit Event"] );
+		
+		html += this.getSidebarTabs( 'edit_event', side_tabs );
 		
 		// html += '<div style="padding:20px;"><div class="subtitle">Editing Event &ldquo;' + event.title + '&rdquo;</div></div>';
 		
@@ -516,17 +517,24 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			html += '<table><tr>';
 				// cancel
 				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().cancel_event_edit()">Cancel</div></td>';
+				
 				// delete
-				html += '<td width="30">&nbsp;</td>';
-				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().delete_event(\'edit\')">Delete Event...</div></td>';
+				if (app.hasPrivilege('delete_events')) {
+					html += '<td width="30">&nbsp;</td>';
+					html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().delete_event(\'edit\')">Delete Event...</div></td>';
+				}
 				
 				// copy
-				html += '<td width="30">&nbsp;</td>';
-				html += '<td><div class="button" style="width:120px; font-weight:normal;" onMouseUp="$P().do_copy_event()">Copy Event...</div></td>';
+				if (app.hasPrivilege('create_events')) {
+					html += '<td width="30">&nbsp;</td>';
+					html += '<td><div class="button" style="width:120px; font-weight:normal;" onMouseUp="$P().do_copy_event()">Copy Event...</div></td>';
+				}
 				
 				// run
-				html += '<td width="30">&nbsp;</td>';
-				html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event_from_edit(event)">Run Now</div></td>';
+				if (app.hasPrivilege('run_events')) {
+					html += '<td width="30">&nbsp;</td>';
+					html += '<td><div class="button" style="width:110px; font-weight:normal;" onMouseUp="$P().run_event_from_edit(event)">Run Now</div></td>';
+				}
 				
 				// save
 				html += '<td width="30">&nbsp;</td>';
