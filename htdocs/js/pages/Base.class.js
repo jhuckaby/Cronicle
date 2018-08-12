@@ -74,7 +74,9 @@ Class.subclass( Page, "Page.Base", {
 	getNiceCategory: function(cat, width) {
 		if (!width) width = 500;
 		if (!cat) return '(None)';
-		return '<div class="ellip" style="max-width:'+width+'px;"><i class="fa fa-folder-open-o">&nbsp;</i>' + cat.title + '</div>';
+		var title = cat.title;
+		if (!cat.enabled) title += ' (Disabled)';
+		return '<div class="ellip" style="max-width:'+width+'px;"><i class="fa fa-folder-open-o">&nbsp;</i>' + title + '</div>';
 	},
 	
 	getNiceGroup: function(group, target, width) {
@@ -93,7 +95,9 @@ Class.subclass( Page, "Page.Base", {
 	getNicePlugin: function(plugin, width) {
 		if (!width) width = 500;
 		if (!plugin) return '(None)';
-		return '<div class="ellip" style="max-width:'+width+'px;"><i class="fa fa-plug">&nbsp;</i>' + plugin.title + '</div>';
+		var title = plugin.title;
+		if (!plugin.enabled) title += ' (Disabled)';
+		return '<div class="ellip" style="max-width:'+width+'px;"><i class="fa fa-plug">&nbsp;</i>' + title + '</div>';
 	},
 	
 	getNiceAPIKey: function(item, link, width) {
