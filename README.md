@@ -135,7 +135,7 @@
 			- [Custom Data Tables](#custom-data-tables)
 			- [Custom HTML Content](#custom-html-content)
 			- [Updating The Event](#updating-the-event)
-		+ [Environment Variables](#environment-variables)
+		+ [Job Environment Variables](#job-environment-variables)
 	* [Sample Node Plugin](#sample-node-plugin)
 	* [Sample Perl Plugin](#sample-perl-plugin)
 	* [Sample PHP Plugin](#sample-php-plugin)
@@ -144,6 +144,7 @@
 		+ [HTTP Request Chaining](#http-request-chaining)
 - [Command Line](#command-line)
 	* [Starting and Stopping](#starting-and-stopping)
+	* [Environment Variables](#environment-variables)
 	* [Storage Maintenance](#storage-maintenance)
 	* [Recover Admin Access](#recover-admin-access)
 	* [Server Startup](#server-startup)
@@ -1840,7 +1841,7 @@ To update the event for a job, simply include an `update_event` object in your P
 
 This would cause the event to be disabled, so the schedule would no longer launch it.  Note that you can only update the event once, and it happens at the completion of your job.
 
-### Environment Variables
+### Job Environment Variables
 
 When processes are spawned to run jobs, your Plugin executable is provided with a copy of the current environment, along with the following custom environment variables:
 
@@ -2162,6 +2163,29 @@ The `status` command will tell you if the service is running or not:
 /opt/cronicle/bin/control.sh status
 ```
 
+## Environment Variables
+
+Cronicle supports a special environment variable syntax, which can specify command-line options as well as override any configuration settings.  The variable name syntax is `CRONICLE_key` where `key` is one of several command-line options (see table below) or a JSON configuration property path.  These can come in handy for automating installations, and using container systems.  
+
+For overriding configuration properties by environment variable, you can specify any top-level JSON key from `config.json`, or a *path* to a nested property using double-underscore (`__`) as a path separator.  For boolean properties, you can specify `1` for true and `0` for false.  Here is an example of some of the possibilities available:
+
+| Variable | Sample Value | Description |
+|----------|--------------|-------------|
+| `CRONICLE_foreground` | `1` | Run Cronicle in the foreground (no background daemon fork). |
+| `CRONICLE_echo` | `1` | Echo the event log to the console (STDOUT), use in conjunction with `CRONICLE_foreground`. |
+| `CRONICLE_color` | `1` | Echo the event log with color-coded columns, use in conjunction with `CRONICLE_echo`. |
+| `CRONICLE_base_app_url` | `http://cronicle.mycompany.com` | Override the [base_app_url](#base_app_url) configuration property. |
+| `CRONICLE_email_from` | `cronicle@mycompany.com` | Override the [email_from](#email_from) configuration property. |
+| `CRONICLE_smtp_hostname` | `mail.mycompany.com` | Override the [smtp_hostname](#smtp_hostname) configuration property. |
+| `CRONICLE_secret_key` | `CorrectHorseBatteryStaple` | Override the [secret_key](#secret_key) configuration property. |
+| `CRONICLE_web_socket_use_hostnames` | `1` | Override the [web_socket_use_hostnames](#web_socket_use_hostnames) configuration property. |
+| `CRONICLE_server_comm_use_hostnames` | `1` | Override the [server_comm_use_hostnames](#server_comm_use_hostnames) configuration property. |
+| `CRONICLE_WebServer__http_port` | `80` | Override the `http_port` property *inside* the [WebServer](#web-server-configuration) object. |
+| `CRONICLE_WebServer__https_port` | `443` | Override the `https_port` property *inside* the [WebServer](#web-server-configuration) object. |
+| `CRONICLE_Storage__Filesystem__base_dir` | `/data/cronicle` | Override the `base_dir` property *inside* the [Filesystem](#filesystem) object *inside* the [Storage](#storage-configuration) object. |
+
+Almost every [configuration property](#configuration) can be overridden using this environment variable syntax.  The only exceptions are things like arrays, e.g. [log_columns](#log_columns) and [socket_io_transports](#socket_io_transports).
+
 ## Storage Maintenance
 
 Storage maintenance automatically runs every morning at 4 AM local server time (this is [configurable](#maintenance) if you want to change it).  The operation is mainly for deleting expired records, and pruning lists that have grown too large.  However, if the Cronicle service was stopped and you missed a day or two, you can force it to run at any time.  Just execute this command on your master server:
@@ -2340,7 +2364,7 @@ This section contains details on some of the inner workings of Cronicle.
 Cronicle has a custom-built scheduling system that is *loosely* based on Unix [Cron](https://en.wikipedia.org/wiki/Cron).  It does not, however, conform to the [specification](https://linux.die.net/man/5/crontab) written by [Paul Vixie](https://en.wikipedia.org/wiki/Paul_Vixie).  Namely, it differs in the following ways:
 
 - Month days and weekdays are intersected when both are present
-	-  If you specify both month days and weekdays, *both must match* for Cronicle to fire an event.  Vixie Cron behaves differently, in that it will fire if *either* matches.  This was a deliberate design decision to enable more flexibility in scheduling.
+	- If you specify both month days and weekdays, *both must match* for Cronicle to fire an event.  Vixie Cron behaves differently, in that it will fire if *either* matches.  This was a deliberate design decision to enable more flexibility in scheduling.
 
 When importing Crontab syntax:
 
