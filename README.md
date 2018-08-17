@@ -634,6 +634,7 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 		"Couchbase": {
 			"connectString": "couchbase://127.0.0.1",
 			"bucket": "default",
+			"username": "",
 			"password": "",
 			"serialize": false,
 			"keyPrefix": "cronicle"
@@ -643,6 +644,8 @@ To use Couchbase as a backing store for Cronicle, please read the [Couchbase sec
 ```
 
 If you are sharing a bucket with other applications, use the `keyPrefix` property to keep the Cronicle data separate, in its own "directory".  For example, set `keyPrefix` to `"cronicle"` to keep all the Cronicle-related records in a top-level "cronicle" directory in the bucket.
+
+Note that for Couchbase Server v5.0+ (Couchbase Node SDK 2.5+), you will have to supply both a `username` and `password` for a valid user created in the Couchbase UI.  Prior to v5+ you could omit the `username` and only specify a `password`, or no password at all if your bucket has no authentication.
 
 You'll also need to install the npm [couchbase](https://www.npmjs.com/package/couchbase) module:
 
