@@ -7,7 +7,7 @@
 	
 	"log_dir": "logs",
 	"log_filename": "[component].log",
-	"log_columns": ["hires_epoch", "date", "hostname", "component", "category", "code", "msg", "data"],
+	"log_columns": ["hires_epoch", "date", "hostname", "pid", "component", "category", "code", "msg", "data"],
 	"log_archive_path": "logs/archives/[yyyy]/[mm]/[dd]/[filename]-[yyyy]-[mm]-[dd].log.gz",
 	"log_crashes": true,
 	"copy_job_logs_to": "",

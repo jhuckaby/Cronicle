@@ -26,7 +26,7 @@ HOMEDIR="$(dirname "$(cd -- "$(dirname "$0")" && (pwd -P 2>/dev/null || pwd))")"
 cd $HOMEDIR
 #
 # the path to your binary, including options if necessary
-BINARY="node --expose_gc --always_compact $HOMEDIR/lib/main.js"
+BINARY="node $HOMEDIR/lib/main.js"
 #
 # the path to your PID file
 PIDFILE=$HOMEDIR/logs/cronicled.pid
