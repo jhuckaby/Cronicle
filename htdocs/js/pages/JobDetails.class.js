@@ -870,7 +870,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			// use ip if available, may work better in some setups
 			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
 		}
-		
+		if (!config.web_direct_connect) {
+			remote_api_url = app.proto + location.host;
+		}
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
 			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
@@ -1044,6 +1046,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
 			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
+		}
+		if (!config.web_direct_connect) {
+			url = app.proto + location.host;
 		}
 		
 		$('#d_live_job_log').append( 
