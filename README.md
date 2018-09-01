@@ -1,3 +1,16 @@
+# NODE.JS v10.x ALERT WARNING CAUTION
+
+There is a [known bug in Node.js v10](https://github.com/nodejs/node/issues/22149) that causes all timers to stop firing after approximately 25 days of continuous running.  Since Cronicle is a scheduler daemon, it relies *completely* on the Node.js timer system, so this is a death sentence.  The bug affects all versions of Node.js v10, from v10.0.0 to v10.9.0.  The bug is marked as fixed and a [PR has landed](https://github.com/nodejs/node/pull/22214) in Git, but it won't be released until Node v10.10 (presumably).  In the meantime, your options are as follows:
+
+1. Run Cronicle under Node LTS (i.e. Node version 8).  The bug was introduced in Node v10.0.0, so any version of Node prior to that will work fine.
+2. Setup a weekly restart job.  You can do this as an actual Cronicle event using the [Shell Plugin](#built-in-shell-plugin) and [Detached Mode](#detached-mode), or just add a crontab to your server(s) like this:
+
+```
+echo "0 3 * * 0 /opt/cronicle/bin/control.sh restart" > /etc/cron.d/cronicle-weekly-restart.cron
+```
+
+Once an official fix is released (presumably in Node v10.10), I will have Cronicle emit a warning if it is started up on any affected version of Node.  For more information on this ongoing situation, see [Issue #108](https://github.com/jhuckaby/Cronicle/issues/108).
+
 # Overview
 
 **Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of slave servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
