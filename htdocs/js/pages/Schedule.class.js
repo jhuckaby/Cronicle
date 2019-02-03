@@ -873,7 +873,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		html += get_form_table_row( rc_classes, 'Time Machine', 
 			'<table cellspacing="0" cellpadding="0"><tr>' + 
 				'<td><input type="checkbox" id="fe_ee_rc_enabled" value="1" onChange="$P().toggle_rc_textfield(this.checked)"/></td><td><label for="fe_ee_rc_enabled">Set Event Clock:</label>&nbsp;</td>' + 
-				'<td><input type="text" id="fe_ee_rc_time" style="font-size:13px; width:180px;" disabled="disabled" value="'+$P().rc_get_short_date_time( rc_epoch )+'" onFocus="this.blur()" onMouseUp="$P().rc_click()"/></td>' + 
+				'<td><input type="text" id="fe_ee_rc_time" style="font-size:13px; width:180px;" disabled="disabled" value="'+$P().rc_get_short_date_time( rc_epoch )+'" data-epoch="' + rc_epoch + '" onFocus="this.blur()" onMouseUp="$P().rc_click()"/></td>' + 
 				'<td><span id="s_ee_rc_reset" class="link addme" style="opacity:0" onMouseUp="$P().reset_rc_time_now()">&laquo; Reset</span></td>' + 
 			'</tr></table>' 
 		);
@@ -1143,12 +1143,6 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		}, 1 );
 	},
 	
-	rc_parse_date: function(str) {
-		// parse date using moment.tz and event tz, return epoch
-		var tz = this.event.timezone || app.tz;
-		return moment.tz( new Date(str), tz).unix();
-	},
-	
 	rc_get_short_date_time: function(epoch) {
 		// get short date/time with tz abbrev using moment
 		var tz = this.event.timezone || app.tz;
@@ -1162,7 +1156,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		$('#fe_ee_rc_time').blur();
 		
 		if ($('#fe_ee_rc_enabled').is(':checked')) {
-			var epoch = (new Date( $('#fe_ee_rc_time').val() ).getTime()) / 1000;
+			var epoch = parseInt( $('#fe_ee_rc_time').data('epoch') );
 			
 			this.choose_date_time({
 				when: epoch,
@@ -1170,7 +1164,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				timezone: this.event.timezone || app.tz,
 				
 				callback: function(rc_epoch) {
-					$('#fe_ee_rc_time').val( self.rc_get_short_date_time( rc_epoch ) );
+					$('#fe_ee_rc_time').data('epoch', rc_epoch).val( self.rc_get_short_date_time( rc_epoch ) );
 					$('#fe_ee_rc_time').blur();
 				}
 			});
@@ -1180,7 +1174,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	reset_rc_time_now: function() {
 		// reset cursor value to now, from click
 		var rc_epoch = normalize_time( time_now(), { sec: 0 } );
-		$('#fe_ee_rc_time').val( this.rc_get_short_date_time( rc_epoch ) );
+		$('#fe_ee_rc_time').data('epoch', rc_epoch).val( this.rc_get_short_date_time( rc_epoch ) );
 	},
 	
 	update_rc_value: function() {
@@ -1189,7 +1183,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = this.event;
 		
 		if (event.id && $('#fe_ee_catch_up').is(':checked') && !$('#fe_ee_rc_enabled').is(':checked') && app.state && app.state.cursors && app.state.cursors[event.id]) {
-			$('#fe_ee_rc_time').val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
+			$('#fe_ee_rc_time').data('epoch', app.state.cursors[event.id]).val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
 		}
 	},
 	
@@ -1207,7 +1201,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			
 			// reset value just in case it changed while field was enabled
 			if (event.id && app.state && app.state.cursors && app.state.cursors[event.id]) {
-				$('#fe_ee_rc_time').val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
+				$('#fe_ee_rc_time').data('epoch', app.state.cursors[event.id]).val( this.rc_get_short_date_time( app.state.cursors[event.id] ) );
 			}
 		}
 	},
@@ -1217,7 +1211,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = this.event;
 		
 		// update 'reset cursor' text field to reflect new timezone
-		var new_cursor = this.rc_parse_date( $('#fe_ee_rc_time').val() );
+		var new_cursor = parseInt( $('#fe_ee_rc_time').data('epoch') );
 		if (!new_cursor || isNaN(new_cursor)) {
 			new_cursor = app.state.cursors[event.id] || normalize_time( time_now(), { sec: 0 } );
 		}
@@ -1228,7 +1222,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		this.change_edit_timing_param();
 		
 		// render out new RC date/time
-		$('#fe_ee_rc_time').val( this.rc_get_short_date_time( new_cursor ) );
+		$('#fe_ee_rc_time').data('epoch', new_cursor).val( this.rc_get_short_date_time( new_cursor ) );
 	},
 	
 	change_edit_timing: function() {
@@ -1715,7 +1709,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {
-			var new_cursor = this.rc_parse_date( $('#fe_ee_rc_time').val() );
+			var new_cursor = parseInt( $('#fe_ee_rc_time').data('epoch') );
 			if (!new_cursor || isNaN(new_cursor)) return quiet ? false : app.badField('fe_ee_rc_time', "Please enter a valid date/time for the new event time.");
 			event['reset_cursor'] = normalize_time( new_cursor, { sec: 0 } );
 		}
