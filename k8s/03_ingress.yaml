@@ -1,0 +1,38 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cronicle-ui-primary
+  namespace: cronicle
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # Uncomment if use nginx-ingress controller
+    # kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: cronicle.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: cronicle-ui-primary
+          servicePort: http
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cronicle-ui-secondary
+  namespace: cronicle
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # Uncomment if use nginx-ingress controller
+    # kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: backup.cronicle.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: cronicle-ui-secondary
+          servicePort: http
+

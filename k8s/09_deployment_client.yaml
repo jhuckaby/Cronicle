@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cronicle-client
+  name: cronicle-client
+  namespace: cronicle
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: cronicle-client
+  template:
+    metadata:
+      labels:
+        app: cronicle-client
+      name: cronicle-client
+    spec:
+      containers:
+      - name: cronicle-client
+        image: intelliops/cronicle:0.8.28
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: CRONICLE_base_app_url
+          value: http://cronicle.example.com
+        - name: CRONICLE_secret_key
+          value: Iogh8noo3eDoo7aiP1hahkeicu3Aneid
+        - name: CRONICLE_web_socket_use_hostnames
+          value: 'true'
+        - name: CRONICLE_server_comm_use_hostnames
+          value: 'false'
+        ports:
+          - name: http
+            containerPort: 3012
+          - name: broadcast-tcp
+            containerPort: 3014
+          - name: broadcast-udp
+            containerPort: 3014
+            protocol: UDP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64M
+          limits: 
+            cpu: 1000m
+            memory: 512M
+        volumeMounts:
+        - name: data
+          mountPath: /opt/cronicle/data
+      initContainers:
+      - name: setup-done
+        image: busybox
+        command:
+          - touch
+          - /opt/cronicle/data/.setup_done
+        volumeMounts:
+        - name: data
+          mountPath: /opt/cronicle/data
+      restartPolicy: Always
+      volumes:
+      - name: data
+        emptyDir: {}
+
