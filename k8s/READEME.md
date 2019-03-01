@@ -12,4 +12,5 @@ cronicle-server-primary-0          1/1     Running   0          32m
 cronicle-server-secondary-0        1/1     Running   0          32m
 ```
 
-Once all the pods are *running* you can hit http://cronicle.example.com and see cronicle. Remember *cronicle.example.com* to the right IP in your hosts file.
+Once all the pods are *running* you can hit http://cronicle.example.com and see cronicle. Remember to map *cronicle.example.com* to the right IP in your hosts file.
+
