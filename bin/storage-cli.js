@@ -88,6 +88,23 @@ var isArray = Array.isArray || util.isArray;
 // prevent logging transactions to STDOUT
 config.Storage.log_event_types = {};
 
+// allow APPNAME_key env vars to override config
+var env_regex = new RegExp( "^CRONICLE_(.+)$" );
+for (var env_key in process.env) {
+	if (env_key.match(env_regex)) {
+		var env_path = RegExp.$1.trim().replace(/^_+/, '').replace(/_+$/, '').replace(/__/g, '/');
+		var env_value = process.env[env_key].toString();
+		
+		// massage value into various types
+		if (env_value === 'true') env_value = true;
+		else if (env_value === 'false') env_value = false;
+		else if (env_value.match(/^\-?\d+$/)) env_value = parseInt(env_value);
+		else if (env_value.match(/^\-?\d+\.\d+$/)) env_value = parseFloat(env_value);
+		
+		Tools.setPath(config, env_path, env_value);
+	}
+}
+
 // construct standalone storage server
 var storage = new StandaloneStorage(config.Storage, function(err) {
 	if (err) throw err;
