@@ -1,3 +1,4 @@
+
 # Node.js v10.x ALERT WARNING CAUTION
 
 There is a [known bug in Node.js v10](https://github.com/nodejs/node/issues/22149) that causes all timers to stop firing after approximately 25 days of continuous running.  Since Cronicle is a scheduler daemon, it relies *completely* on the Node.js timer system, so this is a death sentence.  The bug affects Node.js versions v10.0.0 to v10.8.0.  **The bug is fixed in Node v10.9.0**.  Your options are as follows:
@@ -194,6 +195,7 @@ Cronicle will emit a warning to the console if it is started up on any affected 
 	* [Manual Installation](#manual-installation)
 	* [Starting in Debug Mode](#starting-in-debug-mode)
 	* [Running Unit Tests](#running-unit-tests)
+- [Companies Using Cronicle](#companies-using-cronicle)
 - [Colophon](#colophon)
 - [License](#license)
 
@@ -3372,6 +3374,10 @@ If any tests fail, please open a [GitHub issue](https://github.com/jhuckaby/Cron
 /opt/cronicle/logs/unit.log
 ```
 
+# Companies Using Cronicle
+Cronicle is known to be in use by the following companies:
+- [Agnes & Dora](https://agnesanddora.com)
+- [Sling TV](https://sling.com)
 # Colophon
 
 We stand on the shoulders of giants.  Cronicle was inspired by a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
