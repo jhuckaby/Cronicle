@@ -865,10 +865,17 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 
 		// live job log tail
-		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
-		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
+    // BitProcessor: fix to override websocket url
+		var remote_api_url = null
+		if (config.custom_live_log_socket_url) {
+		  remote_api_url = config.custom_live_log_socket_url;
+		}
+		else {
+			remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
+			if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+				// use ip if available, may work better in some setups
+				remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
+			}
 		}
 
 		html += '<div class="subtitle" style="margin-top:15px;">';
