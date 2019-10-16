@@ -868,7 +868,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
     // BitProcessor: fix to override websocket url
 		var remote_api_url = null
 		if (config.custom_live_log_socket_url) {
-		  remote_api_url = config.custom_live_log_socket_url;
+		  remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
 		}
 		else {
 			remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
