@@ -866,7 +866,11 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		// live job log tail
 		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
-		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+		if (config.custom_live_log_socket_url) {
+			// custom websocket URL for single-master systems behind an LB
+			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
+		}
+		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
 			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
 		}
@@ -1041,7 +1045,11 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var error_shown = false;
 		
 		var url = app.proto + job.hostname + ':' + app.port;
-		if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+		if (config.custom_live_log_socket_url) {
+			// custom websocket URL for single-master systems behind an LB
+			url = config.custom_live_log_socket_url;
+		}
+		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
 			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
 		}
