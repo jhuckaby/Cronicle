@@ -306,7 +306,7 @@ Class.subclass( Page.Base, "Page.Login", {
 		var username = trim($('#fe_pr_username').val()).toLowerCase();
 		var email = trim($('#fe_pr_email').val());
 		
-		if (username.match(/^\w+$/)) {
+		if (username.match(/^[\w.-]+$/)) {
 			if (email.match(/.+\@.+/)) {
 				Dialog.hide();
 				app.showProgress( 1.0, "Sending e-mail..." );
