@@ -82,13 +82,15 @@
 			"id": "maingrp",
 			"title": "Master Group",
 			"regexp": "_HOSTNAME_",
-			"master": 1
+			"master": 1,
+			"max_jobs": 0
 		} ],
 		[ "listPush", "global/server_groups", {
 			"id": "allgrp",
 			"title": "All Servers",
 			"regexp": ".+",
-			"master": 0
+			"master": 0,
+			"max_jobs": 0
 		} ],
 		[ "listCreate", "global/servers", {} ],
 		[ "listPush", "global/servers", {
