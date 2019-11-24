@@ -15,9 +15,9 @@ var installer_version = '1.1';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
-var gh_repo_url = 'http://github.com/jhuckaby/Cronicle';
-var gh_releases_url = 'https://api.github.com/repos/jhuckaby/Cronicle/releases';
-var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.tar.gz';
+var gh_repo_url = 'http://github.com/raymatos/Cronicle';
+var gh_releases_url = 'https://api.github.com/repos/raymatos/Cronicle/releases';
+var gh_head_tarball_url = 'https://github.com/raymatos/Cronicle/archive/master.tar.gz';
 
 var print = function(msg) { 
 	process.stdout.write(msg); 
