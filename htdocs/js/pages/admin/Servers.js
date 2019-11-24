@@ -281,6 +281,9 @@ Class.add( Page.Admin, {
 			get_form_table_spacer() + 
 			get_form_table_row('Server Class:', '<select id="fe_eg_master">' + render_menu_options([ [1,'Master Eligible'], [0,'Slave Only'] ], group.master, false) + '</select>') + 
 			get_form_table_caption("Select whether servers in the group are eligible to become the master server, or run as slaves only.") + 
+			get_form_table_spacer() +
+			get_form_table_row('Maximum Jobs:', '<input type="number" id="fe_eg_max_jobs" min="0" value="'+(group.max_jobs || 0)+'" />') +
+			get_form_table_caption("Enter a maximum number of jobs per server for this group, 0 for unlimited.") +
 		'</table>';
 		
 		app.confirm( '<i class="mdi mdi-server-network">&nbsp;&nbsp;</i>' + (edit ? "Edit Server Group" : "Add Server Group"), html, edit ? "Save Changes" : "Add Group", function(result) {
@@ -295,6 +298,11 @@ Class.add( Page.Admin, {
 				try { new RegExp(group.regexp); }
 				catch(err) {
 					return app.badField('fe_eg_regexp', "Invalid regular expression: " + err);
+				}
+				
+				group.max_jobs = parseInt( $('#fe_eg_max_jobs').val() );
+				if (isNaN(group.max_jobs) || group.max_jobs < 0) {
+					return app.badField('fe_eg_max_jobs', "Please enter a non-negative integer for the maximum jobs.");
 				}
 				
 				group.master = parseInt( $('#fe_eg_master').val() );

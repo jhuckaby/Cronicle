@@ -1547,6 +1547,7 @@ Here you will need to provide:
 - A **Group Title** which is used for display purposes.
 - A **Hostname Match** which is a regular expression applied to every server hostname (used to automatically add servers to the group).
 - A **Server Class** which sets the servers in your group as "Master Eligible" or "Slave Only".
+- A **Maximum Jobs** which is used to determine which servers can run an event that targets this group, only the servers in the group that have less active jobs than the maximum are considered as potential candidates.
 
 Note that "Master Eligible" servers all need to be properly configured and have access to your storage back-end.  Meaning, if you opted to use the filesystem, you'll need to make sure it is mounted (via NFS or similar mechanism) on all the servers who could become master.  Or, if you opted to use a NoSQL DB such as Couchbase or S3, they need all the proper settings and/or credentials to connect.  For more details, see the [Multi-Server Cluster](#multi-server-cluster) section.
 
