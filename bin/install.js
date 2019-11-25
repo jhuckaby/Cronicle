@@ -30,7 +30,7 @@ var restore_packages = function() {
 		cmd += ' ' + pkg + '@' + packages_to_rescue[pkg];
 	}
 	if (log_file) {
-		fs.appendFileSync(log_file, "Executing npm command to restore lost packages: " + cmd + "\n");
+		fs.appendFileSync(log_file, "\nExecuting npm command to restore lost packages: " + cmd + "\n");
 		cmd += ' >>' + log_file + ' 2>&1';
 	}
 	cp.execSync(cmd);
