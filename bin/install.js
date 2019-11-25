@@ -11,7 +11,7 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.2';
+var installer_version = '1.3';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
@@ -31,7 +31,7 @@ var restore_packages = function() {
 	}
 	if (log_file) {
 		fs.appendFileSync(log_file, "Executing npm command to restore lost packages: " + cmd + "\n");
-		cmd += ' >' + log_file + ' 2>&1';
+		cmd += ' >>' + log_file + ' 2>&1';
 	}
 	cp.execSync(cmd);
 };
