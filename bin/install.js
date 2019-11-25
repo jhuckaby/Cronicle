@@ -1,5 +1,5 @@
 // Cronicle Auto Installer
-// Copyright (c) 2015 - 2018 Joseph Huckaby, MIT License.
+// Copyright (c) 2015 - 2019 Joseph Huckaby, MIT License.
 // https://github.com/jhuckaby/Cronicle
 
 // To install, issue this command as root:
@@ -11,13 +11,30 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.1';
+var installer_version = '1.2';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
 var gh_repo_url = 'http://github.com/jhuckaby/Cronicle';
 var gh_releases_url = 'https://api.github.com/repos/jhuckaby/Cronicle/releases';
 var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.tar.gz';
+
+// don't allow npm to delete these (ugh)
+var packages_to_check = ['couchbase', 'aws-sdk', 'redis'];
+var packages_to_rescue = {};
+
+var restore_packages = function() {
+	// restore packages that npm killed during upgrade
+	var cmd = "npm install";
+	for (var pkg in packages_to_rescue) {
+		cmd += ' ' + pkg + '@' + packages_to_rescue[pkg];
+	}
+	if (log_file) {
+		fs.appendFileSync(log_file, "Executing npm command to restore lost packages: " + cmd + "\n");
+		cmd += ' >' + log_file + ' 2>&1';
+	}
+	cp.execSync(cmd);
+};
 
 var print = function(msg) { 
 	process.stdout.write(msg); 
@@ -173,11 +190,19 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 		var npm_cmd = is_preinstalled ? "npm update --unsafe-perm" : "npm install --unsafe-perm";
 		logonly( "Executing command: " + npm_cmd + "\n" );
 		
+		// temporarily stash add-on modules that were installed separately (thanks npm)
+		if (is_preinstalled) packages_to_check.forEach( function(pkg) {
+			if (fs.existsSync('node_modules/' + pkg)) {
+				packages_to_rescue[pkg] = JSON.parse( fs.readFileSync('node_modules/' + pkg + '/package.json', 'utf8') ).version;
+			}
+		});
+		
 		// install dependencies via npm
 		cp.exec(npm_cmd, function (err, stdout, stderr) {
 			if (err) {
 				print( stdout.toString() );
 				warn( stderr.toString() );
+				if (is_preinstalled) restore_packages();
 				die("Failed to install dependencies: " + err);
 			}
 			else {
@@ -194,9 +219,11 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 					if (err) {
 						print( stdout.toString() );
 						warn( stderr.toString() );
+						if (is_preinstalled) restore_packages();
 						die("Failed to run post-install: " + err);
 					}
 					else {
+						if (is_preinstalled) restore_packages();
 						print("Upgrade complete.\n\n");
 						
 						if (is_running) {
