@@ -595,9 +595,12 @@ function import_data(file) {
 	rl.on('close', function() {
 		// end of input stream
 		var complete = function() {
-			print( "\nImport complete. " + count + " records imported.\nExiting.\n\n" );
-			
-			storage.shutdown( function() { process.exit(0); } );
+			// finally, delete state so cronicle recreates it
+			storage.delete( 'global/state', function(err) {
+				// ignore error here, as state may not exist yet
+				print( "\nImport complete. " + count + " records imported.\nExiting.\n\n" );
+				storage.shutdown( function() { process.exit(0); } );
+			});
 		};
 		
 		// fire complete on queue drain
