@@ -2957,6 +2957,8 @@ Example response:
 }
 ```
 
+If you do not wish to merge the POST data into the `params` (for example if you are using a webhook that provides other data as JSON), then you can add the `merge_params=no` parameter to the query string. If you do this, then the POST data will be available in the `post_data` key of the `params` object.
+
 In addition to the [Standard Response Format](#standard-response-format), the IDs of all the launched jobs will be returned in the `ids` array.  Typically only a single job is launched, but it may be multiple if the event has [Multiplexing](#multiplexing) enabled and targets a group with multiple servers.
 
 If [Allow Queued Jobs](#allow-queued-jobs) is enabled on the event, the API response will also include a `queue` property, which will be set to the number of jobs currently queued up.
