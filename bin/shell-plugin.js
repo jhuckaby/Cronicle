@@ -118,6 +118,7 @@ stream.on('json', function(job) {
 	
 	// pass job down to child process (harmless for shell, useful for php/perl/node)
 	cstream.write( job );
+	child.stdin.end();
 	
 	// Handle shutdown
 	process.on('SIGTERM', function() { 
