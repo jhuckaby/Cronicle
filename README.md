@@ -3097,6 +3097,30 @@ The CPU is measured as percentage of one CPU core, so 100 means that a full CPU 
 
 The memory usage is measured in bytes.  The current value can be found in `current`, and the minimum (`min`) and maximum (`max`) readings are also tracked.  To compute the average, divide the `total` value by the `count`.
 
+### get_active_jobs
+
+```
+/api/app/get_active_jobs/v1
+```
+
+This fetches status for **all active** jobs, and returns them all at once.  It takes no parameters (except an [API Key](#api-keys) of course).  The response format is as follows:
+
+```js
+{
+	"code": 0,
+	"jobs": {
+		"jk6lmar4c01": {
+			...
+		},
+		"jk6lmar4d04": {
+			...
+		}
+	}
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), the response object will contain a `jobs` object.  This object will have zero or more nested objects, each representing one active job.  The inner property names are the Job IDs, and the contents are the status, progress, and other information about the active job.  For details on the job objects, see the [get_job_status](#get_job_status) API call above, as the parameters of each job will be the same as that API.
+
 ### update_job
 
 ```
