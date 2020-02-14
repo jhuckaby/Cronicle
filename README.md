@@ -186,6 +186,7 @@ Cronicle will emit a warning to the console if it is started up on any affected 
 		+ [delete_event](#delete_event)
 		+ [run_event](#run_event)
 		+ [get_job_status](#get_job_status)
+		+ [get_active_jobs](#get_active_jobs)
 		+ [update_job](#update_job)
 		+ [abort_job](#abort_job)
 	* [Event Data Format](#event-data-format)
