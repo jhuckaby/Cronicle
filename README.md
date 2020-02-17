@@ -2254,6 +2254,8 @@ update-rc.d cronicled defaults
 
 For multi-server clusters, you'll need to repeat these steps on each server.
 
+**Important Note:** When Cronicle starts on server boot, it typically does not have a proper user environment, namely a `PATH` environment variable.  So if your scripts rely on binary executables in alternate locations, e.g. `/usr/local/bin`, you may have to restore the `PATH` and other variables inside your scripts by redeclaring them.
+
 ## Upgrading Cronicle
 
 To upgrade Cronicle, you can use the built-in `upgrade` command:
