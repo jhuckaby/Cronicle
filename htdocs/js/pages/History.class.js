@@ -32,6 +32,30 @@ Class.subclass( Page.Base, "Page.History", {
 		// show history
 		app.setWindowTitle( "History" );
 		
+		var html = '';
+		// html += '<div style="padding:5px 15px 15px 15px;">';
+		html += '<div style="padding:20px 20px 30px 20px">';
+		
+		html += '<div class="subtitle">';
+			html += 'All Completed Jobs';
+			// html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().refresh_user_list()"><b>Refresh</b></span></div>';
+			// html += '<div class="subtitle_widget"><i class="fa fa-search">&nbsp;</i><input type="text" id="fe_ul_search" size="15" placeholder="Find username..." style="border:0px;"/></div>';
+			var sorted_events = app.schedule.sort( function(a, b) {
+				return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+			} );
+			html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_hist_event" class="subtitle_menu" onChange="$P().jump_to_event_history()"><option value="">Filter by Event</option>' + render_menu_options( sorted_events, '', false ) + '</select></div>';
+			html += '<div class="clear"></div>';
+		html += '</div>';
+		
+		html += '<div id="d_history_table"></div>';
+		html += '</div>'; // padding
+		this.div.html( html );
+		
+		this.get_history();
+	},
+	
+	get_history: function() {
+		var args = this.args;
 		if (!args.offset) args.offset = 0;
 		if (!args.limit) args.limit = 25;
 		app.api.post( 'app/get_history', copy_object(args), this.receive_history.bind(this) );
@@ -51,20 +75,6 @@ Class.subclass( Page.Base, "Page.History", {
 		if (resp.rows) this.events = resp.rows;
 		
 		var cols = ['Job ID', 'Event Name', 'Category', 'Plugin', 'Hostname', 'Result', 'Start Date/Time', 'Elapsed Time'];
-		
-		// html += '<div style="padding:5px 15px 15px 15px;">';
-		html += '<div style="padding:20px 20px 30px 20px">';
-		
-		html += '<div class="subtitle">';
-			html += 'All Completed Jobs';
-			// html += '<div class="subtitle_widget"><span class="link" onMouseUp="$P().refresh_user_list()"><b>Refresh</b></span></div>';
-			// html += '<div class="subtitle_widget"><i class="fa fa-search">&nbsp;</i><input type="text" id="fe_ul_search" size="15" placeholder="Find username..." style="border:0px;"/></div>';
-			var sorted_events = app.schedule.sort( function(a, b) {
-				return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
-			} );
-			html += '<div class="subtitle_widget"><i class="fa fa-chevron-down">&nbsp;</i><select id="fe_hist_event" class="subtitle_menu" onChange="$P().jump_to_event_history()"><option value="">Filter by Event</option>' + render_menu_options( sorted_events, '', false ) + '</select></div>';
-			html += '<div class="clear"></div>';
-		html += '</div>';
 		
 		var self = this;
 		var num_visible_items = 0;
@@ -125,9 +135,7 @@ Class.subclass( Page.Base, "Page.History", {
 			html += '</td></tr>';
 		}
 		
-		html += '</div>'; // padding
-		
-		this.div.html( html );
+		this.div.find('#d_history_table').html( html );
 	},
 	
 	jump_to_event_history: function() {
@@ -727,7 +735,7 @@ Class.subclass( Page.Base, "Page.History", {
 	
 	onStatusUpdate: function(data) {
 		// received status update (websocket), update sub-page if needed
-		if (data.jobs_changed && (this.args.sub == 'history')) this.gosub_history(this.args);
+		if (data.jobs_changed && (this.args.sub == 'history')) this.get_history();
 	},
 	
 	onResizeDelay: function(size) {
