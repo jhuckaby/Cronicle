@@ -1,18 +1,3 @@
-
-# Node.js v10.x ALERT WARNING CAUTION
-
-There is a [known bug in Node.js v10](https://github.com/nodejs/node/issues/22149) that causes all timers to stop firing after approximately 25 days of continuous running.  Since Cronicle is a scheduler daemon, it relies *completely* on the Node.js timer system, so this is a death sentence.  The bug affects Node.js versions v10.0.0 to v10.8.0.  **The bug is fixed in Node v10.9.0**.  Your options are as follows:
-
-1. If you are running Node v10.x, make sure you are on v10.9.0 or later!
-2. Run Cronicle under Node LTS (i.e. Node version 8).  The bug was introduced in Node v10.0.0, so any version of Node prior to that will work fine.
-3. Setup a weekly restart job.  You can do this as an actual Cronicle event using the [Shell Plugin](#built-in-shell-plugin) and [Detached Mode](#detached-mode), or just add a crontab to your server(s) like this:
-
-```
-echo "0 3 * * 0 /opt/cronicle/bin/control.sh restart" > /etc/cron.d/cronicle-weekly-restart.cron
-```
-
-Cronicle will emit a warning to the console if it is started up on any affected version of Node.  For more information on this bug, see [Issue #108](https://github.com/jhuckaby/Cronicle/issues/108).
-
 # Overview
 
 **Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of slave servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
@@ -36,6 +21,8 @@ Cronicle will emit a warning to the console if it is started up on any affected 
 * API Keys for authenticating remote apps.
 
 ## Table of Contents
+
+<details><summary>Table of Contents</summary>
 
 <!-- toc -->
 * [Glossary](#glossary)
@@ -200,6 +187,8 @@ Cronicle will emit a warning to the console if it is started up on any affected 
 - [Colophon](#colophon)
 - [License](#license)
 
+</details>
+
 ## Glossary
 
 A quick introduction to some common terms used in Cronicle:
@@ -220,9 +209,9 @@ A quick introduction to some common terms used in Cronicle:
 
 # Installation
 
-Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  If there is enough interest, I'll look into making it work on Windows.
+Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  You'll also need to have [Node.js LTS](https://nodejs.org/en/download/) pre-installed on your server.  Please note that we **only support the Active LTS versions of Node.js**.  Cronicle may not work on the "current" release channel.  See [Node.js Releases](https://nodejs.org/en/about/releases/) for details.
 
-You'll need to have [Node.js](https://nodejs.org/en/download/) pre-installed on your server.  Then become root and type this:
+Once you have Node.js LTS installed, type this as root:
 
 ```
 curl -s https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js | node
