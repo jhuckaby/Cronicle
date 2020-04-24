@@ -25,7 +25,7 @@
 <details><summary>Table of Contents</summary>
 
 <!-- toc -->
-* [Glossary](#glossary)
+- [Glossary](#glossary)
 - [Installation](#installation)
 - [Setup](#setup)
 	* [Single Server](#single-server)
