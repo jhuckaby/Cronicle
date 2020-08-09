@@ -1,6 +1,6 @@
 {
 	"base_app_url": "http://localhost:3012",
-	"subdir": "/proxy/",
+	"subdir": "",
 	"email_from": "admin@localhost",
 	"smtp_hostname": "localhost",
 	"smtp_port": 25,
