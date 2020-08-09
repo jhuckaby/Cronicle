@@ -22,7 +22,7 @@ app.extend({
 		// receive config from server
 		if (resp.code) {
 			app.showProgress( 1.0, "Waiting for master server..." );
-			setTimeout( function() { load_script( '/api/app/config?callback=app.receiveConfig' ); }, 1000 );
+			setTimeout( function() { load_script( 'api/app/config?callback=app.receiveConfig' ); }, 1000 );
 			return;
 		}
 		delete resp.code;
@@ -79,7 +79,7 @@ app.extend({
 		for (var idx = 0, len = this.preload_images.length; idx < len; idx++) {
 			var filename = '' + this.preload_images[idx];
 			var img = new Image();
-			img.src = '/images/'+filename;
+			img.src = this.config.subdir + '/images/'+filename;
 		}
 		
 		// populate prefs for first time user
@@ -230,7 +230,7 @@ app.extend({
 	doExternalLogin: function() {
 		// login using external user management system
 		// Force API to hit current page hostname vs. master server, so login redirect URL reflects it
-		app.api.post( '/api/user/external_login', { cookie: document.cookie }, function(resp) {
+		app.api.post( 'api/user/external_login', { cookie: document.cookie }, function(resp) {
 			if (resp.user) {
 				Debug.trace("User Session Resume: " + resp.username + ": " + resp.session_id);
 				app.hideProgress();
@@ -275,8 +275,8 @@ app.extend({
 			this.socket.removeAllListeners();
 			if (this.socket.connected) this.socket.disconnect();
 			this.socket = null;
-		}
-		
+    }
+		const path = config.subdir + "/socket.io";
 		var socket = this.socket = io( url, {
 			// forceNew: true,
 			transports: config.socket_io_transports || ['websocket'],
@@ -284,7 +284,8 @@ app.extend({
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 2000,
 			reconnectionAttempts: 9999,
-			timeout: 3000
+      timeout: 3000,
+      path:path,
 		} );
 		
 		socket.on('connect', function() {
@@ -486,14 +487,14 @@ app.extend({
 		this.masterHostname = hostname;
 		
 		if (config.web_direct_connect) {
-			this.base_api_url = this.proto + this.masterHostname + ':' + this.port + config.base_api_uri;
+			this.base_api_url = this.proto + this.masterHostname + ':' + this.port + config.subdir + config.base_api_uri;
 			if (!config.web_socket_use_hostnames && this.servers && this.servers[this.masterHostname] && this.servers[this.masterHostname].ip) {
 				// use ip instead of hostname if available
-				this.base_api_url = this.proto + this.servers[this.masterHostname].ip + ':' + this.port + config.base_api_uri;
+				this.base_api_url = this.proto + this.servers[this.masterHostname].ip + ':' + this.port + config.subdir + config.base_api_uri;
 			}
 		}
 		else {
-			this.base_api_url = this.proto + location.host + config.base_api_uri;
+			this.base_api_url = this.proto + location.host + config.subdir + config.base_api_uri;
 		}
 		
 		Debug.trace("API calls now going to: " + this.base_api_url);
