@@ -79,7 +79,7 @@ app.extend({
 		for (var idx = 0, len = this.preload_images.length; idx < len; idx++) {
 			var filename = '' + this.preload_images[idx];
 			var img = new Image();
-			img.src = this.config.subdir + '/images/'+filename;
+			img.src = 'images/'+filename;
 		}
 		
 		// populate prefs for first time user
