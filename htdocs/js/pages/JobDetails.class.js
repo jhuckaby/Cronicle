@@ -1057,7 +1057,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		$('#d_live_job_log').append( 
 			'<pre class="log_chunk" style="color:#888">Log Watcher: Connecting to server: ' + url + '...</pre>' 
 		);
-		
+		const path = config.subdir + "/socket.io";
 		this.socket = io( url, {
 			forceNew: true,
 			transports: config.socket_io_transports || ['websocket'],
@@ -1065,7 +1065,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
 			reconnectionAttempts: 9999,
-			timeout: 5000
+			timeout: 5000,
+			path:path
 		} );
 		
 		this.socket.on('connect', function() {
