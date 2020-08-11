@@ -284,8 +284,8 @@ app.extend({
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 2000,
 			reconnectionAttempts: 9999,
-      timeout: 3000,
-      path:path,
+			timeout: 3000,
+			path:path,
 		} );
 		
 		socket.on('connect', function() {
