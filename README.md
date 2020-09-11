@@ -587,6 +587,15 @@ Setting this parameter to `true` will force Cronicle's Web UI to connect to the 
 
 This property only takes effect if [web_direct_connect](#web_direct_connect) is also set to `true`.
 
+### custom_live_log_socket_url
+This is an fancy configuration to provide a url for web socket which live log needs to connect.
+Notice this is useful for single-master system behind an LB.
+Socket URL should be like this, e.g.
+```js
+"custom_live_log_socket_url": "http://127.0.0.1:8888"
+```
+Feel free to change the ip and the port.
+
 ### socket_io_transports
 
 This is an advanced configuration property that you will probably never need to worry about.  This allows you to customize the [socket.io transports](https://socket.io/docs/client-api/) used to connect to the server for real-time updates.  By default, this property is set internally to an array containing the `websocket` transport only, e.g.
