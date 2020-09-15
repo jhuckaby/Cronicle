@@ -164,7 +164,7 @@ Class.add( Page.Admin, {
 				break;
 				case 'master_server': // legacy
 				case 'server_master': // current
-					desc = 'Server has become master: <b>' + item.hostname + '</b>';
+					desc = 'Server has become primary: <b>' + item.hostname + '</b>';
 				break;
 				
 				case 'server_restart': 
@@ -207,7 +207,7 @@ Class.add( Page.Admin, {
 				
 				// scheduler
 				case 'state_update':
-					desc = 'Scheduler master switch was <b>' + (item.enabled ? 'enabled' : 'disabled') + '</b>';
+					desc = 'Scheduler was <b>' + (item.enabled ? 'enabled' : 'disabled') + '</b>';
 				break;
 				
 				// errors

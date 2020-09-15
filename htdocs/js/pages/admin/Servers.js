@@ -105,7 +105,7 @@ Class.add( Page.Admin, {
 				'<div class="td_big">' + self.getNiceGroup(null, server.hostname, col_width) + '</div>',
 				(server.ip || 'n/a').replace(/^\:\:ffff\:(\d+\.\d+\.\d+\.\d+)$/, '$1'),
 				group_names.length ? group_names.join(', ') : '(None)',
-				server.master ? '<span class="color_label green"><i class="fa fa-check">&nbsp;</i>Master</span>' : (eligible ? '<span class="color_label purple">Backup</span>' : '<span class="color_label blue">Slave</span>'),
+				server.master ? '<span class="color_label green"><i class="fa fa-check">&nbsp;</i>Primary</span>' : (eligible ? '<span class="color_label purple">Backup</span>' : '<span class="color_label blue">Worker</span>'),
 				num_jobs ? commify( num_jobs ) : '(None)',
 				get_text_from_seconds( server.uptime, true, true ).replace(/\bday\b/, 'days'),
 				short_float(cpu) + '%',
@@ -165,7 +165,7 @@ Class.add( Page.Admin, {
 				// group.description || '(No description)',
 				num_servers ? commify( num_servers) : '(None)',
 				num_events ? commify( num_events ) : '(None)',
-				group.master ? '<b>Master Eligible</b>' : 'Slave Only',
+				group.master ? '<b>Primary Eligible</b>' : 'Worker Only',
 				actions.join(' | ')
 			];
 		} );
@@ -279,8 +279,8 @@ Class.add( Page.Admin, {
 			get_form_table_row('Hostname Match:', '<input type="text" id="fe_eg_regexp" size="30" style="font-family:monospace; font-size:13px;" value="'+escape_text_field_value(group.regexp)+'" spellcheck="false"/>') + 
 			get_form_table_caption("Enter a regular expression to auto-assign servers to this group by their hostnames, e.g. \"^mtx\\d+\\.\".") + 
 			get_form_table_spacer() + 
-			get_form_table_row('Server Class:', '<select id="fe_eg_master">' + render_menu_options([ [1,'Master Eligible'], [0,'Slave Only'] ], group.master, false) + '</select>') + 
-			get_form_table_caption("Select whether servers in the group are eligible to become the master server, or run as slaves only.") + 
+			get_form_table_row('Server Class:', '<select id="fe_eg_master">' + render_menu_options([ [1,'Primary Eligible'], [0,'Worker Only'] ], group.master, false) + '</select>') + 
+			get_form_table_caption("Select whether servers in the group are eligible to become the primary server, or run as workers only.") + 
 		'</table>';
 		
 		app.confirm( '<i class="mdi mdi-server-network">&nbsp;&nbsp;</i>' + (edit ? "Edit Server Group" : "Add Server Group"), html, edit ? "Save Changes" : "Add Group", function(result) {
@@ -331,7 +331,7 @@ Class.add( Page.Admin, {
 				if (this.server_groups[idx].master) num_masters++;
 			}
 			if (num_masters == 1) {
-				return app.doError("Sorry, you cannot delete the last Master Eligible server group.");
+				return app.doError("Sorry, you cannot delete the last Primary Eligible server group.");
 			}
 		}
 		

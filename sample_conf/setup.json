@@ -80,7 +80,7 @@
 		[ "listCreate", "global/server_groups", {} ],
 		[ "listPush", "global/server_groups", {
 			"id": "maingrp",
-			"title": "Master Group",
+			"title": "Primary Group",
 			"regexp": "_HOSTNAME_",
 			"master": 1
 		} ],
