@@ -1,6 +1,6 @@
 # Overview
 
-**Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of slave servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
+**Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of worker servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
 
 ![Main Screenshot](https://pixlcore.com/software/cronicle/screenshots-new/job-details-complete.png)
 
@@ -25,11 +25,11 @@
 <details><summary>Table of Contents</summary>
 
 <!-- toc -->
-- [Glossary](#glossary)
+* [Glossary](#glossary)
 - [Installation](#installation)
 - [Setup](#setup)
 	* [Single Server](#single-server)
-	* [Single Master with Slaves](#single-master-with-slaves)
+	* [Single Primary with Workers](#single-primary-with-workers)
 	* [Multi-Server Cluster](#multi-server-cluster)
 		+ [Load Balancers](#load-balancers)
 		+ [Ops Notes](#ops-notes)
@@ -158,7 +158,7 @@
 	* [Storage](#storage)
 	* [Logs](#logs)
 	* [Keeping Time](#keeping-time)
-	* [Master Server Failover](#master-server-failover)
+	* [Primary Server Failover](#primary-server-failover)
 		+ [Unclean Shutdown](#unclean-shutdown)
 - [API Reference](#api-reference)
 	* [JSON REST API](#json-rest-api)
@@ -195,14 +195,14 @@ A quick introduction to some common terms used in Cronicle:
 
 | Term | Description |
 |------|-------------|
-| **Master Server** | The primary server which keeps time and runs the scheduler, assigning jobs to other servers, and/or itself. |
-| **Backup Server** | A slave server which will automatically become master and take over duties if the current master dies. |
-| **Slave Server** | A server which sits idle until it is assigned jobs by the master server. |
-| **Server Group** | A named group of servers which can be targeted by events, and tagged as "master eligible", or "slave only". |
+| **Primary Server** | The primary server which keeps time and runs the scheduler, assigning jobs to other servers, and/or itself. |
+| **Backup Server** | A worker server which will automatically become primary and take over duties if the current primary dies. |
+| **Worker Server** | A server which sits idle until it is assigned jobs by the primary server. |
+| **Server Group** | A named group of servers which can be targeted by events, and tagged as "primary eligible", or "worker only". |
 | **API Key** | A special key that can be used by external apps to send API requests into Cronicle.  Remotely trigger jobs, etc. |
 | **User** | A human user account, which has a username and a password.  Passwords are salted and hashed with [bcrypt](https://en.wikipedia.org/wiki/Bcrypt). |
 | **Plugin** | Any executable script in any language, which runs a job and reads/writes JSON to communicate with Cronicle. |
-| **Schedule** | The master list of events, which are scheduled to run at particular times, on particular servers. |
+| **Schedule** | The list of events, which are scheduled to run at particular times, on particular servers. |
 | **Category** | Events can be assigned to categories which define defaults and optionally a color highlight in the UI. |
 | **Event** | An entry in the schedule, which may run once or many times at any interval.  Each event points to a Plugin, and a server or group to run it. |
 | **Job** | A running instance of an event.  If an event is set to run hourly, then a new job will be created every hour. |
@@ -244,9 +244,9 @@ If this is your first time installing, please read the [Configuration](#configur
 | `job_memory_max` | The default maximum memory limit for each job (can also be customized per event and per category). |
 | `http_port` | The web server port number for the user interface.  Defaults to 3012. |
 
-Now then, the only other decision you have to make is what to use as a storage back-end.  Cronicle can use local disk (easiest setup), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).  For single server installations, or even single master with multiple slaves, local disk is probably just fine, and this is the default setting.  But if you want to run a true multi-server cluster with automatic master failover, please see [Multi-Server Cluster](#multi-server-cluster) for details.
+Now then, the only other decision you have to make is what to use as a storage back-end.  Cronicle can use local disk (easiest setup), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).  For single server installations, or even single primary with multiple workers, local disk is probably just fine, and this is the default setting.  But if you want to run a true multi-server cluster with automatic primary failover, please see [Multi-Server Cluster](#multi-server-cluster) for details.
 
-With that out of the way, run the following script to initialize the storage system.  You only need to do this once, *and only on the master server*.  Do not run this on any slave servers:
+With that out of the way, run the following script to initialize the storage system.  You only need to do this once, *and only on the primary server*.  Do not run this on any worker servers:
 
 ```
 /opt/cronicle/bin/control.sh setup
@@ -260,7 +260,7 @@ At this point you should be able to start the service and access the web UI.  En
 /opt/cronicle/bin/control.sh start
 ```
 
-Give it a minute to decide to become master, then send your browser to the server on the correct port:
+Give it a minute to decide to become primary, then send your browser to the server on the correct port:
 
 ```
 http://YOUR_SERVER_HOSTNAME:3012/
@@ -274,19 +274,19 @@ See the [Web UI](#web-ui) section below for instructions on using the Cronicle w
 
 For a single server installation, there is nothing more you need to do.  After installing the package, running the `bin/control.sh setup` script and starting the service, Cronicle should be 100% ready to go.  You can always add more servers later (see below).
 
-## Single Master with Slaves
+## Single Primary with Workers
 
-The easiest multi-server Cronicle setup is a single "master" server with one or more slaves.  This means that one server is the scheduler, so it keeps track of time, and assigns jobs for execution.  Jobs may be assigned to any number of slave servers, and even the master itself.  Slave servers simply sit idle and wait for jobs to be assigned by the master server.  Slaves never take over master scheduling duties, even if the master server goes down.
+The easiest multi-server Cronicle setup is a single "primary" server with one or more workers.  This means that one server is the scheduler, so it keeps track of time, and assigns jobs for execution.  Jobs may be assigned to any number of worker servers, and even the primary itself.  Worker servers simply sit idle and wait for jobs to be assigned by the primary server.  Workers never take over primary scheduling duties, even if the primary server goes down.
 
-This is the simplest multi-server setup because the master server can use local disk for all its storage.  Slaves do not need access to the file storage.  This is the default configuration, so you don't have to change anything at all.  What it means is, all the scheduling data, event categories, user accounts, sessions, plugins, job logs and other data is stored as plain JSON files on local disk.  Cronicle can also be configured to use a NoSQL database such as [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/), but this is not required.
+This is the simplest multi-server setup because the primary server can use local disk for all its storage.  Workers do not need access to the file storage.  This is the default configuration, so you don't have to change anything at all.  What it means is, all the scheduling data, event categories, user accounts, sessions, plugins, job logs and other data is stored as plain JSON files on local disk.  Cronicle can also be configured to use a NoSQL database such as [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/), but this is not required.
 
-So by default, when you run the setup script above, the current server is placed into a "Master Group", meaning it is the only server that is eligible to become master.  If you then install Cronicle on additional servers, they will become slaves only.  You can change all this from the UI, but please read the next section before running multiple master backup servers.
+So by default, when you run the setup script above, the current server is placed into a "Primary Group", meaning it is the only server that is eligible to become primary.  If you then install Cronicle on additional servers, they will become workers only.  You can change all this from the UI, but please read the next section before running multiple primary backup servers.
 
-When installing Cronicle onto slave servers, please do not run the `bin/control.sh setup` script.  Instead, simply copy over your `conf/config.json` file, and then start the service.
+When installing Cronicle onto worker servers, please do not run the `bin/control.sh setup` script.  Instead, simply copy over your `conf/config.json` file, and then start the service.
 
 ## Multi-Server Cluster
 
-Cronicle also has the ability to run with one or more "backup" servers, which can become master if need be.  Failover is automatic, and the cluster negotiates who should be master at any given time.  But in order for this to work, all the master eligible servers need access to the same storage data.  This can be achieved in one of three ways:
+Cronicle also has the ability to run with one or more "backup" servers, which can become primary if need be.  Failover is automatic, and the cluster negotiates who should be primary at any given time.  But in order for this to work, all the primary eligible servers need access to the same storage data.  This can be achieved in one of three ways:
 
 * Use a shared filesystem such as [NFS](https://en.wikipedia.org/wiki/Network_File_System).
 * Use a [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) server.
@@ -294,17 +294,17 @@ Cronicle also has the ability to run with one or more "backup" servers, which ca
 
 See the [Storage Configuration](#storage-configuration) section below for details on these.
 
-The other thing you'll need to do is make sure all your master backup servers are in the appropriate server group.  By default, a single "Master Group" is created which only contains your primary master server.  Using the UI, you can simply change the hostname regular expression so it encompasses all your eligible servers, or you can just add additional groups that match each backup server.  More details can be found in the [Servers Tab](#servers-tab) section below.
+The other thing you'll need to do is make sure all your primary backup servers are in the appropriate server group.  By default, a single "Primary Group" is created which only contains your primary primary server.  Using the UI, you can simply change the hostname regular expression so it encompasses all your eligible servers, or you can just add additional groups that match each backup server.  More details can be found in the [Servers Tab](#servers-tab) section below.
 
 ### Load Balancers
 
-You can run Cronicle behind a load balancer, as long as you ensure that only the master server and eligible backup servers are in the load balancer pool.  Do not include any slave-only servers, as they typically do not have access to the back-end storage system, and cannot serve up the UI.
+You can run Cronicle behind a load balancer, as long as you ensure that only the primary server and eligible backup servers are in the load balancer pool.  Do not include any worker-only servers, as they typically do not have access to the back-end storage system, and cannot serve up the UI.
 
 You can then set the [base_app_url](#base_app_url) configuration parameter to point to the load balancer, instead of an individual server, and also use that hostname when loading the UI in your browser.
 
-Note that Web UI needs to make API calls and open [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connections to the master server directly, so it needs to also be accessible directly via its hostname.
+Note that Web UI needs to make API calls and open [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connections to the primary server directly, so it needs to also be accessible directly via its hostname.
 
-You must set the [web_direct_connect](#web_direct_connect) configuration property to `true`.  This ensures that the Web UI will make API and WebSocket connections directly to the master server, rather than via the load balancer hostname.
+You must set the [web_direct_connect](#web_direct_connect) configuration property to `true`.  This ensures that the Web UI will make API and WebSocket connections directly to the primary server, rather than via the load balancer hostname.
 
 ### Ops Notes
 
@@ -313,9 +313,9 @@ For teams setting up multi-server clusters, here are some operational concerns t
 * All servers should have the same exact configuration file (`/opt/cronicle/conf/config.json`).
 * All servers need to have correct clocks (timezones do not matter, clock sync does).
 * Server auto-discovery happens via UDP broadcast on port 3014 (by default).  This is not required.
-* The master server will also open TCP [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connections to each slave on the web server port.
+* The primary server will also open TCP [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connections to each worker on the web server port.
 * Each server in the cluster needs to have a fully-qualified hostname that resolves in DNS.
-* The server hostnames determine priority of which server becomes master (alphabetical sort).
+* The server hostnames determine priority of which server becomes primary (alphabetical sort).
 * All servers need to have unique hostnames (very bad things will happen otherwise).
 * All servers need to have at least one active IPv4 interface.
 * For the "live log" feature in the UI to work, the user needs a network route to the server running the job, via its hostname.
@@ -434,7 +434,7 @@ The level of verbosity in the debug logs.  It ranges from `1` (very quiet) to `1
 
 ### maintenance
 
-Cronicle needs to run storage maintenance once per day, which generally involves deleting expired records and trimming lists which have grown too large.  This only runs on the master server, and typically only takes a few seconds, depending on the number of events you have.  The application is still usable during this time, but UI performance may be slightly impacted.
+Cronicle needs to run storage maintenance once per day, which generally involves deleting expired records and trimming lists which have grown too large.  This only runs on the primary server, and typically only takes a few seconds, depending on the number of events you have.  The application is still usable during this time, but UI performance may be slightly impacted.
 
 By default the maintenance is set to run at 4:00 AM (local server time).  Feel free to change this to a more convenient time for your server environment.  The format of the parameter is `HH:MM`.
 
@@ -456,19 +456,19 @@ This is the number of seconds to allow child processes to exit after sending a T
 
 ### dead_job_timeout
 
-When the master server loses connectivity with a slave that had running jobs on it, they go into a "limbo" state for a period of time, before they are finally considered lost.  The `dead_job_timeout` parameter specifies the amount of time before these wayward jobs are aborted (and possibly retried, depending on the event settings).  The default value is `120` seconds.
+When the primary server loses connectivity with a worker that had running jobs on it, they go into a "limbo" state for a period of time, before they are finally considered lost.  The `dead_job_timeout` parameter specifies the amount of time before these wayward jobs are aborted (and possibly retried, depending on the event settings).  The default value is `120` seconds.
 
 This parameter exists because certain networks may have unreliable connections between servers, and it is possible a server may drop for a few seconds, then come right back.  If a short hiccup like that occurs, you probably don't want to abort all the running jobs right away.  Also, when you are upgrading Cronicle itself, you don't want detached jobs to be interrupted.
 
-The worst case scenario is that a remote server with running jobs goes MIA for longer than the `dead_job_timeout`, the master server aborts all the jobs, then the server reappears and finishes the jobs.  This creates a bit of a mess, because the jobs are reported as both errors and successes.  The latter success prevails in the end, but the errors stay in the logs and event history.
+The worst case scenario is that a remote server with running jobs goes MIA for longer than the `dead_job_timeout`, the primary server aborts all the jobs, then the server reappears and finishes the jobs.  This creates a bit of a mess, because the jobs are reported as both errors and successes.  The latter success prevails in the end, but the errors stay in the logs and event history.
 
 ### master_ping_freq
 
-For multi-server clusters, this specifies how often the master server should send out pings to slave servers, to let them know who is the boss.  The default is `20` seconds.
+For multi-server clusters, this specifies how often the primary server should send out pings to worker servers, to let them know who is the boss.  The default is `20` seconds.
 
 ### master_ping_timeout
 
-For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the master server to be dead.  At this point a new master server will be chosen.  The default value is `60` seconds.
+For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `60` seconds.
 
 ### udp_broadcast_port
 
@@ -476,9 +476,9 @@ For auto-discovery of nearby servers, this specifies the UDP port to use for bro
 
 ### scheduler_startup_grace
 
-When the scheduler first starts up on the master server, it waits for a few seconds before actually assigning jobs.  This is to allow all the servers in the cluster to check in and register themselves with the master server.  The default value is `10` seconds, which should be plenty of time.
+When the scheduler first starts up on the primary server, it waits for a few seconds before actually assigning jobs.  This is to allow all the servers in the cluster to check in and register themselves with the primary server.  The default value is `10` seconds, which should be plenty of time.
 
-Once a server becomes master, it should immediately attempt to connect to all remote servers right away.  So in theory this grace period could be as short as 1 second or less, but a longer delay allows for any random network connectivity errors to work themselves out.
+Once a server becomes primary, it should immediately attempt to connect to all remote servers right away.  So in theory this grace period could be as short as 1 second or less, but a longer delay allows for any random network connectivity errors to work themselves out.
 
 ### universal_web_hook
 
@@ -532,31 +532,31 @@ For legacy compatibility, the old `web_hook_ssl_cert_bypass` property is still a
 
 This parameter allows you to set a default memory usage limit for jobs, specified in bytes.  This is measured as the total usage of the job process *and any sub-processes spawned or forked by the main process*.  If the memory limit is exceeded, the job is aborted.  The default value is `1073741824` (1 GB).  To disable set it to `0`.
 
-Memory limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+Memory limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the primary default.
 
 ### job_memory_sustain
 
 When using the [job_memory_max](#job_memory_max) feature, you can optionally specify how long a job is allowed exceed the maximum memory limit until it is aborted.  For example, you may want to allow jobs to spike over 1 GB of RAM, but not use it sustained for more a certain amount of time.  That is what the `job_memory_sustain` property allows, and it accepts a value in seconds.  It defaults to `0` (abort instantly when exceeded).
 
-Memory limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+Memory limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the default.
 
 ### job_cpu_max
 
 This parameter allows you to set a default CPU usage limit for jobs, specified in percentage of one CPU core.  This is measured as the total CPU usage of the job process *and any sub-processes spawned or forked by the main process*.  If the CPU limit is exceeded, the job is aborted.  The default value is `0` (disabled).  For example, to allow jobs to use up to 2 CPU cores, specify `200` as the limit.
 
-CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the default.
 
 ### job_cpu_sustain
 
 When using the [job_cpu_max](#job_cpu_max) feature, you can optionally specify how long a job is allowed exceed the maximum CPU limit until it is aborted.  For example, you may want to allow jobs to use up to 2 CPU cores, but not use them sustained for more a certain amount of time.  That is what the `job_cpu_sustain` property allows, and it accepts a value in seconds.  It defaults to `0` (abort instantly when exceeded).
 
-CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+CPU limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the default.
 
 ### job_log_max_size
 
 This parameter allows you to set a default log file size limit for jobs, specified in bytes.  If the file size limit is exceeded, the job is aborted.  The default value is `0` (disabled).
 
-Job log file size limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the master default.
+Job log file size limits can also be customized in the UI per each category and/or per each event (see [Event Resource Limits](#event-resource-limits) below).  Doing either overrides the default.
 
 ### job_env
 
@@ -575,9 +575,9 @@ Setting this parameter to `true` will force the Cronicle servers to connect to e
 
 ### web_direct_connect
 
-When this property is set to `false` (which is the default), the Cronicle Web UI will connect to whatever hostname/port is on the URL.  It is expected that this hostname/port will always resolve to your master server.  This is useful for single server setups, situations when your users do not have direct access to your Cronicle servers via their IPs or hostnames, or if you are running behind some kind of reverse proxy.
+When this property is set to `false` (which is the default), the Cronicle Web UI will connect to whatever hostname/port is on the URL.  It is expected that this hostname/port will always resolve to your primary server.  This is useful for single server setups, situations when your users do not have direct access to your Cronicle servers via their IPs or hostnames, or if you are running behind some kind of reverse proxy.
 
-If you set this parameter to `true`, then the Cronicle web application will connect *directly* to your individual Cronicle servers.  This is more for multi-server configurations, especially when running behind a [load balancer](#load-balancers) with multiple backup servers.  The Web UI must always connect to the master server, so if you have multiple backup servers, it needs a direct connection.
+If you set this parameter to `true`, then the Cronicle web application will connect *directly* to your individual Cronicle servers.  This is more for multi-server configurations, especially when running behind a [load balancer](#load-balancers) with multiple backup servers.  The Web UI must always connect to the primary server, so if you have multiple backup servers, it needs a direct connection.
 
 Note that the ability to watch live logs for active jobs requires a direct web socket connection to the server running the job.  For that feature, this setting has no effect (it always attempts to connect directly).
 
@@ -717,7 +717,7 @@ If you're worried about Amazon S3 costs, you probably needn't.  With a typical s
 
 ## Web Server Configuration
 
-Cronicle has an embedded web server which handles serving up the user interface, as well as some server-to-server communication that takes place between the master and slaves.  This is configured in the `WebServer` object, and there are only a handful of parameters you should ever need to configure:
+Cronicle has an embedded web server which handles serving up the user interface, as well as some server-to-server communication that takes place between the primary and workers.  This is configured in the `WebServer` object, and there are only a handful of parameters you should ever need to configure:
 
 ```js
 {
@@ -772,7 +772,7 @@ The `default_privileges` object specifies which privileges new accounts will rec
 | `delete_events` | User is allowed to delete events -- event those created by others. |
 | `run_events` | User is allowed to run events on-demand by clicking the "Run" button in the UI. |
 | `abort_events` | User is allowed to abort jobs in progress, even those for events created by others. |
-| `state_update` | User is allowed to enable or disable the master scheduler. |
+| `state_update` | User is allowed to enable or disable the primary scheduler. |
 
 By default new users have the `create_events`, `edit_events` and `delete_events` privileges, and nothing else.  Note that when an administrator creates new accounts via the UI, (s)he can customize the privileges at that point.  The configuration only sets the defaults.
 
@@ -862,7 +862,7 @@ This section contains a summary of various Cronicle stats.  Some are current tot
 | **Total Servers** | Current total number of servers in the Cronicle cluster. |
 | **Total CPU in Use** | Current total CPU in use (all servers, all jobs, all processes). |
 | **Total RAM in Use** | Current total RAM in use (all servers, all jobs, all processes). |
-| **Master Server Uptime** | Elapsed time since Cronicle on the master server was restarted. |
+| **Primary Server Uptime** | Elapsed time since Cronicle on the primary server was restarted. |
 | **Average Job Duration** | The average elapsed time for all completed jobs today (resets at midnight, local server time). |
 | **Average Job Log Size** | The average job log file size for all completed jobs today (resets at midnight, local server time). |
 
@@ -1060,7 +1060,7 @@ You can have more control over this process by using the JSON API in your Plugin
 
 When editing an existing event that has Run All (Catch-Up) mode enabled, the **Event Time Machine** will appear.  This is a way to reset the internal "clock" for an event, allowing you to re-run past jobs, or skip over a queue of stuck jobs.
 
-For each event in the schedule, Cronicle keeps an internal clock called a "cursor".  If you imagine time running along a straight line, the event cursors are points along that line.  When the master server ticks a new minute, it shifts all the event cursors forward up to the current minute, running any scheduled events along the way.
+For each event in the schedule, Cronicle keeps an internal clock called a "cursor".  If you imagine time running along a straight line, the event cursors are points along that line.  When the primary server ticks a new minute, it shifts all the event cursors forward up to the current minute, running any scheduled events along the way.
 
 So for example, if you needed to re-run a daily 4 AM report event, you can just edit the cursor clock and set it back to 3:59 AM.  The cursor will catch up to the current time as quickly as it can, stopping only to run any scheduled events along the way.  You can also use this feature to "jump" over a queue, if jobs have stacked up for an event.  Just set the cursor clock to the current time, and the scheduler will resume jobs from that point onward.
 
@@ -1502,7 +1502,7 @@ When Cronicle is configured to run in a multi-server environment, this tab allow
 | **Hostname** | The hostname of the server. |
 | **IP Address** | The IP address of the server. |
 | **Groups** | A list of the groups to which the server belongs. |
-| **Status** | The current server status (master, backup or slave). |
+| **Status** | The current server status (primary, backup or worker). |
 | **Active Jobs** | The number of active jobs currently running on the server. |
 | **Uptime** | The elapsed time since Cronicle was restarted on the server. |
 | **CPU** | The current CPU usage on the server (all jobs). |
@@ -1513,9 +1513,9 @@ There is also an **Add Server** button, but note that servers on the same LAN sh
 
 #### Server Groups
 
-Below the server cluster you'll find a list of server groups.  These serve two purposes.  First, you can define groups in order to target events at them.  For example, an event can target the group of servers instead of an individual server, and one of the servers will be picked for each job (or, if [Multiplex](#multiplexing) is enabled, all the servers at once).  Second, you can use server groups to define which of your servers are eligible to become the master server, if the current master is shut down.
+Below the server cluster you'll find a list of server groups.  These serve two purposes.  First, you can define groups in order to target events at them.  For example, an event can target the group of servers instead of an individual server, and one of the servers will be picked for each job (or, if [Multiplex](#multiplexing) is enabled, all the servers at once).  Second, you can use server groups to define which of your servers are eligible to become the primary server, if the current primary is shut down.
 
-When Cronicle is first installed, two server groups are created by default.  A "Master Group" which contains only the current (master) server, and an "All Servers" group, which contains all the servers (current and future).  Groups automatically add servers by a hostname-based regular expression match.  Therefore, when additional servers join the cluster, they will be assigned to groups automatically via their hostname.
+When Cronicle is first installed, two server groups are created by default.  A "Primary Group" which contains only the current (primary) server, and an "All Servers" group, which contains all the servers (current and future).  Groups automatically add servers by a hostname-based regular expression match.  Therefore, when additional servers join the cluster, they will be assigned to groups automatically via their hostname.
 
 The list of server groups contains the following columns:
 
@@ -1525,7 +1525,7 @@ The list of server groups contains the following columns:
 | **Hostname Match** | A hostname regular expression to automatically add servers to the group. |
 | **Number of Servers** | The number of servers currently in the group. |
 | **Number of Events** | The number of events currently targeting the group. |
-| **Class** | The server group classification (whether it supports becoming master or not). |
+| **Class** | The server group classification (whether it supports becoming primary or not). |
 | **Actions** | A list of actions to take (edit and delete). |
 
 When adding or editing a server group, you will be presented with this dialog:
@@ -1536,9 +1536,9 @@ Here you will need to provide:
 
 - A **Group Title** which is used for display purposes.
 - A **Hostname Match** which is a regular expression applied to every server hostname (used to automatically add servers to the group).
-- A **Server Class** which sets the servers in your group as "Master Eligible" or "Slave Only".
+- A **Server Class** which sets the servers in your group as "Primary Eligible" or "Worker Only".
 
-Note that "Master Eligible" servers all need to be properly configured and have access to your storage back-end.  Meaning, if you opted to use the filesystem, you'll need to make sure it is mounted (via NFS or similar mechanism) on all the servers who could become master.  Or, if you opted to use a NoSQL DB such as Couchbase or S3, they need all the proper settings and/or credentials to connect.  For more details, see the [Multi-Server Cluster](#multi-server-cluster) section.
+Note that "Primary Eligible" servers all need to be properly configured and have access to your storage back-end.  Meaning, if you opted to use the filesystem, you'll need to make sure it is mounted (via NFS or similar mechanism) on all the servers who could become primary.  Or, if you opted to use a NoSQL DB such as Couchbase or S3, they need all the proper settings and/or credentials to connect.  For more details, see the [Multi-Server Cluster](#multi-server-cluster) section.
 
 ### Users Tab
 
@@ -2197,7 +2197,7 @@ Almost every [configuration property](#configuration) can be overridden using th
 
 ## Storage Maintenance
 
-Storage maintenance automatically runs every morning at 4 AM local server time (this is [configurable](#maintenance) if you want to change it).  The operation is mainly for deleting expired records, and pruning lists that have grown too large.  However, if the Cronicle service was stopped and you missed a day or two, you can force it to run at any time.  Just execute this command on your master server:
+Storage maintenance automatically runs every morning at 4 AM local server time (this is [configurable](#maintenance) if you want to change it).  The operation is mainly for deleting expired records, and pruning lists that have grown too large.  However, if the Cronicle service was stopped and you missed a day or two, you can force it to run at any time.  Just execute this command on your primary server:
 
 ```
 /opt/cronicle/bin/control.sh maint
@@ -2212,13 +2212,13 @@ This will run maintenance for the current day.  However, if the service was down
 
 ## Recover Admin Access
 
-Lost access to your admin account?  You can create a new temporary administrator account on the command-line.  Just execute this command on your master server:
+Lost access to your admin account?  You can create a new temporary administrator account on the command-line.  Just execute this command on your primary server:
 
 ```
 /opt/cronicle/bin/control.sh admin USERNAME PASSWORD
 ```
 
-Replace `USERNAME` with the desired username, and `PASSWORD` with the desired password for the new account.  Note that the new user will not show up in the master list of users in the UI.  But you will be able to login using the provided credentials.  This is more of an emergency operation, just to allow you to get back into the system.  *This is not a good way to create permanent users*.  Once you are logged back in, you should consider creating another account from the UI, then deleting the emergency admin account.
+Replace `USERNAME` with the desired username, and `PASSWORD` with the desired password for the new account.  Note that the new user will not show up in the main list of users in the UI.  But you will be able to login using the provided credentials.  This is more of an emergency operation, just to allow you to get back into the system.  *This is not a good way to create permanent users*.  Once you are logged back in, you should consider creating another account from the UI, then deleting the emergency admin account.
 
 ## Server Startup
 
@@ -2271,7 +2271,7 @@ If you upgrade to the `HEAD` version, this will grab the very latest from GitHub
 
 Cronicle can import and export data via the command-line, to/from a plain text file.  This data includes all the "vital" storage records such as Users, Plugins, Categories, Servers, Server Groups, API Keys and all Scheduled Events.  It *excludes* things like user sessions, job completions and job logs.
 
-To export your Cronicle data, issue this command on your master server:
+To export your Cronicle data, issue this command on your primary server:
 
 ```
 /opt/cronicle/bin/control.sh export /path/to/cronicle-data-backup.txt --verbose
@@ -2302,7 +2302,7 @@ find $BACKUP_DIR -mtime +365 -type f -exec rm -v {} \;
 
 If you need to migrate your Cronicle storage data to a new location or even a new engine, a simple built-in migration tool is provided.  This tool reads *all* Cronicle storage records and writes them back out, using two different storage configurations (old and new).
 
-To use the tool, first edit your Cronicle's `conf/config.json` file on your master server, and locate the `Storage` object.  This should point to your *current* storage configuration, i.e. where we are migrating *from*.  Then, add a new object right next to it, and name it `NewStorage`.  This should point to your *new* storage location and/or storage engine, i.e. where we are migrating *to*.
+To use the tool, first edit your Cronicle's `conf/config.json` file on your primary server, and locate the `Storage` object.  This should point to your *current* storage configuration, i.e. where we are migrating *from*.  Then, add a new object right next to it, and name it `NewStorage`.  This should point to your *new* storage location and/or storage engine, i.e. where we are migrating *to*.
 
 The contents of the `NewStorage` object should match whatever you'd typically put into `Storage`, if setting up a new install.  See the [Storage Configuration](#storage-configuration) section for details.  It can point to any of the supported engines.  Here is an example that would migrate from the local filesystem to Amazon S3:
 
@@ -2344,7 +2344,7 @@ You could also use this to migrate between two AWS regions, S3 buckets or key pr
 
 When you are ready to proceed, make sure you **shut down Cronicle** on all your servers.  You should not migrate storage while Cronicle is running, as it can result in corrupted data.
 
-All good?  Okay then, on your Cronicle master server as root (superuser), issue this command:
+All good?  Okay then, on your Cronicle primary server as root (superuser), issue this command:
 
 ```
 /opt/cronicle/bin/control.sh migrate
@@ -2389,9 +2389,9 @@ For more details on Cronicle's scheduler implementation, see the [Event Timing O
 
 The storage system in Cronicle is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which is basically a key/value store.  It can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
 
-Writing to local disk should work just fine for most installations, even with multi-server setups, as long as there is only one master server.  However, if you want redundant backup masters with auto-failover, and/or redundant data storage, then you either have to use a shared filesystem such as NFS, or switch to Couchbase or S3.
+Writing to local disk should work just fine for most installations, even with multi-server setups, as long as there is only one primary server.  However, if you want redundant backups with auto-failover, and/or redundant data storage, then you either have to use a shared filesystem such as NFS, or switch to Couchbase or S3.
 
-With an NFS shared filesystem, your master and backup servers can have access to the same Cronicle data storage.  Only the master server performs data writes, so there should never be any data corruption.  The easiest way to set up a shared filesystem is to configure Cronicle to point at your NFS mount in the `conf/config.json` file, then run the setup script.  The filesystem storage location is in the `base_dir` property, which is found in the `Storage` / `Filesystem` objects:
+With an NFS shared filesystem, your primary and backup servers can have access to the same Cronicle data storage.  Only the primary server performs data writes, so there should never be any data corruption.  The easiest way to set up a shared filesystem is to configure Cronicle to point at your NFS mount in the `conf/config.json` file, then run the setup script.  The filesystem storage location is in the `base_dir` property, which is found in the `Storage` / `Filesystem` objects:
 
 ```js
 {
@@ -2418,8 +2418,8 @@ Cronicle writes its logs in a plain text, square-bracket delimited column format
 
 ```
 [1450993152.554][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][3][Cronicle starting up][]
-[1450993152.565][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][4][Server is eligible to become master (Main Group)][]
-[1450993152.566][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][3][We are becoming the master server][]
+[1450993152.565][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][4][Server is eligible to become primary (Main Group)][]
+[1450993152.566][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][3][We are becoming the primary server][]
 [1450993152.576][2015/12/24 13:39:12][joeretina.local][Cronicle][debug][2][Startup complete, entering main loop][]
 ```
 
@@ -2481,27 +2481,27 @@ This causes the value of the `component` column to dictate the actual log filena
 
 ## Keeping Time
 
-Cronicle manages job scheduling for its events by using a "cursor" system, as opposed to a classic queue.  Each event has its own internal cursor (pointer) which contains a timestamp.  This data is stored in RAM but is also persisted to disk for failover.  When the master clock advances a minute, the scheduler iterates over all the active events, and moves their cursors forward, always trying to keep them current.  It launches any necessary jobs along the way.
+Cronicle manages job scheduling for its events by using a "cursor" system, as opposed to a classic queue.  Each event has its own internal cursor (pointer) which contains a timestamp.  This data is stored in RAM but is also persisted to disk for failover.  When the clock advances a minute, the scheduler iterates over all the active events, and moves their cursors forward, always trying to keep them current.  It launches any necessary jobs along the way.
 
 For events that have [Run All Mode](#run-all-mode) set, a cursor may pause or even move backwards, depending on circumstances.  If a job fails to launch, the cursor stays back in the previous minute so it can try again.  In this way jobs virtually "queue up" as time advances.  When the blocking issue is resolved (resource constraint or other), the event cursor will be moved forward as quickly as resources and settings allow, so it can "catch up" to current time.
 
 Also, you have the option of manually resetting an event's cursor using the [Time Machine](#event-time-machine) feature.  This way you can manually have it re-run past jobs, or hop over a "queue" that has built up.
 
-## Master Server Failover
+## Primary Server Failover
 
-In a [Multi-Server Cluster](#multi-server-cluster), you can designate a number of servers as master backups, using the [Server Groups](#server-groups) feature.  These backup servers will automatically take over as master if something happens to the current master server (shutdown or crash).  Your servers will automatically negotiate who should become master, both at startup and at failover, based on an alphabetical sort of their hostnames.  Servers which sort higher will become master before servers that sort lower.
+In a [Multi-Server Cluster](#multi-server-cluster), you can designate a number of servers as primary backups, using the [Server Groups](#server-groups) feature.  These backup servers will automatically take over as primary if something happens to the current primary server (shutdown or crash).  Your servers will automatically negotiate who should become primary, both at startup and at failover, based on an alphabetical sort of their hostnames.  Servers which sort higher will become primary before servers that sort lower.
 
-Upon startup there is a ~60 second delay before a master server is chosen.  This allows time for all the servers in the cluster to auto-discover each other.
+Upon startup there is a ~60 second delay before a primary server is chosen.  This allows time for all the servers in the cluster to auto-discover each other.
 
 ### Unclean Shutdown
 
-Cronicle is designed to handle server failures.  If a slave server goes down for any reason, the cluster will automatically adjust.  Any active jobs on the dead server will be failed and possibly retried after a short period of time (see [dead_job_timeout](#dead_job_timeout)), and new jobs will be reassigned to other servers as needed.
+Cronicle is designed to handle server failures.  If a worker server goes down for any reason, the cluster will automatically adjust.  Any active jobs on the dead server will be failed and possibly retried after a short period of time (see [dead_job_timeout](#dead_job_timeout)), and new jobs will be reassigned to other servers as needed.
 
-If a master server goes down, one of the backups will take over within 60 seconds (see [master_ping_timeout](#master_ping_timeout)).  The same rules apply for any jobs that were running on the master server.  They'll be failed and retried as needed by the new master server, with one exception: unclean shutdown.
+If a primary server goes down, one of the backups will take over within 60 seconds (see [master_ping_timeout](#master_ping_timeout)).  The same rules apply for any jobs that were running on the primary server.  They'll be failed and retried as needed by the new primary server, with one exception: unclean shutdown.
 
-When a master server experiences a catastrophic failure such as a daemon crash, kernel panic or power loss, it has no time to do anything, so any active jobs on the server are instantly dead.  The jobs will eventually be logged as failures, and the logs recovered when the server comes back online.  However, if the events had [Run All Mode](#run-all-mode) enabled, they won't be auto-retried when the new master takes over, because it has no way of knowing a job was even running.  And by the time the old master server is brought back online, days or weeks may have passed, so it would be wrong to blindly rewind the event clock to before the event ran.
+When a primary server experiences a catastrophic failure such as a daemon crash, kernel panic or power loss, it has no time to do anything, so any active jobs on the server are instantly dead.  The jobs will eventually be logged as failures, and the logs recovered when the server comes back online.  However, if the events had [Run All Mode](#run-all-mode) enabled, they won't be auto-retried when the new primary takes over, because it has no way of knowing a job was even running.  And by the time the old primary server is brought back online, days or weeks may have passed, so it would be wrong to blindly rewind the event clock to before the event ran.
 
-So in summary, the only time human intervention may be required is if a master server dies unexpectedly due to an unclean shutdown, and it had active jobs running on it, and those jobs had [Run All Mode](#run-all-mode) set.  In that case, you may want to use the [Time Machine](#event-time-machine) feature to reset the event clock, to re-run any missed jobs.
+So in summary, the only time human intervention may be required is if a primary server dies unexpectedly due to an unclean shutdown, and it had active jobs running on it, and those jobs had [Run All Mode](#run-all-mode) set.  In that case, you may want to use the [Time Machine](#event-time-machine) feature to reset the event clock, to re-run any missed jobs.
 
 # API Reference
 
@@ -2513,7 +2513,7 @@ All API calls expect JSON as input (unless they are simple HTTP GETs), and will 
 /api/app/NAME/v1
 ```
 
-Replace `NAME` with the specific API function you are calling (see below for list).  All requests should be HTTP GET or HTTP POST as the API dictates, and should be directed at the Cronicle master server on the correct TCP port (the default is `3012` but is often reconfigured to be `80`).  Example URL:
+Replace `NAME` with the specific API function you are calling (see below for list).  All requests should be HTTP GET or HTTP POST as the API dictates, and should be directed at the Cronicle primary server on the correct TCP port (the default is `3012` but is often reconfigured to be `80`).  Example URL:
 
 ```
 http://myserver.com:3012/api/app/get_schedule/v1
@@ -2523,9 +2523,9 @@ For web browser access, [JSONP](https://en.wikipedia.org/wiki/JSONP) response st
 
 ### Redirects
 
-If you are running a multi-server Cronicle cluster with multiple master backup servers behind a load balancer, you may receive a `HTTP 302` response if you hit a non-master server for an API request.  In this case, the `Location` response header will contain the proper master server hostname.  Please repeat your request pointed at the correct server.  Most HTTP request libraries have an option to automatically follow redirects, so you can make this process automatic.
+If you are running a multi-server Cronicle cluster with multiple primary backup servers behind a load balancer, you may receive a `HTTP 302` response if you hit a non-primary server for an API request.  In this case, the `Location` response header will contain the proper primary server hostname.  Please repeat your request pointed at the correct server.  Most HTTP request libraries have an option to automatically follow redirects, so you can make this process automatic.
 
-It is recommended (although not required) that you cache the master server hostname if you receive a 302 redirect response, so you can make subsequent calls to the master server directly, without requiring a round trip.  
+It is recommended (although not required) that you cache the primary server hostname if you receive a 302 redirect response, so you can make subsequent calls to the primary server directly, without requiring a round trip.  
 
 ## API Keys
 
@@ -3368,13 +3368,13 @@ To start Cronicle in debug mode, issue the following command:
 
 This will launch the service without forking a daemon process, and echo the entire debug log contents to the console.  This is great for debugging server-side issues.  Beware of file permissions if you run as a non-root user.  Hit Ctrl-C to shut down the service when in this mode.
 
-Also, you can force it to become the master server right away, so there is no delay before you can use the web app:
+Also, you can force it to become the primary server right away, so there is no delay before you can use the web app:
 
 ```
 ./bin/debug.sh --master
 ```
 
-Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become master (~60 seconds after startup).
+Do not use the `--master` switch on multiple servers in a cluster.  For multi-server setups, it is much better to wait for Cronicle to decide who should become primary (~60 seconds after startup).
 
 Please note that when starting Cronicle in debug mode, all existing events with [Run All Mode](#run-all-mode) set will instantly be "caught up" to the current time, and not run any previous jobs.  Also, some features are not available in debug mode, namely the "Restart" and "Shut Down" links in the UI.
 
