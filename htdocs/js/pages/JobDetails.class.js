@@ -1078,11 +1078,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				'<pre class="log_chunk" style="color:#888; margin-bottom:14px;">Log Watcher: Connected successfully!</pre>' 
 			);
 			
-			// request log stream + authenticate
-			self.socket.emit( 'watch_job_log', {
-				token: app.getPref('session_id'),
-				id: job.id
-			} );
+			// get auth token from master server (uses session)
+			app.api.post( 'app/get_log_watch_auth', { id: job.id }, function(resp) {
+				// now request log watch stream on target server
+				self.socket.emit( 'watch_job_log', {
+					token: resp.token,
+					id: job.id
+				} );
+			}); // api.post
 		} );
 		this.socket.on('connect_error', function(err) {
 			Debug.trace("JobDetails socket.io connect error: " + err);
