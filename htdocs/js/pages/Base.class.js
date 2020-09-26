@@ -380,18 +380,36 @@ Class.subclass( Page, "Page.Base", {
 		// including optgroups for both server group and individual servers
 		var html = '';
 		
-		app.server_groups.sort( function(a, b) {
+		var server_groups = app.server_groups.sort( function(a, b) {
 			// return (b.title < a.title) ? 1 : -1;
 			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
-		} );
+		} )
+		.filter( function(group) {
+			return app.hasPrivilege( 'grp_' + group.id );
+		});
 		
-		html += '<optgroup label="Groups:">' + render_menu_options(app.server_groups, value, false) + '</optgroup>';
+		html += '<optgroup label="Groups:">' + render_menu_options(server_groups, value, false) + '</optgroup>';
 		
-		if (find_object(app.server_groups, { id: value })) value = '';
+		if (find_object(server_groups, { id: value })) value = '';
 		
 		// trim hostname suffixes
 		var hostnames = hash_keys_to_array(app.servers).sort();
 		if (value && !app.servers[value]) hostnames.push( value );
+		
+		// filter hostnames by server group privilege
+		hostnames = hostnames.filter(function(hostname) {
+			var groups = server_groups.filter( function(group) {
+				return hostname.match( group.regexp );
+			} );
+			
+			// we just need one group to match, then the user has permission to target the server
+			for (var idx = 0, len = groups.length; idx < len; idx++) {
+				priv_id = 'grp_' + groups[idx].id;
+				result = app.hasPrivilege(priv_id);
+				if (result) return true;
+			}
+			return false;
+		});
 		
 		var short_hostnames = [];
 		for (var idx = 0, len = hostnames.length; idx < len; idx++) {

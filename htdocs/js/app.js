@@ -137,7 +137,7 @@ app.extend({
 			this[key] = resp[key];
 		}
 		
-		if (this.isCategoryLimited()) {
+		if (this.isCategoryLimited() || this.isGroupLimited()) {
 			this.pruneSchedule();
 			this.pruneCategories();
 			this.pruneActiveJobs();
@@ -355,12 +355,12 @@ app.extend({
 		
 		socket.on('update', function(data) {
 			// receive data update (global list contents)
-			var cat_limited = self.isCategoryLimited();
+			var limited_user = self.isCategoryLimited() || self.isGroupLimited();
 			
 			for (var key in data) {
 				self[key] = data[key];
 				
-				if (cat_limited) {
+				if (limited_user) {
 					if (key == 'schedule') self.pruneSchedule();
 					else if (key == 'categories') self.pruneCategories();
 				}
@@ -404,28 +404,32 @@ app.extend({
 		}
 		
 		this.activeJobs = jobs;
-		if (this.isCategoryLimited()) this.pruneActiveJobs();
+		if (this.isCategoryLimited() || this.isGroupLimited()) this.pruneActiveJobs();
 		data.jobs_changed = changed;
 	},
 	
 	pruneActiveJobs: function() {
-		// remove active jobs that the user should not see, due to category privs
+		// remove active jobs that the user should not see, due to category/group privs
 		if (!this.activeJobs) return;
 		
 		for (var id in this.activeJobs) {
 			var job = this.activeJobs[id];
-			if (!this.hasCategoryAccess(job.category)) delete this.activeJobs[id];
+			if (!this.hasCategoryAccess(job.category) || !this.hasGroupAccess(job.target)) {
+				delete this.activeJobs[id];
+			}
 		}
 	},
 	
 	pruneSchedule: function() {
-		// remove schedule items that the user should not see, due to category privs
+		// remove schedule items that the user should not see, due to category/group privs
 		if (!this.schedule || !this.schedule.length) return;
 		var new_items = [];
 		
 		for (var idx = 0, len = this.schedule.length; idx < len; idx++) {
 			var item = this.schedule[idx];
-			if (this.hasCategoryAccess(item.category)) new_items.push(item);
+			if (this.hasCategoryAccess(item.category) && this.hasGroupAccess(item.target)) {
+				new_items.push(item);
+			}
 		}
 		
 		this.schedule = new_items;
@@ -450,6 +454,12 @@ app.extend({
 		return( app.user && app.user.privileges && app.user.privileges.cat_limit );
 	},
 	
+	isGroupLimited: function() {
+		// return true if user is limited to specific server groups, false otherwise
+		if (this.isAdmin()) return false;
+		return( app.user && app.user.privileges && app.user.privileges.grp_limit );
+	},
+	
 	hasCategoryAccess: function(cat_id) {
 		// check if user has access to specific category
 		if (!app.user || !app.user.privileges) return false;
@@ -458,6 +468,32 @@ app.extend({
 		
 		var priv_id = 'cat_' + cat_id;
 		return( !!app.user.privileges[priv_id] );
+	},
+	
+	hasGroupAccess: function(grp_id) {
+		// check if user has access to specific server group
+		if (!app.user || !app.user.privileges) return false;
+		if (app.user.privileges.admin) return true;
+		if (!app.user.privileges.grp_limit) return true;
+		
+		var priv_id = 'grp_' + grp_id;
+		var result = !!app.user.privileges[priv_id];
+		if (result) return true;
+		
+		// make sure grp_id is a hostname from this point on
+		if (find_object(app.server_groups, { id: grp_id })) return false;
+		
+		var groups = app.server_groups.filter( function(group) {
+			return grp_id.match( group.regexp );
+		} );
+		
+		// we just need one group to match, then the user has permission to target the server
+		for (var idx = 0, len = groups.length; idx < len; idx++) {
+			priv_id = 'grp_' + groups[idx].id;
+			result = !!app.user.privileges[priv_id];
+			if (result) return true;
+		}
+		return false;
 	},
 	
 	hasPrivilege: function(priv_id) {

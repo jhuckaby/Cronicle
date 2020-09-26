@@ -463,6 +463,40 @@ Class.add( Page.Admin, {
 		
 		priv_html += '</div>';
 		
+		// user can be limited to certain server groups
+		var priv = { id: "grp_limit", title: "Limit to Server Groups" };
+		var has_priv = !!user.privileges[ priv.id ];
+		var priv_visible = !user_is_admin;
+		
+		priv_html += '<div class="priv_group_other" style="margin-top:4px; margin-bottom:4px; '+(priv_visible ? '' : 'display:none;')+'">';
+		priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" ' + 
+			(has_priv ? 'checked="checked" ' : '') + 'onChange="$P().change_grp_checkbox()"' + '>';
+		priv_html += '<label for="fe_eu_priv_'+priv.id+'">'+priv.title+'</label>';
+		priv_html += '</div>';
+		
+		priv_html += '<div class="priv_group_other">';
+		
+		// sort by title ascending
+		var groups = app.server_groups.sort( function(a, b) {
+			// return (b.title < a.title) ? 1 : -1;
+			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+		} );
+		
+		for (var idx = 0, len = groups.length; idx < len; idx++) {
+			var group = groups[idx];
+			var priv = { id: 'grp_' + group.id, title: group.title };
+			var has_priv = !!user.privileges[ priv.id ];
+			var priv_visible = !!user.privileges.grp_limit;
+			
+			priv_html += '<div class="priv_group_grp" style="margin-top:4px; margin-bottom:4px; margin-left:20px; '+(priv_visible ? '' : 'display:none;')+'">';
+			priv_html += '<input type="checkbox" id="fe_eu_priv_'+priv.id+'" value="1" ' + 
+				(has_priv ? 'checked="checked" ' : '') + '>';
+			priv_html += '<label for="fe_eu_priv_'+priv.id+'" style="font-weight:normal"><i class="fa fa-folder-open-o">&nbsp;</i>'+priv.title+'</label>';
+			priv_html += '</div>';
+		}
+		
+		priv_html += '</div>';
+		
 		html += get_form_table_row( 'Privileges', priv_html );
 		html += get_form_table_caption( "Select which privileges the user account should have. Administrators have all privileges." );
 		html += get_form_table_spacer();
@@ -482,6 +516,13 @@ Class.add( Page.Admin, {
 		var is_checked = $('#fe_eu_priv_cat_limit').is(':checked');
 		if (is_checked) $('div.priv_group_cat').show(250);
 		else $('div.priv_group_cat').hide(250);
+	},
+	
+	change_grp_checkbox: function() {
+		// toggle server group limit checkbox
+		var is_checked = $('#fe_eu_priv_grp_limit').is(':checked');
+		if (is_checked) $('div.priv_group_grp').show(250);
+		else $('div.priv_group_grp').hide(250);
 	},
 	
 	get_user_form_json: function() {
@@ -519,6 +560,23 @@ Class.add( Page.Admin, {
 				
 				if (!num_cat_privs) return app.doError("Please select at least one category privilege.");
 			} // cat limit
+			
+			// server group limit privs
+			user.privileges.grp_limit = $('#fe_eu_priv_grp_limit').is(':checked') ? 1 : 0;
+			
+			if (user.privileges.grp_limit) {
+				var num_grp_privs = 0;
+				for (var idx = 0, len = app.server_groups.length; idx < len; idx++) {
+					var grp = app.server_groups[idx];
+					var priv = { id: 'grp_' + grp.id };
+					if ($('#fe_eu_priv_'+priv.id).is(':checked')) {
+						user.privileges[ priv.id ] = 1;
+						num_grp_privs++;
+					}
+				}
+				
+				if (!num_grp_privs) return app.doError("Please select at least one server group privilege.");
+			} // grp limit
 		} // not admin
 		
 		return user;

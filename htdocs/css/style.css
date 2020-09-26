@@ -575,8 +575,11 @@ td.table_label {
 	cursor: default;
 }
 
-/* User Category Privilege Checkbox Label Augmentation */
+/* User Category/Group Privilege Checkbox Label Augmentation */
 
 #fe_eu_priv_cat_limit:checked + label:after {
+	content: ':'
+}
+#fe_eu_priv_grp_limit:checked + label:after {
 	content: ':'
 }
