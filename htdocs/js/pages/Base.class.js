@@ -385,6 +385,7 @@ Class.subclass( Page, "Page.Base", {
 			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
 		} )
 		.filter( function(group) {
+			if (!app.user.privileges.grp_limit) return true; // user is not limited by groups
 			return app.hasPrivilege( 'grp_' + group.id );
 		});
 		
@@ -397,19 +398,21 @@ Class.subclass( Page, "Page.Base", {
 		if (value && !app.servers[value]) hostnames.push( value );
 		
 		// filter hostnames by server group privilege
-		hostnames = hostnames.filter(function(hostname) {
-			var groups = server_groups.filter( function(group) {
-				return hostname.match( group.regexp );
-			} );
-			
-			// we just need one group to match, then the user has permission to target the server
-			for (var idx = 0, len = groups.length; idx < len; idx++) {
-				priv_id = 'grp_' + groups[idx].id;
-				result = app.hasPrivilege(priv_id);
-				if (result) return true;
-			}
-			return false;
-		});
+		if (app.user.privileges.grp_limit) {
+			hostnames = hostnames.filter(function(hostname) {
+				var groups = server_groups.filter( function(group) {
+					return hostname.match( group.regexp );
+				} );
+				
+				// we just need one group to match, then the user has permission to target the server
+				for (var idx = 0, len = groups.length; idx < len; idx++) {
+					priv_id = 'grp_' + groups[idx].id;
+					result = app.hasPrivilege(priv_id);
+					if (result) return true;
+				}
+				return false;
+			});
+		} // grp_limit
 		
 		var short_hostnames = [];
 		for (var idx = 0, len = hostnames.length; idx < len; idx++) {
