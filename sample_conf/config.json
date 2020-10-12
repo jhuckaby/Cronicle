@@ -55,6 +55,9 @@
 			{ "id": "delete_events", "title": "Delete Events" },
 			{ "id": "run_events", "title": "Run Events" },
 			{ "id": "abort_events", "title": "Abort Events" },
+			{ "id": "create_categories", "title": "Create Categories" },
+			{ "id": "update_categories", "title": "Update Categories" },
+			{ "id": "delete_categories", "title": "Delete Categories" },
 			{ "id": "state_update", "title": "Toggle Scheduler" }
 		],
 		"new_event_template": { 
