@@ -3188,6 +3188,201 @@ Example response:
 
 See the [Standard Response Format](#standard-response-format) for details.
 
+### get_categories
+
+```
+/api/app/get_categories/v1
+```
+
+This fetches categories and returns details about them.  It supports pagination to fetch chunks, with the default being the first 50 categories.  Both HTTP GET (query string) or HTTP POST (JSON data) are acceptable.  Parameters:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `offset` | (Optional) The offset into the data to start returning records, defaults to 0. |
+| `limit` | (Optional) The number of records to return, defaults to 50. |
+
+Example request:
+
+```json
+{
+	"offset": 0,
+	"limit": 0
+}
+```
+
+Example response:
+
+```json
+{
+    "code": 0,
+    "rows": [
+        {
+            "id": "new-category",
+            "title": "New Category",
+            "enabled": 1,
+            "username": "admin",
+            "description": "A description",
+            "max_children": 0,
+            "modified": 1602511976,
+            "created": 1602510152,
+            "api_key": "fee3566c8f7081bb2cdfbd82c3a52ab6",
+            "color": "red",
+            "notify_success": "admin@cronicle.com",
+            "notify_fail": "admin@cronicle.com",
+            "web_hook": "http://myserver.com/notify-chronos.php",
+            "cpu_limit": 100,
+            "cpu_sustain": 0,
+            "memory_limit": 0,
+            "memory_sustain": 0,
+            "log_max_size": 0
+        },
+        {
+            "id": "general",
+            "title": "General",
+            "enabled": 1,
+            "username": "admin",
+            "modified": 1602508912,
+            "created": 1602508912,
+            "description": "For events that don't fit anywhere else.",
+            "max_children": 0
+        }
+    ],
+    "list": {
+        "page_size": 50,
+        "first_page": 0,
+        "last_page": 0,
+        "length": 2,
+        "type": "list"
+    }
+}
+```
+
+### create_category
+
+```
+/api/app/create_category/v1
+```
+
+This creates a new category.  API Keys require the `create_categories` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The required parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `title` | **(Required)** A display name for the category. |
+| `max_children` | **(Required)** Specifies the maximum number of jobs allowed to run concurrently in this category. Use 0 for no limit. |
+
+In addition to the required parameters, almost anything in the [Category Data Object](#category-data-object) can also be included here. Example request:
+
+```json
+{
+    "title": "New Category",
+    "enabled": 1,
+    "description": "A description",
+    "max_children": 0,
+    "color": "red",
+    "notify_success": "admin@cronicle.com",
+    "notify_fail": "admin@cronicle.com",
+    "web_hook": "http://myserver.com/notify-chronos.php",
+    "cpu_limit": 100,
+    "cpu_sustain": 0,
+    "memory_limit": 0,
+    "memory_sustain": 0,
+    "log_max_size": 0
+}
+```
+
+Example response:
+
+```json
+{
+	"code": 0,
+	"id": "ckg6mh66k01"
+}
+```
+
+In addition to the [Standard Response Format](#standard-response-format), the ID of the new event will be returned in the `id` property.
+
+### update_category
+
+```
+/api/app/update_category/v1
+```
+
+This updates an existing category given its ID, replacing any properties you specify.  API Keys require the `update_categories` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `id` | **(Required)** The ID of the category you wish to update. |
+
+Include anything from the [Category Data Object](#category-data-object) to update (i.e. replace) the values.  Anything omitted is preserved.  Example request:
+
+```json
+{
+	"id": "ckg6mh66k01",
+	"enabled": 0
+}
+```
+
+Example request with everything updated:
+
+```json
+{
+    "id": "ckg6mh66k01",
+    "title": "Updated Category",
+    "enabled": 1,
+    "description": "A description",
+    "max_children": 0,
+    "color": "red",
+    "notify_success": "admin@cronicle.com",
+    "notify_fail": "admin@cronicle.com",
+    "web_hook": "http://myserver.com/notify-chronos.php",
+    "cpu_limit": 100,
+    "cpu_sustain": 0,
+    "memory_limit": 0,
+    "memory_sustain": 0,
+    "log_max_size": 0
+}
+```
+
+Example response:
+
+```json
+{
+	"code": 0
+}
+```
+
+See the [Standard Response Format](#standard-response-format) for details.
+
+### delete_category
+
+```
+/api/app/delete_category/v1
+```
+
+This deletes an existing category given its ID.  Note that the category must not contain any event (or else an error will be returned).  API Keys require the `delete_categories` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `id` | **(Required)** The ID of the category you wish to delete. |
+
+Example request:
+
+```json
+{
+	"id": "ckg6mh66k01"
+}
+```
+
+Example response:
+
+```json
+{
+	"code": 0
+}
+```
+
+See the [Standard Response Format](#standard-response-format) for details.
+
 ## Event Data Format
 
 Here are descriptions of all the properties in the event object, which is common in many API calls:
@@ -3276,6 +3471,31 @@ Here is a list of all the timing object properties and their descriptions:
 | `weekdays` | 0 - 6 | One or more weekdays, where Sunday is 0, and Saturday is 6 |
 | `hours` | 0 - 23 | One or more hours in 24-hour time, from 0 to 23. |
 | `minutes` | 0 - 59 | One or more minutes, from 0 to 59. |
+
+## Category Data Format
+
+Here are descriptions of all the properties in the category object, which is common in many API calls:
+
+| Category Property | Format | Description |
+|----------------|--------|-------------|
+| `api_key` | String | The API Key of the application that originally created the category (if created via API). |
+| `color` | String | A highlight color for the category, which will show on the schedule.|
+| `cpu_limit` | Number | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](#event-resource-limits). A default value for all events in the category. |
+| `cpu_sustain` | Number | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). A default value for all events in the category. |
+| `created` | Number | The date/time of the category's initial creation, in Epoch seconds. |
+| `description` | String | A description for the category. |
+| `enabled` | Boolean | Specifies whether events in this category should be enabled or disabled in the schedule. |
+| `id` | String | A unique ID assigned to the category when it was first created. |
+| `log_max_size` | Number | Limit the job log file size to the specified amount, in bytes.  See [Event Resource Limits](#event-resource-limits). A default value for all events in the category. |
+| `max_children` | Number | The maximum number of jobs allowed to run concurrently in this category. See [Event Concurrency](#event-concurrency). |
+| `memory_limit` | Number | Limit the memory usage to the specified amount, in bytes. See [Event Resource Limits](#event-resource-limits). A default value for all events in the category. |
+| `memory_sustain` | Number | Only abort if the memory limit is exceeded for this many seconds. See [Event Resource Limits](#event-resource-limits). A default value for all events in the category. |
+| `modified` | Number | The date/time of the category's last modification, in Epoch seconds. |
+| `notify_fail` | String | List of e-mail recipients to notify upon job failure (CSV). See [Event Notification](#event-notification). A default value for all events in the category. |
+| `notify_success` | String | List of e-mail recipients to notify upon job success (CSV). See [Event Notification](#event-notification). A default value for all events in the category. |
+| `title` | String | A display name for the category. |
+| `username` | String | The username of the user who originally created the category (if created in the UI). |
+| `web_hook` | String | An optional URL to hit for the start and end of each job. See [Event Web Hook](#event-web-hook). A default value for all events in the category. |
 
 # Development
 
