@@ -486,6 +486,12 @@ While you can specify a web hook in the UI per each category and/or per each eve
 
 Web hooks are fired at the start and the end of each job (success or fail).  A JSON record is sent in the HTTP POST body, which contains all the relevant information about the job, including an `action` property, which will be set to `job_start` at the start and `job_complete` at the end of the job.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
 
+To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
+
+```
+http://myserver.com/webhook/script.php [Authorization: Bearer xoxb-your-token]
+```
+
 ### web_hook_custom_data
 
 If you need to include custom JSON data with the web hook HTTP POST, you can do so by specifying a `web_hook_custom_data` property, and any keys/values will be merged in with the event data as it is sent to the web hook URL.  Example:
@@ -1201,6 +1207,12 @@ Here is an example web hook JSON record (`job_complete` version shown):
 In addition to `job_start` and `job_complete`, there is one other special hook action that may be sent, and that is `job_launch_failure`.  This happens if a scheduled event completely fails to start a job, due to an unrecoverable error (such as an unavailable target server or group).  In this case the `code` property will be non-zero, and the `description` property will contain a summary of the error.
 
 Only a small subset of the properties shown above will be included with a `job_launch_failure`, as a job object was never successfully created, so there will be no `hostname`, `pid`, `elapsed`, `log_file_size`, etc.
+
+To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
+
+```
+http://myserver.com/webhook/script.php [Authorization: Bearer xoxb-your-token]
+```
 
 #### Event Resource Limits
 

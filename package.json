@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.8.50",
+	"version": "0.8.51",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
@@ -48,7 +48,7 @@
 		"pixl-tools": "^1.0.23",
 		"pixl-logger": "^1.0.14",
 		"pixl-json-stream": "^1.0.6",
-		"pixl-request": "^1.0.27",
+		"pixl-request": "^1.0.32",
 		"pixl-mail": "^1.0.8",
 		"pixl-perf": "^1.0.5",
 		"pixl-server": "^1.0.26",
