@@ -489,7 +489,7 @@ Web hooks are fired at the start and the end of each job (success or fail).  A J
 To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
 
 ```
-http://myserver.com/webhook/script.php [Authorization: Bearer xoxb-your-token]
+https://slack.com/api/chat.postMessage [Authorization: Bearer xoxb-your-token]
 ```
 
 ### web_hook_custom_data
@@ -1211,7 +1211,7 @@ Only a small subset of the properties shown above will be included with a `job_l
 To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
 
 ```
-http://myserver.com/webhook/script.php [Authorization: Bearer xoxb-your-token]
+https://slack.com/api/chat.postMessage [Authorization: Bearer xoxb-your-token]
 ```
 
 #### Event Resource Limits
