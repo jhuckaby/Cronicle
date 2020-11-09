@@ -486,10 +486,10 @@ While you can specify a web hook in the UI per each category and/or per each eve
 
 Web hooks are fired at the start and the end of each job (success or fail).  A JSON record is sent in the HTTP POST body, which contains all the relevant information about the job, including an `action` property, which will be set to `job_start` at the start and `job_complete` at the end of the job.  See the [Web Hooks](#event-web-hook) section below for more on the data format.
 
-To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
+To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[header: My-Header: My-Value]`.  Make sure to include a space before the opening bracket.  Example URL:
 
 ```
-https://slack.com/api/chat.postMessage [Authorization: Bearer xoxb-your-token]
+https://myserver.com/api/chat.postMessage [header: My-Header: My-Value]
 ```
 
 ### web_hook_custom_data
@@ -1208,10 +1208,10 @@ In addition to `job_start` and `job_complete`, there is one other special hook a
 
 Only a small subset of the properties shown above will be included with a `job_launch_failure`, as a job object was never successfully created, so there will be no `hostname`, `pid`, `elapsed`, `log_file_size`, etc.
 
-To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[Header-Name: Header Value]`.  Make sure to include a space before the opening bracket.  Example URL:
+To include custom HTTP request headers with your web hook, append them onto the end of the URL using this format: `[header: My-Header: My-Value]`.  Make sure to include a space before the opening bracket.  Example URL:
 
 ```
-https://slack.com/api/chat.postMessage [Authorization: Bearer xoxb-your-token]
+https://myserver.com/api/chat.postMessage [header: My-Header: My-Value]
 ```
 
 #### Event Resource Limits
