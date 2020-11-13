@@ -364,7 +364,7 @@ Set specific mailer options, such as SMTP SSL and authentication, passed directl
 
 ```js
 "mail_options": {
-	"secure", true,
+	"secure": true,
 	"auth": { user: "fsmith", pass: "12345" },
 	"connectionTimeout": 10000,
 	"greetingTimeout": 10000,
