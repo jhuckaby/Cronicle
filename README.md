@@ -60,6 +60,7 @@
 		+ [scheduler_startup_grace](#scheduler_startup_grace)
 		+ [universal_web_hook](#universal_web_hook)
 		+ [web_hook_custom_data](#web_hook_custom_data)
+		+ [web_hook_custom_opts](#web_hook_custom_opts)
 		+ [web_hook_text_templates](#web_hook_text_templates)
 		+ [ssl_cert_bypass](#ssl_cert_bypass)
 		+ [job_memory_max](#job_memory_max)
