@@ -38,20 +38,20 @@ stream.on('json', function(job) {
 		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 	}
 	
+	// allow URL to be substituted using [placeholders]
+	params.url = Tools.sub( params.url, process );
+
 	if (!params.url || !params.url.match(/^https?\:\/\/\S+$/i)) {
 		stream.write({ complete: 1, code: 1, description: "Malformed URL: " + (params.url || '(n/a)') });
 		return;
 	}
-	
-	// allow URL to be substituted using [placeholders]
-	params.url = Tools.sub( params.url, job );
 	
 	print("Sending HTTP " + params.method + " to URL:\n" + params.url + "\n");
 	
 	// headers
 	if (params.headers) {
 		// allow headers to be substituted using [placeholders]
-		params.headers = Tools.sub( params.headers, job );
+		params.headers = Tools.sub( params.headers, process );
 		
 		print("\nRequest Headers:\n" + params.headers.trim() + "\n");
 		params.headers.replace(/\r\n/g, "\n").trim().split(/\n/).forEach( function(pair) {
@@ -71,7 +71,7 @@ stream.on('json', function(job) {
 	// post data
 	if (opts.method == 'POST') {
 		// allow POST data to be substituted using [placeholders]
-		params.data = Tools.sub( params.data, job );
+		params.data = Tools.sub( params.data, process );
 		
 		print("\nPOST Data:\n" + params.data.trim() + "\n");
 		opts.data = Buffer.from( params.data || '' );
