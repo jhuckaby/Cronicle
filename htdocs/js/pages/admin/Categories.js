@@ -51,7 +51,7 @@ Class.add( Page.Admin, {
 			
 			var tds = [
 				'<div class="td_big"><span class="link" onMouseUp="$P().edit_category('+idx+')">' + self.getNiceCategory(cat, col_width) + '</span></div>',
-				'<div class="ellip" style="max-width:'+col_width+'px;">' + (cat.description || '(No description)') + '</div>',
+				'<div class="ellip" style="max-width:'+col_width+'px;">' + encode_entities(cat.description || '(No description)') + '</div>',
 				num_events ? commify( num_events ) : '(None)',
 				cat.max_children ? commify(cat.max_children) : '(No limit)',
 				actions.join(' | ')

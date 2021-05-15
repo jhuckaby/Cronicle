@@ -55,8 +55,8 @@ Class.add( Page.Admin, {
 			];
 			return [
 				'<div class="td_big">' + self.getNiceUsername(user, true, col_width) + '</div>',
-				'<div class="ellip" style="max-width:'+col_width+'px;">' + user.full_name + '</div>',
-				'<div class="ellip" style="max-width:'+col_width+'px;"><a href="mailto:'+user.email+'">'+user.email+'</a></div>',
+				'<div class="ellip" style="max-width:'+col_width+'px;">' + encode_entities(user.full_name) + '</div>',
+				'<div class="ellip" style="max-width:'+col_width+'px;"><a href="mailto:'+user.email+'">'+encode_entities(user.email)+'</a></div>',
 				user.active ? '<span class="color_label green"><i class="fa fa-check">&nbsp;</i>Active</span>' : '<span class="color_label red"><i class="fa fa-warning">&nbsp;</i>Suspended</span>',
 				user.privileges.admin ? '<span class="color_label purple"><i class="fa fa-lock">&nbsp;</i>Admin</span>' : '<span class="color_label gray">Standard</span>',
 				'<span title="'+get_nice_date_time(user.created, true)+'">'+get_nice_date(user.created, true)+'</span>',

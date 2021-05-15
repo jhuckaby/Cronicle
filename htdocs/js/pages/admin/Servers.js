@@ -161,7 +161,7 @@ Class.add( Page.Admin, {
 			
 			return [
 				'<div class="td_big" style="white-space:nowrap;"><span class="link" onMouseUp="$P().edit_group('+idx+')">' + self.getNiceGroup(group, null, col_width) + '</span></div>',
-				'<div class="ellip" style="font-family:monospace; max-width:'+col_width+'px;">/' + group.regexp + '/</div>',
+				'<div class="ellip" style="font-family:monospace; max-width:'+col_width+'px;">/' + encode_entities(group.regexp) + '/</div>',
 				// group.description || '(No description)',
 				num_servers ? commify( num_servers) : '(None)',
 				num_events ? commify( num_events ) : '(None)',
