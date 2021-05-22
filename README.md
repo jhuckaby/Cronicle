@@ -623,6 +623,14 @@ However, if you are trying to run Cronicle in an environment where WebSockets ar
 
 However, please only do this if you know exactly what you are doing, and why.
 
+### max_jobs
+
+You can optionally set a global maximum number of concurrent jobs to allow.  This is across all servers and categories, and is designed as an "emergency brake" for runaway events.  The property is called `max_jobs`.  The default is `0` (no limit).  Example:
+
+```js
+"max_jobs": 256
+```
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).

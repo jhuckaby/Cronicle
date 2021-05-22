@@ -25,6 +25,7 @@
 	"scheduler_startup_grace": 10,
 	"universal_web_hook": "",
 	"track_manual_jobs": false,
+	"max_jobs": 0,
 	
 	"server_comm_use_hostnames": false,
 	"web_direct_connect": false,
