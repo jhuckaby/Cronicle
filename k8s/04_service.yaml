@@ -1,0 +1,30 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cronicle-ui-primary
+  namespace: cronicle
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 3012
+  selector:
+    app: cronicle-server
+    server-role: primary
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cronicle-ui-secondary
+  namespace: cronicle
+spec:
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 3012
+  selector:
+    app: cronicle-server
+    server-role: secondary
+
