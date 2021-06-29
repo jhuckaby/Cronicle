@@ -244,7 +244,7 @@ If this is your first time installing, please read the [Configuration](#configur
 | `secret_key` | For multi-server setups (see below) all your servers must share the same secret key.  Any randomly generated string is fine. |
 | `job_memory_max` | The default maximum memory limit for each job (can also be customized per event and per category). |
 | `http_port` | The web server port number for the user interface.  Defaults to 3012. |
-
+| `ip` | Te web server IP for the user interface or slave<>master comunication. Defaults to first eth* |
 Now then, the only other decision you have to make is what to use as a storage back-end.  Cronicle can use local disk (easiest setup), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).  For single server installations, or even single primary with multiple workers, local disk is probably just fine, and this is the default setting.  But if you want to run a true multi-server cluster with automatic primary failover, please see [Multi-Server Cluster](#multi-server-cluster) for details.
 
 With that out of the way, run the following script to initialize the storage system.  You only need to do this once, *and only on the primary server*.  Do not run this on any worker servers:
