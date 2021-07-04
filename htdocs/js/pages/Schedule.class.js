@@ -861,6 +861,14 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		);
 		html += get_form_table_spacer();
 		
+		html += get_form_table_row( 'Job Log Expire', 
+			'<table cellspacing="0" cellpadding="0"><tr>' + 
+				'<td><select id="fe_ee_job_log_expire">' + render_menu_options([[0,'None'], 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], event.log_expire_days, false) + '</select></td>' + 
+				'<td id="td_ee_retry1" '+(event.log_expire_days ? '' : 'style="display:none"')+'><span style="padding-left:15px; font-size:13px; color:#777;"><b>Delay:</b>&nbsp;</span></td>' + 
+			'</tr></table>'
+		);
+		html += get_form_table_spacer();
+		
 		// reset cursor (only for catch_up and edit mode)
 		var rc_epoch = normalize_time( time_now(), { sec: 0 } );
 		if (event.id && app.state && app.state.cursors && app.state.cursors[event.id]) {
@@ -1687,6 +1695,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// retries
 		event.retries = parseInt( $('#fe_ee_retries').val() );
+		event.log_expire_days = parseInt( $('#fe_ee_job_log_expire').val() );
 		event.retry_delay = parseInt( $('#fe_ee_retry_delay').val() ) * parseInt( $('#fe_ee_retry_delay_units').val() );
 		if (isNaN(event.retry_delay)) return quiet ? false : app.badField('fe_ee_retry_delay', "Please enter an integer value for the event retry delay.");
 		if (event.retry_delay < 0) return quiet ? false : app.badField('fe_ee_retry_delay', "Please enter a positive integer for the event retry delay.");
