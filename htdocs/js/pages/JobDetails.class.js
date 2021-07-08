@@ -865,14 +865,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 		
 		// live job log tail
-		var remote_api_url = config.worker_connect_proto + job.hostname + ':' + config.worker_connect_port + config.base_api_uri;
+		var remote_api_url = config.worker_connect_proto + '://' + job.hostname + ':' + config.worker_connect_port + config.base_api_uri;
 		if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
 			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			remote_api_url = config.worker_connect_proto + app.servers[job.hostname].ip + ':' + config.worker_connect_port + config.base_api_uri;
+			remote_api_url = config.worker_connect_proto + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port + config.base_api_uri;
 		}
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
@@ -1044,14 +1044,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var chunk_count = 0;
 		var error_shown = false;
 		
-		var url = config.worker_connect_proto + job.hostname + ':' + config.worker_connect_port;
+		var url = config.worker_connect_proto + '://' + job.hostname + ':' + config.worker_connect_port;
 		if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
 			url = config.custom_live_log_socket_url;
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			url = config.worker_connect_proto + app.servers[job.hostname].ip + ':' + config.worker_connect_port;
+			url = config.worker_connect_proto + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port;
 		}
 		
 		$('#d_live_job_log').append( 
