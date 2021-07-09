@@ -1060,11 +1060,10 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		else if (config.worker_proxy_logs) {
 			// Use master address instead
-			url = app.proto + '://' + config.base_api_uri + ':' + app.port
+			url = config.base_api_uri
 			job_log_function = "api_get_live_job_log_proxy"
 		}
 		var api_url = url + '/api/app/' + job_log_function
-		console.error(api_url)
 
 		self.curr_live_log_job = job.id;
 
