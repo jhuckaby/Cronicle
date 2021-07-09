@@ -866,7 +866,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 		
 		// live job log tail
-		var port = self.server.config.get('WebServer').http_port;
+		var port = config.get('WebServer').http_port;
 		var remote_api_url = 'http://' + job.hostname + ':' + port + config.base_api_uri;
 		var job_log_function = "get_live_job_log"
 		if (config.worker_proxy_logs) {
@@ -1049,7 +1049,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		var $cont = $('#d_live_job_log');
 
-		var port = self.server.config.get('WebServer').http_port;
+		var port = config.get('WebServer').http_port;
 		var url = 'http://' + job.hostname + ':' + port;
 		var job_log_function = "get_live_job_log_tail"
 		if (config.worker_proxy_logs) {
