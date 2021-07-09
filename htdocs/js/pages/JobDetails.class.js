@@ -1063,13 +1063,15 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			url = app.proto + '://' + config.base_api_uri + ':' + app.port
 			job_log_function = "api_get_live_job_log_proxy"
 		}
+		var api_url = url + '/api/app/' + job_log_function
+		console.error(api_url)
 
 		self.curr_live_log_job = job.id;
 
 		// poll live_console api until job is running or some error occur
 		function refresh() {
 			if(self.curr_live_log_job != job.id) return; // prevent double logging
-			app.api.post(url + '/api/app/' + job_log_function, { id: job.id }
+			app.api.post(api_url, { id: job.id }
 				, (data) => {  // success callback
 					if (!data.data) return; // stop polling if no data
 					$cont.append('<pre class="log_chunk">' + data.data + '</pre>');
