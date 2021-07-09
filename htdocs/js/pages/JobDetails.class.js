@@ -871,7 +871,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		if (config.worker_proxy_logs) {
 			// Use master address instead
 			remote_api_url = ""
-			job_log_function = "api_get_live_job_log_proxy"
+			job_log_function = "get_live_job_log_proxy"
 		}
 		else if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
@@ -1053,7 +1053,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		if (config.worker_proxy_logs) {
 			// Use master address instead
 			url = ""
-			job_log_function = "api_get_live_job_log_proxy"
+			job_log_function = "get_live_job_log_proxy"
 		}
 		else if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
