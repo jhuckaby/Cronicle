@@ -866,20 +866,21 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 		
 		// live job log tail
-		var remote_api_url = app.proto + '://' + job.hostname + ':' + app.port + config.base_api_uri;
+		var port = self.server.config.get('WebServer').http_port;
+		var remote_api_url = 'http://' + job.hostname + ':' + port + config.base_api_uri;
 		var job_log_function = "get_live_job_log"
-		if (config.custom_live_log_socket_url) {
+		if (config.worker_proxy_logs) {
+			// Use master address instead
+			remote_api_url = ""
+			job_log_function = "api_get_live_job_log_proxy"
+		}
+		else if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
 			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			remote_api_url = app.proto + '://' + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
-		}
-		else if (config.worker_proxy_logs) {
-			// Use master address instead
-			remote_api_url = ""
-			job_log_function = "api_get_live_job_log_proxy"
+			remote_api_url = 'http://' + app.servers[job.hostname].ip + ':' + port + config.base_api_uri;
 		}
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
@@ -1047,21 +1048,22 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		// open special websocket to target server for live log feed
 		var self = this;
 		var $cont = $('#d_live_job_log');
-		
-		var url = app.proto + '://' + job.hostname + ':' + app.port;
+
+		var port = self.server.config.get('WebServer').http_port;
+		var url = 'http://' + job.hostname + ':' + port;
 		var job_log_function = "get_live_job_log_tail"
-		if (config.custom_live_log_socket_url) {
+		if (config.worker_proxy_logs) {
+			// Use master address instead
+			url = config.base_api_uri
+			job_log_function = "api_get_live_job_log_proxy"
+		}
+		else if (config.custom_live_log_socket_url) {
 			// custom websocket URL for single-master systems behind an LB
 			url = config.custom_live_log_socket_url;
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			url = app.proto + '://' + app.servers[job.hostname].ip + ':' + app.port;
-		}
-		else if (config.worker_proxy_logs) {
-			// Use master address instead
-			url = config.base_api_uri
-			job_log_function = "api_get_live_job_log_proxy"
+			url = 'http://' + app.servers[job.hostname].ip + ':' + port;
 		}
 		var api_url = url + '/api/app/' + job_log_function
 		console.error(api_url)
