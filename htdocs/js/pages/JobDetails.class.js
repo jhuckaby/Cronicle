@@ -1064,6 +1064,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			job_log_function = "api_get_live_job_log_proxy"
 		}
 		var api_url = url + '/api/app/' + job_log_function
+		console.error(api_url)
 
 		self.curr_live_log_job = job.id;
 
