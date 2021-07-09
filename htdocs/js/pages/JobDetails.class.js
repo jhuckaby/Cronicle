@@ -866,8 +866,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '</div>';
 		
 		// live job log tail
-		var port = config.get('WebServer').http_port;
-		var remote_api_url = 'http://' + job.hostname + ':' + port + config.base_api_uri;
+		var remote_api_url = config.worker_connect_proto + '://' + job.hostname + ':' + config.worker_connect_port + config.base_api_uri;
 		var job_log_function = "get_live_job_log"
 		if (config.worker_proxy_logs) {
 			// Use master address instead
@@ -880,7 +879,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			remote_api_url = 'http://' + app.servers[job.hostname].ip + ':' + port + config.base_api_uri;
+			remote_api_url = config.worker_connect_proto + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port + config.base_api_uri;
 		}
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
@@ -1049,8 +1048,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		var $cont = $('#d_live_job_log');
 
-		var port = config.get('WebServer').http_port;
-		var url = 'http://' + job.hostname + ':' + port;
+		var url = config.worker_connect_port + '://' + job.hostname + ':' + config.worker_connect_port;
 		var job_log_function = "get_live_job_log_tail"
 		if (config.worker_proxy_logs) {
 			// Use master address instead
@@ -1063,7 +1061,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		}
 		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
 			// use ip if available, may work better in some setups
-			url = 'http://' + app.servers[job.hostname].ip + ':' + port;
+			url = config.worker_connect_port + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port;
 		}
 		var api_url = url + '/api/app/' + job_log_function
 		console.error(api_url)
