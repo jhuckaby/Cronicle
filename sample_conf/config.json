@@ -30,8 +30,7 @@
 	"server_comm_use_hostnames": false,
 	"web_direct_connect": false,
 	"web_socket_use_hostnames": false,
-	"worker_connect_proto": "http",
-	"worker_connect_port": 3012,
+	"worker_proxy_logs": false,
 	
 	"job_memory_max": 1073741824,
 	"job_memory_sustain": 0,

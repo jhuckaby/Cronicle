@@ -607,13 +607,9 @@ Setting this parameter to `true` will force Cronicle's Web UI to connect to the 
 
 This property only takes effect if [web_direct_connect](#web_direct_connect) is also set to `true`.
 
-### web_connect_proto
+### worker_proxy_logs
 
-This controls the protocol used to connect to workers.  It should mirror the setup used in the workers WebServer section.
-
-### web_connect_port
-
-This controls the port used to connect to workers.  It should mirror the setup used in the workers WebServer section.
+Use this setting to force live log polling to occur as a pull through proxy on the master.
 
 ### socket_io_transports
 
