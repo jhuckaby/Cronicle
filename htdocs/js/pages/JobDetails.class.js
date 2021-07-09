@@ -1052,7 +1052,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var job_log_function = "get_live_job_log_tail"
 		if (config.worker_proxy_logs) {
 			// Use master address instead
-			url = config.base_api_uri
+			url = ""
 			job_log_function = "api_get_live_job_log_proxy"
 		}
 		else if (config.custom_live_log_socket_url) {
