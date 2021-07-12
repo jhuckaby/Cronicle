@@ -865,26 +865,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 		html += '</div>';
 		
-		// live job log tail
-		var remote_api_url = config.worker_connect_proto + '://' + job.hostname + ':' + config.worker_connect_port + config.base_api_uri;
-		var job_log_function = "get_live_job_log"
-		if (config.worker_proxy_logs) {
-			// Use master address instead
-			remote_api_url = ""
-			job_log_function = "get_live_job_log_proxy"
-		}
-		else if (config.custom_live_log_socket_url) {
-			// custom websocket URL for single-master systems behind an LB
-			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
-		}
-		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			remote_api_url = config.worker_connect_proto + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port + config.base_api_uri;
-		}
-		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
-			html += '<div class="subtitle_widget"><a href="'+remote_api_url+'/app/' + job_log_function + '?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
+			html += '<div class="subtitle_widget"><a href="/app/get_live_job_log_proxy?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
@@ -1048,23 +1031,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		var $cont = $('#d_live_job_log');
 
-		var url = config.worker_connect_port + '://' + job.hostname + ':' + config.worker_connect_port;
-		var job_log_function = "get_live_job_log_tail"
-		if (config.worker_proxy_logs) {
-			// Use master address instead
-			url = ""
-			job_log_function = "get_live_job_log_proxy"
-		}
-		else if (config.custom_live_log_socket_url) {
-			// custom websocket URL for single-master systems behind an LB
-			url = config.custom_live_log_socket_url;
-		}
-		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			url = config.worker_connect_port + '://' + app.servers[job.hostname].ip + ':' + config.worker_connect_port;
-		}
-		var api_url = url + '/api/app/' + job_log_function
-		console.error(api_url)
+		var api_url = '/api/app/job_log_function'
 
 		self.curr_live_log_job = job.id;
 
@@ -1075,7 +1042,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				, (data) => {  // success callback
 					if (!data.data) return; // stop polling if no data
 					$cont.append('<pre class="log_chunk">' + data.data + '</pre>');
-					pollInterval = parseInt(app.config.ui.live_log)
+					pollInterval = parseInt(config.live_log_poll_interval)
 					if(!pollInterval || pollInterval < 1000) pollInterval = 1000;
 					setTimeout(refresh,  1000);
 				}
