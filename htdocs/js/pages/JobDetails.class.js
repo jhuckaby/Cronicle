@@ -1031,14 +1031,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var self = this;
 		var $cont = $('#d_live_job_log');
 
-		var api_url = '/api/app/job_log_function'
-
 		self.curr_live_log_job = job.id;
 
 		// poll live_console api until job is running or some error occur
 		function refresh() {
 			if(self.curr_live_log_job != job.id) return; // prevent double logging
-			app.api.post(api_url, { id: job.id }
+			app.api.post('/api/app/get_live_job_log_proxy', { id: job.id }
 				, (data) => {  // success callback
 					if (!data.data) return; // stop polling if no data
 					$cont.append('<pre class="log_chunk">' + data.data + '</pre>');
