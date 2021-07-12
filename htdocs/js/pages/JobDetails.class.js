@@ -1033,13 +1033,21 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 
 		self.curr_live_log_job = job.id;
 
+		var previous_data = []
+
 		// poll live_console api until job is running or some error occur
 		function refresh() {
 			if(self.curr_live_log_job != job.id) return; // prevent double logging
 			app.api.post('/api/app/get_live_job_log_proxy', { id: job.id }
 				, (data) => {  // success callback
 					if (!data.data) return; // stop polling if no data
-					$cont.append('<pre class="log_chunk">' + data.data + '</pre>');
+
+                    // Prevent short logs from showing duplicate lines
+                    var new_data = data.data.split(/\r?\n/)
+                    var trimmed_data = new_data.filter((item) => previous_data.indexOf(item)< 0)
+                    previous_data = previous_data.concat(trimmed_data)
+                    
+					$cont.append('<pre class="log_chunk">' + trimmed_data.join('\n') + '</pre>');
 					pollInterval = parseInt(config.live_log_poll_interval)
 					if(!pollInterval || pollInterval < 1000) pollInterval = 1000;
 					setTimeout(refresh,  1000);
