@@ -625,6 +625,10 @@ Setting this parameter to `true` will force Cronicle's Web UI to connect to the 
 
 This property only takes effect if [web_direct_connect](#web_direct_connect) is also set to `true`.
 
+#### live_log_poll_interval
+
+The interval at which live logs are polled from the running job.
+
 ### socket_io_transports
 
 This is an advanced configuration property that you will probably never need to worry about.  This allows you to customize the [socket.io transports](https://socket.io/docs/client-api/) used to connect to the server for real-time updates.  By default, this property is set internally to an array containing the `websocket` transport only, e.g.

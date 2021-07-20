@@ -531,6 +531,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 					],
 					backgroundColor: [
 						(cpu_avg < jcm*0.5) ? this.pie_colors.cool : 
+						(cpu_avg < jcm*0.5) ? this.pie_colors.cool :
 							((cpu_avg < jcm*0.75) ? this.pie_colors.warm : this.pie_colors.hot),
 						this.pie_colors.empty
 					],
@@ -864,21 +865,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 		html += '</div>';
 		
-		// live job log tail
-		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
-		if (config.custom_live_log_socket_url) {
-			// custom websocket URL for single-master systems behind an LB
-			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
-		}
-		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
-		}
-		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
-			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
-			html += '<div class="subtitle_widget"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
+			html += '<div class="subtitle_widget"><a href="/app/get_live_job_log_proxy?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
@@ -1040,91 +1029,38 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	start_live_log_watcher: function(job) {
 		// open special websocket to target server for live log feed
 		var self = this;
-		var $cont = null;
-		var chunk_count = 0;
-		var error_shown = false;
-		
-		var url = app.proto + job.hostname + ':' + app.port;
-		if (config.custom_live_log_socket_url) {
-			// custom websocket URL for single-master systems behind an LB
-			url = config.custom_live_log_socket_url;
+		var $cont = $('#d_live_job_log');
+
+		self.curr_live_log_job = job.id;
+
+		var previous_data = []
+
+		// poll live_console api until job is running or some error occur
+		function refresh() {
+			if(self.curr_live_log_job != job.id) return; // prevent double logging
+			app.api.post('/api/app/get_live_job_log_proxy', { id: job.id }
+				, (data) => {  // success callback
+					if (!data.data) return; // stop polling if no data
+
+                    // Prevent short logs from showing duplicate lines
+                    var new_data = data.data.split(/\r?\n/)
+                    var trimmed_data = new_data.filter((item) => previous_data.indexOf(item)< 0)
+                    previous_data = previous_data.concat(trimmed_data)
+                    
+					$cont.append('<pre class="log_chunk">' + trimmed_data.join('\n') + '</pre>');
+					pollInterval = parseInt(config.live_log_poll_interval)
+					if(!pollInterval || pollInterval < 1000) pollInterval = 1000;
+					setTimeout(refresh,  1000);
+				}
+				// stop polling on error, report unexpected errors
+				, (e) => {
+					if(e.code != 'job') console.error('Live log poll error: ', e)
+					return
+				}
+			)
 		}
-		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			url = app.proto + app.servers[job.hostname].ip + ':' + app.port;
-		}
-		
-		$('#d_live_job_log').append( 
-			'<pre class="log_chunk" style="color:#888">Log Watcher: Connecting to server: ' + url + '...</pre>' 
-		);
-		
-		this.socket = io( url, {
-			forceNew: true,
-			transports: config.socket_io_transports || ['websocket'],
-			reconnection: true,
-			reconnectionDelay: 1000,
-			reconnectionDelayMax: 5000,
-			reconnectionAttempts: 9999,
-			timeout: 5000
-		} );
-		
-		this.socket.on('connect', function() {
-			Debug.trace("JobDetails socket.io connected successfully: " + url);
-			
-			// cache this for later
-			$cont = $('#d_live_job_log');
-			
-			$cont.append( 
-				'<pre class="log_chunk" style="color:#888; margin-bottom:14px;">Log Watcher: Connected successfully!</pre>' 
-			);
-			
-			// get auth token from master server (uses session)
-			app.api.post( 'app/get_log_watch_auth', { id: job.id }, function(resp) {
-				// now request log watch stream on target server
-				self.socket.emit( 'watch_job_log', {
-					token: resp.token,
-					id: job.id
-				} );
-			}); // api.post
-		} );
-		this.socket.on('connect_error', function(err) {
-			Debug.trace("JobDetails socket.io connect error: " + err);
-			$('#d_live_job_log').append( 
-				'<pre class="log_chunk">Log Watcher: Server Connect Error: ' + err + ' (' + url + ')</pre>' 
-			);
-			error_shown = true;
-		} );
-		this.socket.on('connect_timeout', function(err) {
-			Debug.trace("JobDetails socket.io connect timeout");
-			if (!error_shown) $('#d_live_job_log').append( 
-				'<pre class="log_chunk">Log Watcher: Server Connect Timeout: ' + err + ' (' + url + ')</pre>' 
-			);
-		} );
-		this.socket.on('reconnect', function() {
-			Debug.trace("JobDetails socket.io reconnected successfully");
-		} );
-		
-		this.socket.on('log_data', function(lines) {
-			// received log data, as array of lines
-			var scroll_y = $cont.scrollTop();
-			var scroll_max = Math.max(0, $cont.prop('scrollHeight') - $cont.height());
-			var need_scroll = ((scroll_max - scroll_y) <= 10);
-			
-			$cont.append( 
-				'<pre class="log_chunk">' + 
-					lines.map( function(line) { return line.replace(/</g, '&lt;'); } ).join("\n").trim() + 
-				'</pre>' 
-			);
-			
-			// only show newest 1K chunks
-			chunk_count++;
-			if (chunk_count >= 1000) {
-				$cont.children().first().remove();
-				chunk_count--;
-			}
-			
-			if (need_scroll) $cont.scrollTop( $cont.prop('scrollHeight') );
-		} );
+
+		refresh();
 	},
 	
 	update_live_progress: function(job) {

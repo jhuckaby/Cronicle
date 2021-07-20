@@ -30,6 +30,7 @@
 	"server_comm_use_hostnames": false,
 	"web_direct_connect": false,
 	"web_socket_use_hostnames": false,
+    "live_log_poll_interval": 1000,
 	
 	"job_memory_max": 1073741824,
 	"job_memory_sustain": 0,
