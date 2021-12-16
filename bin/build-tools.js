@@ -12,11 +12,11 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var mkdirp = require('mkdirp');
 var async = require('async');
 var glob = require('glob');
 var UglifyJS = require("uglify-js");
 var Tools = require('pixl-tools');
+var mkdirp = Tools.mkdirp;
 
 var fileStatSync = function(file) {
 	// no-throw version of fs.statSync
