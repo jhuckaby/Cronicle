@@ -9,7 +9,6 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var async = require('async');
-var mkdirp = require('mkdirp');
 
 var Tools = require('pixl-tools');
 var mkdirp = Tools.mkdirp;
