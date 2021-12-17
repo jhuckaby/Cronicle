@@ -69,7 +69,7 @@ logonly( "\nStarting install run: " + (new Date()).toString() + "\n" );
 
 print( 
 	"\nCronicle Installer v" + installer_version + "\n" + 
-	"Copyright (c) 2015 - 2018 PixlCore.com. MIT Licensed.\n" + 
+	"Copyright (c) 2015 - 2022 PixlCore.com. MIT Licensed.\n" + 
 	"Log File: " + log_file + "\n\n" 
 );
 
