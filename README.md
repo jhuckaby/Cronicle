@@ -1,20 +1,8 @@
-##
-# PLEASE READ:
-# THE CRONICLE TEAM DOES NOT MERGE PULL REQUESTS!
-##
+# Important Upgrade Note!
 
-Please understand, we greatly appreciate your contribution.  Open source software is amazing, because anyone can fork it and build in their own enhancements.  But Cronicle v0.x is in maintenance-only mode.  We are no longer adding any new features, because we are hard at work on the next major version of Cronicle (called Orchestra).  It is a complete ground-up rewrite from scratch, and will have MANY of the requested features people has been asking for.
+For those upgrading multi-server clusters from Cronicle v0.8 to v0.9, you must upgrade **all** of your servers for them to be able to communicate. In v0.9 we have upgraded to socket.io v4.4, which is incompatible with socket.io v1.7.3 that previous Cronicle versions used. We had to upgrade this dependency due to high severity vulnerabilities. Since this is a breaking API change for them, you cannot run "mixed" server clusters with some servers on Cronicle v0.8 and others on v0.9. They all have to be on v0.8 or they all have to be on v0.9.
 
-We simply do not have the man power to merge PRs into Cronicle v0.x and then maintain them.
-
-The very rare exception to this is something like a single line bug fix, which we have merged before (and we are very thankful for!).  If you happen to be fixing a bug, and your PR contains only a small amount of code with minor changes, then it MAY possibly get merged.  But this is largely not the case.
-
-We're very sorry if you have already spent time on your PR.  We will copy this message into the main README file so it is hopefully visible to people before they fork and begin work on a PR.
-
-Thank you, and deepest apologies.
-
--- The Cronicle Team
-
+So, it is recommended that you first disable the main scheduler on your master server (checkbox in top-right corner of the UI), wait for all jobs to complete, then shut down all servers and upgrade them all together. Then start them all up again, and finally re-enable the scheduler.
 
 # Overview
 
