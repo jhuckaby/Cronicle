@@ -665,6 +665,8 @@ For more details on using the Filesystem as a backing store, please read the [Lo
 
 ### Couchbase
 
+Please note that as of this writing, Cronicle only supports Couchbase Client v2, so you need to force install version `2.6.12` (see instructions below).  Work is underway to support the v3 API, which has many breaking changes.
+
 To use Couchbase as a backing store for Cronicle, please read the [Couchbase section in the pixl-server-storage docs](https://www.npmjs.com/package/pixl-server-storage#couchbase).  It has complete details for how to setup the storage object.  Example configuration:
 
 ```js
@@ -687,11 +689,11 @@ If you are sharing a bucket with other applications, use the `keyPrefix` propert
 
 Note that for Couchbase Server v5.0+ (Couchbase Node SDK 2.5+), you will have to supply both a `username` and `password` for a valid user created in the Couchbase UI.  Prior to v5+ you could omit the `username` and only specify a `password`, or no password at all if your bucket has no authentication.
 
-You'll also need to install the npm [couchbase](https://www.npmjs.com/package/couchbase) module:
+You'll also need to install the npm [couchbase](https://www.npmjs.com/package/couchbase) module, but it **must be version 2**:
 
 ```
 cd /opt/cronicle
-npm install couchbase
+npm install couchbase@2.6.12
 ```
 
 After configuring Couchbase, you'll need to run the Cronicle setup script manually, to recreate all the base storage records needed to bootstrap the system:
