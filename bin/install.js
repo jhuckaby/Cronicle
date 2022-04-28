@@ -26,9 +26,12 @@ var packages_to_rescue = {};
 var restore_packages = function() {
 	// restore packages that npm killed during upgrade
 	var cmd = "npm install";
+	var num_found = 0;
 	for (var pkg in packages_to_rescue) {
 		cmd += ' ' + pkg + '@' + packages_to_rescue[pkg];
+		num_found++;
 	}
+	if (!num_found) return; // nothing to restore
 	if (log_file) {
 		fs.appendFileSync(log_file, "\nExecuting npm command to restore lost packages: " + cmd + "\n");
 		cmd += ' >>' + log_file + ' 2>&1';
