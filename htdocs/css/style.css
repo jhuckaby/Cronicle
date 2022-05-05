@@ -13,6 +13,10 @@ div.container {
 	background-size: 36px 36px;
 }
 
+#d_header_title {
+	text-shadow: none;
+}
+
 .header_clock_layer {
 	position: absolute;
 	left: 0px;
@@ -348,6 +352,10 @@ pre.log_chunk {
 }
 
 /* Misc */
+
+span.color_label.clicky {
+	cursor: pointer;
+}
 
 div.activity_desc > b {
 	word-break: break-all;
