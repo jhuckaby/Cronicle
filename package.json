@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.8",
+	"version": "0.9.9",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
@@ -32,7 +32,7 @@
 		"font-awesome": "4.7.0",
 		"mdi": "1.9.33",
 		"chart.js": "2.9.4",
-		"moment": "2.29.2",
+		"moment": "2.29.4",
 		"moment-timezone": "0.5.34",
 		"jstimezonedetect": "1.0.6",
 		"netmask": "2.0.1",
