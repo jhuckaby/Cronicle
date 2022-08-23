@@ -9,7 +9,7 @@ div.container {
 	position: relative;
 	width: 40px;
 	height: 40px;
-	background: url(/images/clock-bkgnd.png) no-repeat center center;
+	background: url(../images/clock-bkgnd.png) no-repeat center center;
 	background-size: 36px 36px;
 }
 
@@ -39,15 +39,15 @@ div.container {
 }
 
 #d_header_clock_hour {
-	background-image: url(/images/clock-hour.png);
+  background-image: url(../images/clock-hour.png);
 }
 
 #d_header_clock_minute {
-	background-image: url(/images/clock-minute.png);
+  background-image: url(../images/clock-minute.png);
 }
 
 #d_header_clock_second {
-	background-image: url(/images/clock-second.png);
+  background-image: url(../images/clock-second.png);
 }
 
 #d_tab_time {
