@@ -1,9 +1,3 @@
-# Important Upgrade Note!
-
-For those upgrading multi-server clusters from Cronicle v0.8 to v0.9, you must upgrade **all** of your servers for them to be able to communicate. In v0.9 we have upgraded to socket.io v4.4, which is incompatible with socket.io v1.7.3 that previous Cronicle versions used. We had to upgrade this dependency due to high severity vulnerabilities. Since this is a breaking API change for them, you cannot run "mixed" server clusters with some servers on Cronicle v0.8 and others on v0.9. They all have to be on v0.8 or they all have to be on v0.9.
-
-So, it is recommended that you first disable the main scheduler on your master server (checkbox in top-right corner of the UI), wait for all jobs to complete, then shut down all servers and upgrade them all together. Then start them all up again, and finally re-enable the scheduler.
-
 # Overview
 
 **Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of worker servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
@@ -1683,6 +1677,8 @@ This tells Cronicle that the job was completed, and your process is about to exi
 Your error code and description will be displayed on the [Job Details Tab](#job-details-tab), and in any e-mail notifications and/or web hooks sent out for the event completion.
 
 If your Plugin writes anything other than JSON to STDOUT (or STDERR), it is automatically appended to your log file.  This is so you don't have to worry about using existing code or utilities that may emit some kind of output.  Cronicle is very forgiving in this regard.
+
+Please note that the once you send a JSON line containing the `complete` flag, Cronicle will consider your job completed, and *not process any further JSON updates from your Plugin*.  So make sure it is the **last** JSON line you send for a job.
 
 #### Reporting Progress
 
