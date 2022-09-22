@@ -575,3 +575,7 @@ X-UUID: 7617a494-823f-4566-8f8b-f479c2a6e707
 ```
 
 You can chain as many requests together as you like, but note that each request can only see and act on chain data from the *previous* request (the one that directly chained to it).
+
+<hr/>
+
+&larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

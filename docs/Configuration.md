@@ -593,3 +593,5 @@ The Cronicle Team
 The stock e-mail templates shipped with Cronicle are plain text, but you can provide your own rich HTML e-mail templates if you want.  Simply start the e-mail body content (what comes after the Subject line) with an HTML open tag, e.g. `<div>`, and the e-mails will be sent as HTML instead of text.
 
 You can include any property from the main `conf/config.json` file by using the syntax `[/config/KEY]`.  Also, to include environment variables, use the syntax `[/env/ENV_KEY]`, for example `[/env/NODE_ENV]`.
+
+&larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

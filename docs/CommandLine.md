@@ -255,3 +255,5 @@ Once the migration is complete and you have verified that your data is where you
 If you have multiple Cronicle servers, make sure you sync your `conf/config.json` between all servers!  They all need to be identical.
 
 Finally, restart Cronicle, and all should be well.
+
+&larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

@@ -54,9 +54,7 @@ A quick introduction to some common terms used in Cronicle:
 
 # Colophon
 
-We stand on the shoulders of giants.  Cronicle was inspired by a PHP application called **Ubercron**, which was designed and programmed by [Larry Azlin](http://azlin.com/).  Cheers Larry!
-
-Cronicle was built using these awesome Node modules:
+We stand on the shoulders of giants.  Cronicle was built using these awesome Node modules:
 
 | Module Name | Description | License |
 |-------------|-------------|---------|
@@ -93,9 +91,9 @@ Cronicle is known to be in use by the following companies:
 
 # License
 
-The MIT License (MIT)
+**The MIT License (MIT)**
 
-Copyright (c) 2015 - 2022 Joseph Huckaby
+*Copyright (c) 2015 - 2022 Joseph Huckaby*
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

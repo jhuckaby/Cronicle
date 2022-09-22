@@ -784,3 +784,5 @@ The user edit form contains the following elements:
 - The user's **Email Address**, which is used for event and error notifications.
 - The account **Password**, which can be reset here, as well as randomized.
 - A set of **Privileges**, which grant the user access to specific features of Cronicle.
+
+&larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

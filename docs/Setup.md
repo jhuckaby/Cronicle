@@ -123,3 +123,5 @@ For teams setting up multi-server clusters, here are some operational concerns t
 * For the "live log" feature in the UI to work, the user needs a network route to the server running the job, via its hostname.
 * If you have to change any server IP addresses, they'll have to be removed and re-added to the cluster.
 * See the [Cron Noncompliance](InnerWorkings.md#cron-noncompliance) section for differences in how Cronicle schedules events, versus the Unix Cron standard.
+
+&larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
