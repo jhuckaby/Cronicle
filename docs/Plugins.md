@@ -1,5 +1,7 @@
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
 
+<hr/>
+
 <!-- toc -->
 - [Plugins](#plugins)
 	* [Writing Plugins](#writing-plugins)

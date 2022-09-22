@@ -1,5 +1,7 @@
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
 
+<hr/>
+
 <!-- toc -->
 - [API Reference](#api-reference)
 	* [JSON REST API](#json-rest-api)
@@ -793,5 +795,7 @@ Here is a list of all the timing object properties and their descriptions:
 | `weekdays` | 0 - 6 | One or more weekdays, where Sunday is 0, and Saturday is 6 |
 | `hours` | 0 - 23 | One or more hours in 24-hour time, from 0 to 23. |
 | `minutes` | 0 - 59 | One or more minutes, from 0 to 59. |
+
+<hr/>
 
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

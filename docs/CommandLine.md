@@ -1,5 +1,7 @@
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
 
+<hr/>
+
 <!-- toc -->
 - [Command Line](#command-line)
 	* [Starting and Stopping](#starting-and-stopping)
@@ -255,5 +257,7 @@ Once the migration is complete and you have verified that your data is where you
 If you have multiple Cronicle servers, make sure you sync your `conf/config.json` between all servers!  They all need to be identical.
 
 Finally, restart Cronicle, and all should be well.
+
+<hr/>
 
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*

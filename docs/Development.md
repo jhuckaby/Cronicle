@@ -1,5 +1,7 @@
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
 
+<hr/>
+
 <!-- toc -->
 - [Development](#development)
 	* [Installing Dev Tools](#installing-dev-tools)
@@ -121,5 +123,7 @@ If any tests fail, please open a [GitHub issue](https://github.com/jhuckaby/Cron
 ```
 /opt/cronicle/logs/unit.log
 ```
+
+<hr/>
 
 &larr; *[Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)*
