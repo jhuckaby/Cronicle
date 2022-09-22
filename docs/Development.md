@@ -1,4 +1,4 @@
-> &larr; [Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)
+&larr; [Return to the main document](https://github.com/jhuckaby/Cronicle/blob/master/README.md)
 
 <!-- toc -->
 - [Development](#development)
