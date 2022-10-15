@@ -459,20 +459,13 @@ If you are sharing a bucket with other applications, use the `keyPrefix` propert
 
 It is recommended that you always set the S3 `fileExtensions` property to `true` for new installs.  This makes the Cronicle S3 records play nice with sync / copy tools such as [Rclone](https://rclone.org/).  See [Issue #60](https://github.com/jhuckaby/Cronicle/issues/60) for more details.  Do not change this property on existing installs -- use the [Storage Migration Tool](CommandLine.md#storage-migration-tool).
 
-To use S3 you'll also need to install the npm [aws-sdk](https://www.npmjs.com/package/aws-sdk) module:
-
-```
-cd /opt/cronicle
-npm install aws-sdk
-```
-
 After configuring S3, you'll need to run the Cronicle setup script manually, to recreate all the base storage records needed to bootstrap the system:
 
 ```
 /opt/cronicle/bin/control.sh setup
 ```
 
-If you're worried about Amazon S3 costs, you probably needn't.  With a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
+Regarding S3 costs, with a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
 
 ## Web Server Configuration
 
