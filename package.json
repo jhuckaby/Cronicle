@@ -54,7 +54,8 @@
 		"pixl-server-storage": "^3.0.21",
 		"pixl-server-web": "^1.3.8",
 		"pixl-server-api": "^1.0.2",
-		"pixl-server-user": "^1.0.9"
+		"pixl-server-user": "^1.0.9",
+		"tree-kill": "^1.2.2"
 	},
 	"devDependencies": {
 		"pixl-unit": "^1.0.12"
