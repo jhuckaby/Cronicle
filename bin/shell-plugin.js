@@ -9,6 +9,7 @@ var fs = require('fs');
 var os = require('os');
 var cp = require('child_process');
 var path = require('path');
+var send_sig = require('tree-kill');
 var JSONStream = require('pixl-json-stream');
 var Tools = require('pixl-tools');
 
@@ -132,11 +133,11 @@ stream.on('json', function(job) {
 		kill_timer = setTimeout( function() {
 			// child didn't die, kill with prejudice
 			console.log("Child did not exit, killing harder: " + child.pid);
-			child.kill('SIGKILL');
+			send_sig(child.pid, 'SIGKILL');
 		}, 9 * 1000 );
 		
 		// try killing nicely first
-		child.kill('SIGTERM');
+		send_sig(child.pid, 'SIGTERM');
 	} );
 	
 } ); // stream
