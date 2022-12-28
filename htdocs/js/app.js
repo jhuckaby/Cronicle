@@ -72,7 +72,7 @@ app.extend({
 		this.server_groups = [];
 		
 		// timezone support
-		this.tz = jstz.determine().name();
+		this.tz = this.config.tz || jstz.determine().name();
 		this.zones = moment.tz.names();
 		
 		// preload a few essential images
