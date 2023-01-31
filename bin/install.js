@@ -1,5 +1,5 @@
 // Cronicle Auto Installer
-// Copyright (c) 2015 - 2019 Joseph Huckaby, MIT License.
+// Copyright (c) 2015 - 2023 Joseph Huckaby, MIT License.
 // https://github.com/jhuckaby/Cronicle
 
 // To install, issue this command as root:
@@ -11,7 +11,7 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.3';
+var installer_version = '1.4';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
@@ -20,7 +20,7 @@ var gh_releases_url = 'https://api.github.com/repos/jhuckaby/Cronicle/releases';
 var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.tar.gz';
 
 // don't allow npm to delete these (ugh)
-var packages_to_check = ['couchbase', 'aws-sdk', 'redis'];
+var packages_to_check = ['couchbase', 'redis', 'ioredis', 'ioredis-timeout', 'sqlite3'];
 var packages_to_rescue = {};
 
 var restore_packages = function() {
