@@ -182,7 +182,8 @@ Class.subclass( Page.Base, "Page.Home", {
 			schedule: app.schedule,
 			state: app.state,
 			categories: app.categories,
-			plugins: app.plugins
+			plugins: app.plugins,
+			holiday_cal: app.holiday_cal,
 		});
 	},
 	

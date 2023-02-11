@@ -134,7 +134,21 @@ app.extend({
 		delete resp.code;
 		
 		for (var key in resp) {
-			this[key] = resp[key];
+			var val = resp[key];
+			if(key==='holiday_cal'){
+				var holidayCal = new Map();
+				for (var idx = 0, len = val.length; idx < len; idx++) {
+					var item = val[idx];
+					holidayCal.set(item.timezone, {
+						"holidays": item.holidays,
+						"holidayFormat": item.holidayFormat,
+						"workingWeekdays": item.workingWeekdays
+					});
+				}
+				val = holidayCal;
+			}
+				
+			this[key] = val;
 		}
 		
 		if (this.isCategoryLimited() || this.isGroupLimited()) {

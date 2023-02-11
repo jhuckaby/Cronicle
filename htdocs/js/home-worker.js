@@ -28,6 +28,7 @@ onmessage = function(e) {
 	var cursors = state.cursors;
 	var categories = data.categories;
 	var plugins = data.plugins;
+	var holiday_cal = data.holiday_cal;
 	var events = [];
 	var max_events = 10000;
 	
@@ -56,11 +57,8 @@ onmessage = function(e) {
 		if (!item.catch_up) min_epoch = now + 60;
 		
 		// setup moment, and floor to the hour
-		moment.updateLocale('us', {
-            "holidays": ["02-09-2023", "02-12-2023", "02-10-2023"],
-            "holidayFormat": "MM-DD-YYYY",
-            "workingWeekdays": [1, 2, 3, 4, 5]
-        });
+		if(holiday_cal.has(item.timezone || default_tz))
+			moment.updateLocale('us', holiday_cal.get(item.timezone || default_tz));
 		var margs = moment(min_epoch * 1000).tz(item.timezone || default_tz);
 		margs.minutes(0).seconds(0).milliseconds(0);
 		
