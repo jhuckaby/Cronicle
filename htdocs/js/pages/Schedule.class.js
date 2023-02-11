@@ -841,7 +841,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			['hourly', 'Hourly']
 		];
 		
-		html += get_form_table_row( 'Timing', 
+		html += get_form_table_row( 'Due Timing', 
 			'<div class="right">' + 
 				'<table cellspacing="0" cellpadding="0"><tr>' + 
 					'<td><span class="label" style="font-size:12px;">Timezone:&nbsp;</span></td>' + 
@@ -852,9 +852,20 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			'<table cellspacing="0" cellpadding="0"><tr>' + 
 				'<td><select id="fe_ee_timing" onChange="$P().change_edit_timing()">' + render_menu_options(timing_items, tmode, false) + '</select></td>' + 
 				'<td><span class="link addme" style="padding-left:5px; font-size:13px;" title="Import from Crontab" onMouseUp="$P().show_crontab_import_dialog()">&laquo; Import...</span></td>' + 
-			'</tr></table>' + 
+				'</tr></table>' + 
 			
 			'<div class="clear"></div>'
+		);
+
+		html += get_form_table_row( '', 
+			'<div>' +
+				'<table cellspacing="0" cellpadding="0"><tr>' + 
+					'<td><span class="label" style="font-size:12px;">Run on: &nbsp;</span></td>' + 
+					'<td><input type="text" id="fe_ee_triggerbefore" style="width:30px; height:10px;" onChange="$P().change_triggerBefore()" value="'+escape_text_field_value(event.triggerBefore || 0)+'"/></td>' +
+					'<td><select id="fe_ee_datecalctype" style="max-width:150px; font-size:12px;" onChange="$P().change_dateCalcType()">' + render_menu_options(["Business", "Calendar"], event.dateCalcType || "Business", false) + '</select></td>' + 
+					'<td><span class="label" style="font-size:12px;"> day/s before due date.&nbsp;</span></td>' +
+				'</tr></table>' +
+			'</div>'
 		);
 		
 		// timing params
@@ -1260,6 +1271,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// render out new RC date/time
 		$('#fe_ee_rc_time').data('epoch', new_cursor).val( this.rc_get_short_date_time( new_cursor ) );
+	},
+
+	change_dateCalcType: function() {
+		var event = this.event;
+		event.dateCalcType = $('#fe_ee_datecalctype').val();
+	},
+
+	change_triggerBefore: function() {
+		var event = this.event;
+		event.triggerBefore = $('#fe_ee_triggerbefore').val();
 	},
 	
 	change_edit_timing: function() {
@@ -1713,6 +1734,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// timezone
 		event.timezone = $('#fe_ee_timezone').val();
+
+		// date calculation type
+		event.dateCalcType = $('#fe_ee_datecalctype').val();
+
+		// trigger before
+		event.triggerBefore = $('#fe_ee_triggerbefore').val();
 		
 		// max children
 		event.max_children = parseInt( $('#fe_ee_max_children').val() );

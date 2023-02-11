@@ -10,10 +10,13 @@ var window = {};
 
 importScripts(
 	'external/moment.min.js',
+	'external/moment-businessdays.js',
 	'external/moment-timezone-with-data.min.js',
 	'common/xml.js', 
 	'common/tools.js', 
-	'common/datetime.js' 
+	'common/datetime.js',
+	'datecalc.js'
+
 );
 
 onmessage = function(e) {
@@ -53,11 +56,16 @@ onmessage = function(e) {
 		if (!item.catch_up) min_epoch = now + 60;
 		
 		// setup moment, and floor to the hour
-		var margs = moment.tz(min_epoch * 1000, item.timezone || default_tz);
+		moment.updateLocale('us', {
+            "holidays": ["02-09-2023", "02-12-2023", "02-10-2023"],
+            "holidayFormat": "MM-DD-YYYY",
+            "workingWeekdays": [1, 2, 3, 4, 5]
+        });
+		var margs = moment(min_epoch * 1000).tz(item.timezone || default_tz);
 		margs.minutes(0).seconds(0).milliseconds(0);
 		
 		for (var epoch = min_epoch; epoch < max_epoch; epoch += 3600) {
-			if (item.timing && check_event_hour(item.timing, margs)) {
+			if (item.timing && check_event_hour(item.timing, margs, item.timezone , item.dateCalcType, item.triggerBefore)) {
 				// item will run at least one time this hour
 				// so we can use the timing.minutes to populate events directly
 				var hour_start = margs.unix();
@@ -101,13 +109,14 @@ onmessage = function(e) {
 	);
 };
 
-function check_event_hour(timing, margs) {
+function check_event_hour(timing, margs, timezone, dateCalcType, triggerBefore) {
 	// check if event needs to run, up to the hour (do not check minute)
+	console.log("fdsjgjdf");
 	if (!timing) return false;
 	if (timing.hours && timing.hours.length && (timing.hours.indexOf(margs.hour()) == -1)) return false;
-	if (timing.weekdays && timing.weekdays.length && (timing.weekdays.indexOf(margs.day()) == -1)) return false;
+	if (this.checkToTriggerWeekdays(timing, margs, timezone, dateCalcType, triggerBefore)) return false;
 	if (timing.days && timing.days.length && (timing.days.indexOf(margs.date()) == -1)) return false;
-	if (timing.months && timing.months.length && (timing.months.indexOf(margs.month() + 1) == -1)) return false;
+	if (this.checkToTriggerDayOfMonth(timing, margs, timezone, dateCalcType, triggerBefore)) return false;
 	if (timing.years && timing.years.length && (timing.years.indexOf(margs.year()) == -1)) return false;
 	return true;
 };
