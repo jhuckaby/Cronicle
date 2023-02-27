@@ -109,11 +109,14 @@ onmessage = function(e) {
 
 function check_event_hour(timing, margs, timezone, dateCalcType, triggerBefore) {
 	// check if event needs to run, up to the hour (do not check minute)
-	console.log("fdsjgjdf");
+	console.log(timezone);
+	if(timezone == 'Asia/Calcutta')
+		a = 3+5;
+	
 	if (!timing) return false;
 	if (timing.hours && timing.hours.length && (timing.hours.indexOf(margs.hour()) == -1)) return false;
 	if (this.checkToTriggerWeekdays(timing, margs, timezone, dateCalcType, triggerBefore)) return false;
-	if (timing.days && timing.days.length && (timing.days.indexOf(margs.date()) == -1)) return false;
+	//if (timing.days && timing.days.length && (timing.days.indexOf(margs.date()) == -1)) return false;
 	if (this.checkToTriggerDayOfMonth(timing, margs, timezone, dateCalcType, triggerBefore)) return false;
 	if (timing.years && timing.years.length && (timing.years.indexOf(margs.year()) == -1)) return false;
 	return true;
