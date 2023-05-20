@@ -31,7 +31,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		app.setWindowTitle( "Scheduled Events" );
 		
 		var size = get_inner_window_size();
-		var col_width = Math.floor( ((size.width * 0.9) + 200) / 8 );
+		var col_width = 600;
 		var group_by = app.getPref('schedule_group_by');
 		var html = '';
 		
