@@ -19,6 +19,8 @@
 		+ [get_active_jobs](#get_active_jobs)
 		+ [update_job](#update_job)
 		+ [abort_job](#abort_job)
+		+ [get_master_state](#get_master_state)
+		+ [update_master_state](#update_master_state)
 	* [Event Data Format](#event-data-format)
 		+ [Event Timing Object](#event-timing-object)
 
