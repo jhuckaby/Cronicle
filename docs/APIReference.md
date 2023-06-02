@@ -707,6 +707,53 @@ Example response:
 
 See the [Standard Response Format](APIReference.md#standard-response-format) for details.
 
+### get_master_state
+
+```
+/api/app/get_master_state/v1
+```
+
+This fetches the current application "state", which contains information like the status of the scheduler (enabled or disabled).  The API accepts no parameters.  Example response:
+
+```js
+{
+	"code": 0,
+	"state": { "enabled": 1 }
+}
+```
+
+In addition to the [Standard Response Format](APIReference.md#standard-response-format), the response object will contain a `state` object.  This will contain an `enabled` property, which indicates the current state of the scheduler (enabled or disabled).  It may also contain other properties, but they are for internal use and can be ignored.
+
+### update_master_state
+
+```
+/api/app/update_master_state/v1
+```
+
+This updates the master application state, i.e. toggling the scheduler on/off.  API Keys require the `state_update` privilege to use this API.  Only HTTP POST (JSON data) is acceptable.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `enabled` | **(Required)** The desired new state of the scheduler (`1` for enabled or `0` for disabled). |
+
+Example request:
+
+```js
+{
+	"enabled": 1
+}
+```
+
+Example response:
+
+```js
+{
+	"code": 0
+}
+```
+
+See the [Standard Response Format](APIReference.md#standard-response-format) for details.
+
 ## Event Data Format
 
 Here are descriptions of all the properties in the event object, which is common in many API calls:
