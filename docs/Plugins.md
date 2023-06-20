@@ -81,13 +81,13 @@ The `params` object will contain all the custom parameter keys defined when you 
 
 ### JSON Output
 
-Your Plugin is expected to write JSON to STDOUT in order to report status back to the Cronicle daemon.  At the very least, you need to notify Cronicle that the job was completed.  This is done by printing a JSON object with a `complete` property set to `1` (or any true value).  You need to make sure the JSON is compacted onto a single line, and ends with a single EOL character (`\n` on Unix).  Example:
+Your Plugin is expected to write JSON to STDOUT in order to report status back to the Cronicle daemon.  At the very least, you need to notify Cronicle that the job was completed, and the result of the job (i.e. success or fail).  This is done by printing a JSON object with a `complete` property set to `1`, and a `code` property set to `0` indicating success.  You need to make sure the JSON is compacted onto a single line, and ends with a single EOL character (`\n` on Unix).  Example:
 
 ```js
-{ "complete": 1 }
+{ "complete": 1, "code": 0 }
 ```
 
-This tells Cronicle that the job was completed, and your process is about to exit.  By default, the job is considered a success.  However, if the job failed and you need to report an error, you must include a `code` property set to any non-zero error code you want, and a `description` property set to a custom error message.  Include these along with the `complete` property in the JSON.  Example:
+This tells Cronicle that the job was completed successfully, and your process is about to exit.  However, if the job failed and you need to report an error, you need to set the `code` property set to any non-zero error code you want, and add a `description` property set to a custom error string.  Include these along with the `complete` property in the JSON.  Example:
 
 ```js
 { "complete": 1, "code": 999, "description": "Failed to connect to database." }
