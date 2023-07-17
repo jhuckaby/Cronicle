@@ -75,6 +75,9 @@
 		"concurrency": 4,
 		"log_event_types": { "get": 1, "put": 1, "head": 1, "delete": 1, "expire_set": 1 },
 		
+		"transactions": true,
+		"trans_auto_recover": true,
+		
 		"Filesystem": {
 			"base_dir": "data",
 			"key_namespaces": 1

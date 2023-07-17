@@ -11,7 +11,7 @@ var util = require('util');
 var os = require('os');
 var cp = require('child_process');
 
-var installer_version = '1.4';
+var installer_version = '1.5';
 var base_dir = '/opt/cronicle';
 var log_dir = base_dir + '/logs';
 var log_file = '';
@@ -22,6 +22,12 @@ var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.t
 // don't allow npm to delete these (ugh)
 var packages_to_check = ['couchbase', 'redis', 'ioredis', 'ioredis-timeout', 'sqlite3'];
 var packages_to_rescue = {};
+
+// Error out if Node.js version is old
+if (process.version.match(/^v?(\d+)/) && (parseInt(RegExp.$1) < 16) && !process.env['CRONICLE_OLD']) {
+	console.error("\nERROR: You are using an incompatible version of Node.js (" + process.version + ").  Please upgrade to v16 or later.  Instructions: https://nodejs.org/en/download/package-manager\n\nTo ignore this error and run unsafely, set a CRONICLE_OLD environment variable.  Do this at your own risk.\n");
+	process.exit(1);
+}
 
 var restore_packages = function() {
 	// restore packages that npm killed during upgrade
