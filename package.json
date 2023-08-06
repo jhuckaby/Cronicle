@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.19",
+	"version": "0.9.25",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
@@ -50,8 +50,8 @@
 		"pixl-tools": "^1.0.31",
 		"pixl-webapp": "^2.0.2",
 		"shell-quote": "1.7.3",
-		"socket.io": "4.5.4",
-		"socket.io-client": "4.5.3",
+		"socket.io": "4.7.1",
+		"socket.io-client": "4.7.1",
 		"uglify-js": "3.14.3",
 		"uncatch": "^1.0.0",
 		"zxcvbn": "3.5.0"

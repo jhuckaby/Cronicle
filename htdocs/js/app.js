@@ -617,15 +617,19 @@ app.extend({
 		// toggle master scheduler switch on/off
 		var self = this;
 		var enabled = this.state.enabled ? 0 : 1;
+		var action = enabled ? 'enable' : 'disable';
 		
 		if (!this.hasPrivilege('state_update')) return;
 		
-		// $('#d_tab_master > i').removeClass().addClass('fa fa-spin fa-spinner');
-		
-		app.api.post( 'app/update_master_state', { enabled: enabled }, function(resp) {
-			app.showMessage('success', "Scheduler has been " + (enabled ? 'enabled' : 'disabled') + ".");
-			self.state.enabled = enabled;
-			self.updateMasterSwitch();
+		app.confirm( '<span style="color:red">Toggle Scheduler</span>', "Are you sure you want to " + action + " the scheduler?", ucfirst(action), function(result) {
+			if (result) {
+				app.hideDialog();
+				app.api.post( 'app/update_master_state', { enabled: enabled }, function(resp) {
+					app.showMessage('success', "Scheduler has been " + (enabled ? 'enabled' : 'disabled') + ".");
+					self.state.enabled = enabled;
+					self.updateMasterSwitch();
+				} );
+			}
 		} );
 	},
 	
