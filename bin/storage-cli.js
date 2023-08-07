@@ -28,6 +28,8 @@ while (argv.length && !argv[0].match(/^\-/)) {
 	commands.push( argv.shift() );
 }
 
+var cmd = commands.shift() || '';
+
 // now parse rest of cmdline args, if any
 var args = new Args( argv, {
 	debug: false,
@@ -38,6 +40,9 @@ args = args.get(); // simple hash
 
 // copy debug flag into config (for standalone)
 config.Storage.debug = args.debug;
+
+// disable storage transactions for CLI
+config.Storage.transactions = false;
 
 var print = function(msg) {
 	// print message to console
@@ -59,6 +64,21 @@ var verbose_warn = function(msg) {
 if (config.uid && (process.getuid() != 0)) {
 	print( "ERROR: Must be root to use this script.\n" );
 	process.exit(1);
+}
+
+// make sure cronicle isn't running (except for read-only commands)
+if (!cmd.toString().match(/^(export|get|fetch|view|cat|list_get|list_info)$/)) {
+	var is_running = false;
+	var pid_file = config.log_dir + '/cronicled.pid';
+	try {
+		var pid = fs.readFileSync(pid_file, { encoding: 'utf8' });
+		is_running = process.kill( pid, 0 );
+	}
+	catch (err) {;}
+	if (is_running && !args.force) {
+		print( "ERROR: Please stop Cronicle before running this script.\n" );
+		process.exit(1);
+	}
 }
 
 // determine server hostname
@@ -128,7 +148,6 @@ var storage = new StandaloneStorage(config.Storage, function(err) {
 	} );
 	
 	// process command
-	var cmd = commands.shift();
 	verbose("\n");
 	
 	switch (cmd) {
