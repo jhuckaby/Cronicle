@@ -114,26 +114,21 @@ Replace `USERNAME` with the desired username, and `PASSWORD` with the desired pa
 
 ## Server Startup
 
-Here are the instructions for making Cronicle automatically start on server boot (Linux only).  Type these commands as root:
+Cronicle will automatically register itself as a system service when it is first installed, so it will automatically start itself on server boot.  This is done via the [pixl-boot](https://github.com/jhuckaby/pixl-boot) module, and it supports [Systemd](https://en.wikipedia.org/wiki/Systemd) if available, falling back to [Sysv Init](https://en.wikipedia.org/wiki/Init#SysV-style) or others.
 
-```
-cp /opt/cronicle/bin/cronicled.init /etc/init.d/cronicled
-chmod 775 /etc/init.d/cronicled
-```
+If you do **not** want Cronicle to automatically start itself on boot, you can disable it with this command:
 
-Then, if you have a RedHat-style Linux (i.e. Fedora, CentOS), type this:
-
-```
-chkconfig cronicled on
+```sh
+cd /opt/cronicle
+npm run unboot
 ```
 
-Or, if you have Debian-style Linux (i.e. Ubuntu), type this:
+If you change your mind and want to reenable it, use this command:
 
+```sh
+cd /opt/cronicle
+npm run boot
 ```
-update-rc.d cronicled defaults
-```
-
-For multi-server clusters, you'll need to repeat these steps on each server.
 
 **Important Note:** When Cronicle starts on server boot, it typically does not have a proper user environment, namely a `PATH` environment variable.  So if your scripts rely on binary executables in alternate locations, e.g. `/usr/local/bin`, you may have to restore the `PATH` and other variables inside your scripts by redeclaring them.
 

@@ -1,13 +1,18 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.26",
+	"version": "0.9.27",
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
 	"homepage": "https://github.com/jhuckaby/Cronicle",
 	"license": "MIT",
 	"main": "lib/main.js",
+	"bin": "bin/control.sh",
 	"scripts": {
-		"test": "pixl-unit lib/test.js"
+		"test": "pixl-unit lib/test.js",
+		"postinstall": "pixl-boot install",
+		"preuninstall": "pixl-boot uninstall",
+		"boot": "pixl-boot install",
+		"unboot": "pixl-boot uninstall"
 	},
 	"repository": {
 		"type": "git",
@@ -34,6 +39,7 @@
 		"moment-timezone": "0.5.35",
 		"netmask": "2.0.1",
 		"pixl-args": "^1.0.3",
+		"pixl-boot": "^2.0.0",
 		"pixl-class": "^1.0.2",
 		"pixl-cli": "^1.0.8",
 		"pixl-config": "^1.0.5",
