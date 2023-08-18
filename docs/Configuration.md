@@ -456,21 +456,25 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 		
 		"engine": "S3",
 		"AWS": {
-			"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
-			"secretAccessKey": "YOUR_AMAZON_SECRET_KEY", 
 			"region": "us-west-1",
-			"correctClockSkew": true,
-			"maxRetries": 5,
-			"httpOptions": {
-				"connectTimeout": 5000,
-				"timeout": 5000
+			"credentials": {
+				"accessKeyId": "YOUR_AMAZON_ACCESS_KEY", 
+				"secretAccessKey": "YOUR_AMAZON_SECRET_KEY"
 			}
 		},
 		"S3": {
-			"keyPrefix": "cronicle",
+			"connectTimeout": 5000,
+			"socketTimeout": 5000,
+			"maxAttempts": 50,
+			"keyPrefix": "",
 			"fileExtensions": true,
 			"params": {
-				"Bucket": "YOUR_S3_BUCKET_ID"
+				"Bucket": "MY_S3_BUCKET_ID"
+			},
+			"cache": {
+				"enabled": true,
+				"maxItems": 1000,
+				"maxBytes": 10485760
 			}
 		}
 	}
