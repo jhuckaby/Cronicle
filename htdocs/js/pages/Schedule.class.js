@@ -98,7 +98,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			
 			// keyword filter
 			var words = [item.title, item.username, item.notes, item.target].join(' ').toLowerCase();
-			if (args.keywords && words.indexOf(args.keywords.toLowerCase()) == -1) continue;
+			if (('keywords' in args) && words.indexOf(args.keywords.toString().toLowerCase()) == -1) continue;
 			
 			// enabled filter
 			if ((args.enabled == 1) && !item.enabled) continue;
