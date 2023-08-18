@@ -393,7 +393,7 @@ Class.add( Page.Admin, {
 		html += get_form_table_spacer();
 		
 		// account status
-		html += get_form_table_row( 'Account Status', '<select id="fe_eu_status">' + render_menu_options([[1,'Active'], [0,'Suspended']], user.active) + '</select>' );
+		html += get_form_table_row( 'Account Status', '<select id="fe_eu_status">' + render_menu_options([['1','Active'], ['0','Suspended']], user.active) + '</select>' );
 		html += get_form_table_caption( "'Suspended' means that the account remains in the system, but the user cannot log in." );
 		html += get_form_table_spacer();
 		
@@ -529,7 +529,7 @@ Class.add( Page.Admin, {
 		// get user elements from form, used for new or edit
 		var user = {
 			username: trim($('#fe_eu_username').val().toLowerCase()),
-			active: $('#fe_eu_status').val(),
+			active: ($('#fe_eu_status').val() === "1") ? 1 : 0,
 			full_name: trim($('#fe_eu_fullname').val()),
 			email: trim($('#fe_eu_email').val()),
 			password: $('#fe_eu_password').val(),
