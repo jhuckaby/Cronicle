@@ -14,6 +14,8 @@
 		+ [create_event](#create_event)
 		+ [update_event](#update_event)
 		+ [delete_event](#delete_event)
+		+ [get_event_history](#get_event_history)
+		+ [get_history](#get_history)
 		+ [run_event](#run_event)
 		+ [get_job_status](#get_job_status)
 		+ [get_active_jobs](#get_active_jobs)
