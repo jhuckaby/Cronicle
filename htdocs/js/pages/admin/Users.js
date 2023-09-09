@@ -529,7 +529,7 @@ Class.add( Page.Admin, {
 		// get user elements from form, used for new or edit
 		var user = {
 			username: trim($('#fe_eu_username').val().toLowerCase()),
-			active: ($('#fe_eu_status').val() === "1") ? 1 : 0,
+			active: parseInt($('#fe_eu_status').val()),
 			full_name: trim($('#fe_eu_fullname').val()),
 			email: trim($('#fe_eu_email').val()),
 			password: $('#fe_eu_password').val(),
