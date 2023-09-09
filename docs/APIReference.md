@@ -406,6 +406,80 @@ Example response:
 
 See the [Standard Response Format](APIReference.md#standard-response-format) for details.
 
+### get_event_history
+
+```
+/api/app/get_event_history/v1
+```
+
+This fetches the event history (i.e. previously completed jobs) for a specific event.  The response array is sorted by reverse timestamp (descending), so the latest jobs are listed first.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `id` | The **Event ID** of the scheduled event you want to get history for.  You can find this on the Edit Event page at the very top of the form, above the event title.  |
+| `offset` | The offset into the data.  Passing `0` means get the latest jobs. |
+| `limit` | The number of jobs to fetch. |
+
+Example request:
+
+```js
+{
+	"id": "3c182051",
+	"offset": 0,
+	"limit": 100
+}
+```
+
+Example response:
+
+```js
+{
+	"code": 0,
+	"rows": [ {...}, {...}, ... ],
+	"list": { "length": 500 }
+}
+```
+
+In addition to the [Standard Response Format](APIReference.md#standard-response-format), the `rows` array contains information about the completed jobs, each one following the [Event Data Format](#event-data-format).  The `list.length` property contains the full list of all available items, regardless of your `offset` and `limit` parameters.
+
+This API requires authentication, so please setup an [API Key](#api-keys) and pass it in using any of the methods available.
+
+### get_history
+
+```
+/api/app/get_history/v1
+```
+
+This fetches previously completed jobs for **all** events.  The response array is sorted by reverse timestamp (descending), so the latest jobs are listed first.  The parameters are as follows:
+
+| Parameter Name | Description |
+|----------------|-------------|
+| `offset` | The offset into the data.  Passing `0` means get the latest jobs. |
+| `limit` | The number of jobs to fetch. |
+
+Example request:
+
+```js
+{
+	"offset": 0,
+	"limit": 100
+}
+```
+
+Example response:
+
+```js
+{
+	"code": 0,
+	"rows": [ {...}, {...}, ... ],
+	"list": { "length": 500 }
+}
+```
+
+In addition to the [Standard Response Format](APIReference.md#standard-response-format), the `rows` array contains information about the completed jobs, each one following the [Event Data Format](#event-data-format).  The `list.length` property contains the full list of all available items, regardless of your `offset` and `limit` parameters.
+
+This API requires authentication, so please setup an [API Key](#api-keys) and pass it in using any of the methods available.
+
 ### run_event
 
 ```
