@@ -26,6 +26,7 @@
 	"universal_web_hook": "",
 	"track_manual_jobs": false,
 	"max_jobs": 0,
+	"remote_server_port": 3012,
 	
 	"server_comm_use_hostnames": false,
 	"web_direct_connect": false,
