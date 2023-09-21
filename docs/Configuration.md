@@ -43,6 +43,7 @@
 		+ [web_direct_connect](#web_direct_connect)
 		+ [web_socket_use_hostnames](#web_socket_use_hostnames)
 		+ [socket_io_transports](#socket_io_transports)
+		+ [remote_server_port](#remote_server_port)
 		+ [max_jobs](#max_jobs)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
