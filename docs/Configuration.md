@@ -355,9 +355,9 @@ However, please only do this if you know exactly what you are doing, and why.
 
 ### remote_server_port
 
-Normally, Cronicle will attempt to connect to its worker servers on the same HTTP port that the master server is listening on.  However, in some custom / advanced setups, this may be different.  For those cases, you can define a `remote_server_port` property on the master server.  If defined, Cronicle master servers will use this custom port number to connect to its worker servers, rather than the default.
+Normally, Cronicle will attempt to connect to its worker servers on the same HTTP port that the master server is listening on.  However, in some custom / advanced setups, this may be different.  For those cases, you can define a `remote_server_port` property on the master server.  If defined, Cronicle master servers will use this custom port number to connect to its worker servers, rather than the default.  For example, some people may want their master servers to listen on port 80, but their worker servers to listen on another port, such as 3012.
 
-For example, some people may want their master servers to listen on port 80, but their worker servers to listen on another port, such as 3012.
+**Important Note:** This feature only works for *single-master* setups!  If you have multiple master servers, they all must listen on the same web server port, and you cannot use `remote_server_port`.  This is a hack at best, and is designed only for single-master multi-worker setups, where the workers have to listen on a different port.
 
 ### max_jobs
 
