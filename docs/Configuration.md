@@ -352,6 +352,12 @@ However, if you are trying to run Cronicle in an environment where WebSockets ar
 
 However, please only do this if you know exactly what you are doing, and why.
 
+### remote_server_port
+
+Normally, Cronicle will attempt to connect to its worker servers on the same HTTP port that the master server is listening on.  However, in some custom / advanced setups, this may be different.  For those cases, you can define a `remote_server_port` property on the master server.  If defined, Cronicle master servers will use this custom port number to connect to its worker servers, rather than the default.
+
+For example, some people may want their master servers to listen on port 80, but their worker servers to listen on another port, such as 3012.
+
 ### max_jobs
 
 You can optionally set a global maximum number of concurrent jobs to allow.  This is across all servers and categories, and is designed as an "emergency brake" for runaway events.  The property is called `max_jobs`.  The default is `0` (no limit).  Example:
