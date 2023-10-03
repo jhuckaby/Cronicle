@@ -32,7 +32,6 @@
 		+ [web_hook_custom_data](#web_hook_custom_data)
 		+ [web_hook_custom_opts](#web_hook_custom_opts)
 		+ [web_hook_text_templates](#web_hook_text_templates)
-		+ [ssl_cert_bypass](#ssl_cert_bypass)
 		+ [job_memory_max](#job_memory_max)
 		+ [job_memory_sustain](#job_memory_sustain)
 		+ [job_cpu_max](#job_cpu_max)
@@ -247,6 +246,25 @@ If you need to customize the low-level properties sent to the Node.js [http.requ
 }
 ```
 
+You can also use this to enable [retries](https://github.com/jhuckaby/pixl-request#automatic-retries) and [redirect following](https://github.com/jhuckaby/pixl-request#automatic-redirects).  Example of enabling both:
+
+ ```js
+"web_hook_custom_opts": {
+	"retries": 3,
+	"follow": 2
+}
+```
+
+If you are having trouble getting HTTPS (SSL) web hooks to work, you might need to set `rejectUnauthorized` to true here.  This causes Node.js to blindly accept the web hook SSL connection, even when it cannot validate the SSL certificate.  Example:
+
+```js
+"web_hook_custom_opts": {
+	"rejectUnauthorized": true
+}
+```
+
+Please only do this if you understand the security ramifications, and *completely trust* the host(s) you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
+
 See the [http.request](https://nodejs.org/api/http.html#http_http_request_options_callback) docs for all the possible properties you can set here.
 
 ### web_hook_text_templates
@@ -265,18 +283,6 @@ The web hook JSON POST data includes a `text` property which is a simple summary
 You can customize these text strings by including a `web_hook_text_templates` object in your configuration, and setting each of the action properties within.  Also, you can use this to *disable* any of the web hook actions, by simply removing certain action keys.  For example, if you don't want to fire a web hook for starting a job, remove the `job_start` key.  If you only want web hooks to fire for errors, remove both the `job_start` and `job_complete` keys.
 
 The text string templates can use any data values from the web hook JSON data by inserting `[square_bracket]` placeholders.  See the [Web Hooks](WebUI.md#event-web-hook) section below for more on the data format, and which values are available.
-
-### ssl_cert_bypass
-
-If you are having trouble getting HTTPS web hooks or SSL SMTP e-mails to work, you might need to set `ssl_cert_bypass` to true.  This causes Node.js to blindly accept all SSL connections, even when it cannot validate the SSL certificate.  This effectively sets the following environment variable at startup:
-
-```js
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-```
-
-Please only do this if you understand the security ramifications, and *completely trust* the host(s) you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
-
-For legacy compatibility, the old `web_hook_ssl_cert_bypass` property is still accepted, and has the same effect as `ssl_cert_bypass`.
 
 ### job_memory_max
 

@@ -33,11 +33,6 @@ stream.on('json', function(job) {
 	// timeout
 	request.setTimeout( (params.timeout || 0) * 1000 );
 	
-	// ssl cert bypass
-	if (params.ssl_cert_bypass) {
-		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-	}
-	
 	if (!params.url || !params.url.match(/^https?\:\/\/\S+$/i)) {
 		stream.write({ complete: 1, code: 1, description: "Malformed URL: " + (params.url || '(n/a)') });
 		return;
@@ -67,6 +62,11 @@ stream.on('json', function(job) {
 	var opts = {
 		method: params.method
 	};
+	
+	// ssl cert bypass
+	if (params.ssl_cert_bypass) {
+		opts.rejectUnauthorized = true;
+	}
 	
 	// post data
 	if (opts.method == 'POST') {
