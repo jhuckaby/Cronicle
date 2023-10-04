@@ -56,7 +56,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		
 		// render table
 		var cols = [
-			'<i class="fa fa-check-square-o"></i>', 
+			config.hide_schedule_checkboxes ? '&nbsp;' : '<i class="fa fa-check-square-o"></i>', 
 			'Event Name', 
 			'Category', 
 			'Plugin', 
@@ -175,8 +175,11 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				group.multiplex = 1;
 			}
 			
+			var toggle_html = '<input type="checkbox" style="cursor:pointer" onChange="$P().change_event_enabled('+idx+')" '+(item.enabled ? 'checked="checked"' : '')+'/>';
+			if (config.hide_schedule_checkboxes) toggle_html = '&nbsp;';
+			
 			var tds = [
-				'<input type="checkbox" style="cursor:pointer" onChange="$P().change_event_enabled('+idx+')" '+(item.enabled ? 'checked="checked"' : '')+'/>', 
+				toggle_html, 
 				'<div class="td_big"><span class="link" onMouseUp="$P().edit_event('+idx+')">' + self.getNiceEvent(item, col_width) + '</span></div>',
 				self.getNiceCategory( cat, col_width ),
 				self.getNicePlugin( plugin, col_width ),
