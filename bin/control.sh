@@ -18,6 +18,9 @@
 # |||||||||||||||||||| START CONFIGURATION SECTION  ||||||||||||||||||||
 # --------------------                              --------------------
 # 
+# add some common paths
+PATH=$PATH:/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/usr/local/sbin
+#
 # the name of your binary
 NAME="Cronicle Daemon"
 #
