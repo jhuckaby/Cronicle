@@ -13,6 +13,7 @@
 			- [Changing Notification Settings](#changing-notification-settings)
 			- [Chain Reaction Control](#chain-reaction-control)
 				* [Chain Data](#chain-data)
+				* [Chain Params](#chain-params)
 			- [Custom Data Tables](#custom-data-tables)
 			- [Custom HTML Content](#custom-html-content)
 			- [Updating The Event](#updating-the-event)
@@ -225,6 +226,16 @@ You can pass custom JSON data to the next event in the chain, when using a [Chai
 ```
 
 So in this case when the event `e29bf12db` runs, it will be passed your `chain_data` object as part of the JSON sent to it when the job starts.  The Plugin code running the chained event can access the data by parsing the JSON and grabbing the `chain_data` property.
+
+##### Chain Params
+
+In addition to passing `chain_data` to chained events (see above), you can also override some or all the *parameters* of the chained event (the key/value pairs normally populated by the Plugin).  To do this, specify a JSON property called `chain_params` in your JSON output, and pass in an object containing param keys.  This will be merged with the default event Plugin parameters when the chained job is executed.  Example:
+
+```js
+{ "chain": "e29bf12db", "chain_params": { "custom_key": "foobar", "value": 42 } }
+```
+
+Note that the contents of the `chain_params` object will be *shallow-merged* into the event's default Plugin params, so your object can be sparsely populated.  This is done so that you can replace any keys that you want, or even add new ones, and you do not need to specify all the params the event is expecting.
 
 #### Custom Data Tables
 
