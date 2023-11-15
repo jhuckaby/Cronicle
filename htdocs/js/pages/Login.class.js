@@ -34,7 +34,7 @@ Class.subclass( Page.Base, "Page.Login", {
 		// html += '<iframe name="i_login" id="i_login" src="blank.html" width="1" height="1" style="display:none"></iframe>';
 		// html += '<form id="f_login" method="post" action="/api/user/login?format=jshtml&callback=window.parent.%24P%28%29.doFrameLogin" target="i_login">';
 		
-		html += '<div class="inline_dialog_container">';
+		html += '<form class="inline_dialog_container">';
 			html += '<div class="dialog_title shade-light">User Login</div>';
 			html += '<div class="dialog_content">';
 				html += '<center><table style="margin:0px;">';
@@ -60,7 +60,7 @@ Class.subclass( Page.Base, "Page.Login", {
 				html += '<td width="20">&nbsp;</td>';
 				html += '<td><div class="button" style="width:120px;" onMouseUp="$P().doLogin()"><i class="fa fa-sign-in">&nbsp;&nbsp;</i>Login</div></td>';
 			html += '</tr></table></center></div>';
-		html += '</div>';
+		html += '</form>';
 		
 		// html += '<input type="submit" value="Login" style="position:absolute; left:-9999px; top:0px;">';
 		html += '</form>';
@@ -157,7 +157,7 @@ Class.subclass( Page.Base, "Page.Login", {
 		this.div.css({ 'padding-top':'75px', 'padding-bottom':'75px' });
 		var html = '';
 		
-		html += '<div class="inline_dialog_container">';
+		html += '<form class="inline_dialog_container">';
 			html += '<div class="dialog_title shade-light">Create Account</div>';
 			html += '<div class="dialog_content">';
 				html += '<center><table style="margin:0px;">';
@@ -188,7 +188,7 @@ Class.subclass( Page.Base, "Page.Login", {
 				html += '<td width="50">&nbsp;</td>';
 				html += '<td><div class="button" style="width:120px;" onMouseUp="$P().doCreateAccount()"><i class="fa fa-user-plus">&nbsp;&nbsp;</i>Create</div></td>';
 			html += '</tr></table></center></div>';
-		html += '</div>';
+		html += '</form>';
 		
 		this.div.html( html );
 		
@@ -264,7 +264,7 @@ Class.subclass( Page.Base, "Page.Login", {
 		this.div.css({ 'padding-top':'75px', 'padding-bottom':'75px' });
 		var html = '';
 		
-		html += '<div class="inline_dialog_container">';
+		html += '<form class="inline_dialog_container">';
 			html += '<div class="dialog_title shade-light">Forgot Password</div>';
 			html += '<div class="dialog_content">';
 				html += '<center><table style="margin:0px;">';
@@ -284,7 +284,7 @@ Class.subclass( Page.Base, "Page.Login", {
 				html += '<td width="50">&nbsp;</td>';
 				html += '<td><div class="button" style="width:120px;" onMouseUp="$P().doSendRecoveryEmail()"><i class="fa fa-envelope-o">&nbsp;&nbsp;</i>Send Email</div></td>';
 			html += '</tr></table></center></div>';
-		html += '</div>';
+		html += '</form>';
 		
 		this.div.html( html );
 		
@@ -335,7 +335,7 @@ Class.subclass( Page.Base, "Page.Login", {
 		this.div.css({ 'padding-top':'75px', 'padding-bottom':'75px' });
 		var html = '';
 		
-		html += '<div class="inline_dialog_container">';
+		html += '<form class="inline_dialog_container">';
 			html += '<div class="dialog_title shade-light">Reset Password</div>';
 			html += '<div class="dialog_content">';
 				html += '<center><table style="margin:0px;">';
@@ -355,7 +355,7 @@ Class.subclass( Page.Base, "Page.Login", {
 			html += '<div class="dialog_buttons"><center><table><tr>';
 				html += '<td><div class="button" style="width:130px;" onMouseUp="$P().doResetPassword()"><i class="fa fa-key">&nbsp;&nbsp;</i>Reset Password</div></td>';
 			html += '</tr></table></center></div>';
-		html += '</div>';
+		html += '</form>';
 		
 		this.div.html( html );
 		
