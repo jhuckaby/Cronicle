@@ -11,6 +11,9 @@
 		+ [Load Balancers](#load-balancers)
 		+ [Ops Notes](#ops-notes)
 
+# One-click deploy on sealos
+[![](https://raw.githubusercontent.com/labring-actions/templates/main/Deploy-on-Sealos.svg)](https://cloud.sealos.io/?openapp=system-template%3FtemplateName%3Dcronicle)
+
 # Installation
 
 Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  You'll also need to have [Node.js LTS](https://nodejs.org/en/download/) pre-installed on your server.  Please note that we **only support the Active LTS versions of Node.js**.  Cronicle may not work on the "current" release channel.  See [Node.js Releases](https://nodejs.org/en/about/releases/) for details.
