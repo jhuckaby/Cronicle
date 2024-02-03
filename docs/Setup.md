@@ -13,7 +13,7 @@
 
 # Installation
 
-Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  You'll also need to have [Node.js LTS](https://nodejs.org/en/download/) pre-installed on your server.  Please note that we **only support the Active LTS versions of Node.js**.  Cronicle may not work on the "current" release channel.  See [Node.js Releases](https://nodejs.org/en/about/releases/) for details.
+Please note that Cronicle currently only works on POSIX-compliant operating systems, which basically means Unix/Linux and OS X.  You'll also need to have [Node.js LTS](https://nodejs.org/en/download/) pre-installed on your server.  Please note that we **only support the Active LTS versions of Node.js**.  Cronicle may not work on the "current" release channel.  See [Node.js Releases](https://nodejs.org/en/about/releases/) for details.  Please note that Node.js **must** be installed to a standard location like `/usr/bin` or `/usr/local/bin`.
 
 Once you have Node.js LTS installed, type this as root:
 
