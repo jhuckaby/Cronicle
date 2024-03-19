@@ -23,6 +23,7 @@
 		+ [abort_job](#abort_job)
 		+ [get_master_state](#get_master_state)
 		+ [update_master_state](#update_master_state)
+        + [get_servers](#get_servers)
 	* [Event Data Format](#event-data-format)
 		+ [Event Timing Object](#event-timing-object)
 
@@ -831,6 +832,36 @@ Example response:
 ```
 
 See the [Standard Response Format](APIReference.md#standard-response-format) for details.
+
+### get_servers
+
+```
+/api/app/get_servers/v1
+```
+
+This provides the state of each server belonging to cluster.  API Keys require the `admin` privilege to use this API. The API accepts no parameters.
+
+Example response:
+
+```js
+{
+	"code": 0,
+	"servers": {
+		"node1.example.org": {
+			"hostname": "node1.example.org",
+			"ip": "0.0.0.0",
+			"master": 1,
+			"uptime": 86400,
+			"data": {
+				"cpu": 5.5,
+				"mem": 1883082752
+			},
+			"disabled": 0
+		}
+	}
+```
+
+In addition to the [Standard Response Format](APIReference.md#standard-response-format), the response object will contain a `servers` object.  This object contains an entry per server, with several properties such as master state (1 for master, 0 else), uptime in seconds and others shown above.
 
 ## Event Data Format
 
