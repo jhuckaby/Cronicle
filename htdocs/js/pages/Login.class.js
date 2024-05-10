@@ -31,8 +31,6 @@ Class.subclass( Page.Base, "Page.Login", {
 		
 		this.div.css({ 'padding-top':'75px', 'padding-bottom':'75px' });
 		var html = '';
-		// html += '<iframe name="i_login" id="i_login" src="blank.html" width="1" height="1" style="display:none"></iframe>';
-		// html += '<form id="f_login" method="post" action="/api/user/login?format=jshtml&callback=window.parent.%24P%28%29.doFrameLogin" target="i_login">';
 		
 		html += '<div class="inline_dialog_container">';
 			html += '<div class="dialog_title shade-light">User Login</div>';

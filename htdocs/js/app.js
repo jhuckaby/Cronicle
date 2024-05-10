@@ -22,7 +22,7 @@ app.extend({
 		// receive config from server
 		if (resp.code) {
 			app.showProgress( 1.0, "Waiting for master server..." );
-			setTimeout( function() { load_script( '/api/app/config?callback=app.receiveConfig' ); }, 1000 );
+			setTimeout( function() { load_script( '/api/app/config' ); }, 1000 );
 			return;
 		}
 		delete resp.code;
