@@ -232,12 +232,12 @@ If any of the following situations occur, and the event has Run All (Catch-Up) m
 * Job could not run due to the event category or Plugin being disabled.
 * Server running the job was shut down.
 * Server running the job crashed.
-* Job was aborted due to exceeding a timeout limit.
 * Job was aborted due to exceeding a resource limit (RAM or CPU).
 
 The only time a Catch-Up job is *not* re-run is when one of the following actions occur:
 
 * Job is manually aborted via the Web UI or API.
+* Job was aborted due to exceeding a timeout limit (see [Issue #369](https://github.com/jhuckaby/Cronicle/issues/369) for explanation).
 * Job fails due to error thrown from inside the Plugin (user code generated error).
 
 You can see all queued jobs on the [Home Tab](WebUI.md#home-tab).  They will be listed in the [Upcoming Events](WebUI.md#upcoming-events) table, and have their "Countdown" column set to "Now".  To jump over the queue and reset an event that has fallen behind, use the [Event Time Machine](WebUI.md#event-time-machine) feature.
