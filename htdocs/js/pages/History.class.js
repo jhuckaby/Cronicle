@@ -57,7 +57,7 @@ Class.subclass( Page.Base, "Page.History", {
 	get_history: function() {
 		var args = this.args;
 		if (!args.offset) args.offset = 0;
-		if (!args.limit) args.limit = 25;
+		if (!args.limit) args.limit = config.default_job_history_limit || 25;
 		app.api.post( 'app/get_history', copy_object(args), this.receive_history.bind(this) );
 	},
 	
@@ -147,7 +147,7 @@ Class.subclass( Page.Base, "Page.History", {
 	gosub_event_stats: function(args) {
 		// request event stats
 		if (!args.offset) args.offset = 0;
-		if (!args.limit) args.limit = 50;
+		if (!args.limit) args.limit = config.default_job_stats_limit || 50;
 		app.api.post( 'app/get_event_history', copy_object(args), this.receive_event_stats.bind(this) );
 	},
 	
