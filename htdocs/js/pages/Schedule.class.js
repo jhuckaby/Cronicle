@@ -304,6 +304,15 @@ Class.subclass( Page.Base, "Page.Schedule", {
 				}
 			});
 		}
+		else if (config.prompt_before_run) {
+			// show prompt before running
+			var msg = 'Are you sure you want to run the event "' + event.title + '" now?';
+			app.confirm( 'Run Event Now', msg, "Run", function(result) {
+				if (!result) return;
+				Dialog.hide();
+				self.run_event_now(event_idx);
+			} );
+		}
 		else this.run_event_now(event_idx);
 	},
 	
