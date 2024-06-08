@@ -223,8 +223,6 @@ This section allows you to select options on how jobs are handled for the event:
 
 ##### Run All Mode
 
-**NOTE 2024/05/15:** Run All Mode does not work with manually started jobs.  It will only re-run missed jobs that were actually pre-scheduled to run on the missed minutes.  This is a huge oversight, but it may not be possible for me to fix this in v0.  See [Issue #757](https://github.com/jhuckaby/Cronicle/issues/757) for details.
-
 When Run All (Catch-Up) Mode mode is enabled on an event, the scheduler will do its best to ensure that *every* scheduled job will run, even if they have to run late.  This is useful for time-sensitive events such as generating reports.  So for example, if you have an event scheduled to run hourly, but something prevents it from starting or completing (see below), the scheduler will *keep trying indefinitely* until each separate hourly job runs.  If the event cannot run for multiple hours, the jobs will simply queue up, and the scheduler will run them all in order, as quickly as its rules allow.
 
 If any of the following situations occur, and the event has Run All (Catch-Up) mode enabled, the scheduler will queue up and re-run all missed jobs:
