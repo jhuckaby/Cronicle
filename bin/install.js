@@ -29,6 +29,12 @@ if (process.version.match(/^v?(\d+)/) && (parseInt(RegExp.$1) < 16) && !process.
 	process.exit(1);
 }
 
+// Error out if we have low memory
+if ((os.totalmem() < 64 * 1024 * 1024) && !process.env['CRONICLE_DANGER']) {
+	console.error("\nERROR: The current machine has less than 64 MB of total RAM.  Cronicle will likely fail to install successfully under such low memory conditions.\n\nTo ignore this error and attempt the install anyway, set a CRONICLE_DANGER environment variable.  Do this at your own risk.\n");
+	process.exit(1);
+}
+
 var restore_packages = function() {
 	// restore packages that npm killed during upgrade
 	var cmd = "npm install";
