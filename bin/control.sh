@@ -22,7 +22,7 @@
 PATH=$PATH:/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/usr/local/sbin
 #
 # the name of your binary
-NAME="Cronicle Daemon"
+NAME="Cronicle Server"
 #
 # home directory
 HOMEDIR="$(dirname "$(cd -- "$(dirname "$0")" && (pwd -P 2>/dev/null || pwd))")"
@@ -40,60 +40,69 @@ PIDFILE=$HOMEDIR/logs/cronicled.pid
 ERROR=0
 ARGV="$@"
 if [ "x$ARGV" = "x" ] ; then 
-    ARGS="help"
+	ARGS="help"
 fi
 
 for ARG in $@ $ARGS
 do
-    # check for pidfile
-    if [ -f $PIDFILE ] ; then
+	# check for pidfile
+	if [ -f $PIDFILE ] ; then
 		PID=`cat $PIDFILE`
-	if [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; then
-	    STATUS="$NAME running (pid $PID)"
-	    RUNNING=1
+		if [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; then
+			# make sure process is actually ours
+			PS=`ps -p $PID -o args= | sed 's/[ \t]*$//'`
+			
+			if [ "$PS" = "$NAME" ] ; then
+				STATUS="$NAME running (pid $PID)"
+				RUNNING=1
+			else
+				STATUS="$NAME not running (pid $PID?)"
+				RUNNING=0
+			fi
+			
+		else
+			STATUS="$NAME not running (pid $PID?)"
+			RUNNING=0
+		fi
 	else
-	    STATUS="$NAME not running (pid $PID?)"
-	    RUNNING=0
-	fi
-    else
 		STATUS="$NAME not running (no pid file)"
 		RUNNING=0
-    fi
+	fi
 
-    case $ARG in
-    start)
+	case $ARG in
+	start)
 		if [ $RUNNING -eq 1 ]; then
-		    echo "$ARG: $NAME already running (pid $PID)"
-		    continue
+			echo "$ARG: $NAME already running (pid $PID)"
+			continue
 		fi
 		echo "$0 $ARG: Starting up $NAME..."
 		if $BINARY ; then
-		    echo "$0 $ARG: $NAME started"
+			echo "$0 $ARG: $NAME started"
 		else
-		    echo "$0 $ARG: $NAME could not be started"
-		    ERROR=3
+			echo "$0 $ARG: $NAME could not be started"
+			ERROR=3
 		fi
 	;;
-    stop)
+	stop)
 		if [ $RUNNING -eq 0 ]; then
-		    echo "$ARG: $STATUS"
-		    continue
+			echo "$ARG: $STATUS"
+			continue
 		fi
 		if kill $PID ; then
-	            while [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; do
-	                sleep 1;
-	            done
-		    echo "$0 $ARG: $NAME stopped"
+			while [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; do
+				sleep 1;
+			done
+			echo "$0 $ARG: $NAME stopped"
 		else
-		    echo "$0 $ARG: $NAME could not be stopped"
-		    ERROR=4
+			echo "$0 $ARG: $NAME could not be stopped"
+			ERROR=4
 		fi
 	;;
-    restart)
-        $0 stop start
+	restart)
+		$0 stop start
 	;;
-    cycle)
-        $0 stop start
+	cycle)
+		$0 stop start
 	;;
 	status)
 		echo "$ARG: $STATUS"
@@ -116,7 +125,7 @@ do
 	;;
 	import)
 		if [ $RUNNING -eq 1 ]; then
-		    $0 stop
+			$0 stop
 		fi
 		node $HOMEDIR/bin/storage-cli.js import $2 $3 $4
 		exit
@@ -134,7 +143,7 @@ do
 		echo "$PACKAGE_VERSION"
 		exit
 	;;
-    *)
+	*)
 	echo "usage: $0 (start|stop|cycle|status|setup|maint|admin|export|import|upgrade|help)"
 	cat <<EOF
 
