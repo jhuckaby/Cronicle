@@ -292,6 +292,8 @@ In addition to the required parameters, almost anything in the [Event Data Objec
 }
 ```
 
+In the above example we've included a `timing` object, and set it to run daily at 9:20 PM and 9:40 PM in the `America/New_York` timezone.  If you omit the `timing` object entirely, the event becomes "on demand", and can only be run manually via user or API.  If you do include a `timing` object but keep it empty (no properties inside it), the event will run **every** minute of **every** day of **every** month of **every** year.
+
 Example response:
 
 ```js
