@@ -907,7 +907,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			'<div class="caption">Run event as a detached background process that is never interrupted.</div>' + 
 			
 			'<div style="margin-top:10px"><input type="checkbox" id="fe_ee_queue" value="1" '+(event.queue ? 'checked="checked"' : '')+' onChange="$P().setGroupVisible(\'eq\',this.checked)"/><label for="fe_ee_queue">Allow Queued Jobs</label></div>' + 
-			'<div class="caption">Jobs will be queued that cannot run immediately.</div>'
+			'<div class="caption">Jobs that cannot run immediately will be queued.</div>'
 		);
 		html += get_form_table_spacer();
 		
