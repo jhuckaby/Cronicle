@@ -62,7 +62,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			'Plugin', 
 			'Target', 
 			'Timing', 
-			'Last Run', 
+			'Status', 
 			'Actions'
 		];
 		
@@ -236,6 +236,8 @@ Class.subclass( Page.Base, "Page.Schedule", {
 					$P().set_search_filters();
 				}
 			} ); 
+			
+			self.update_live_job_counts();
 		}, 1 );
 	},
 	
@@ -243,17 +245,62 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		// update last run state for all jobs, called when state is updated
 		if (!app.state.jobCodes) return;
 		
+		var event_counts = {};
+		
+		for (var job_id in app.activeJobs) {
+			var job = app.activeJobs[job_id];
+			event_counts[job.event] = (event_counts[job.event] || 0) + 1;
+		}
+		
 		for (var event_id in app.state.jobCodes) {
-			var last_code = app.state.jobCodes[event_id];
-			var status_html = last_code ? '<span class="color_label red clicky"><i class="fa fa-warning">&nbsp;</i>Error</span>' : '<span class="color_label green clicky"><i class="fa fa-check">&nbsp;</i>Success</span>';
+			if (!(event_id in event_counts)) {
+				var last_code = app.state.jobCodes[event_id];
+				var status_html = last_code ? '<span class="color_label red clicky"><i class="fa fa-warning">&nbsp;</i>Error</span>' : '<span class="color_label green clicky"><i class="fa fa-check">&nbsp;</i>Success</span>';
+				this.div.find('#ss_' + event_id).html( status_html );
+			}
+		}
+	},
+	
+	update_live_job_counts: function() {
+		// app.activeJobs
+		var event_counts = {};
+		
+		for (var job_id in app.activeJobs) {
+			var job = app.activeJobs[job_id];
+			event_counts[job.event] = (event_counts[job.event] || 0) + 1;
+		}
+		
+		for (var event_id in event_counts) {
+			var count = event_counts[event_id];
+			var status_html = '<span class="color_label blue">Running (' + count + ')</span>';
 			this.div.find('#ss_' + event_id).html( status_html );
 		}
+		
+		this.update_job_last_runs();
 	},
 	
 	jump_to_last_job: function(idx) {
 		// locate ID of latest completed job for event, and redirect to it
 		var event = this.events[idx];
+		var event_counts = {};
 		
+		for (var job_id in app.activeJobs) {
+			var job = app.activeJobs[job_id];
+			event_counts[job.event] = (event_counts[job.event] || 0) + 1;
+		}
+		
+		if (event_counts[event.id]) {
+			// if event has active jobs, change behavior of click
+			// if exactly 1 job, link to it -- if more, do nothing
+			if (event_counts[event.id] == 1) {
+				var job = find_object( Object.values(app.activeJobs), { event: event.id } );
+				if (job) Nav.go( 'JobDetails?id=' + job.id );
+				return;
+			}
+			else return;
+		}
+		
+		// jump to last completed job
 		app.api.post( 'app/get_event_history', { id: event.id, offset: 0, limit: 1 }, function(resp) {
 			if (resp && resp.rows && resp.rows[0]) {
 				var job = resp.rows[0];
@@ -1832,6 +1879,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 	
 	onStatusUpdate: function(data) {
 		// received status update (websocket)
+		if (data.jobs_changed) this.update_live_job_counts();
 	},
 	
 	onResizeDelay: function(size) {
