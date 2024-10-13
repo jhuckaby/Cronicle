@@ -56,7 +56,7 @@
 		"pixl-tools": "^1.1.1",
 		"pixl-webapp": "^2.0.2",
 		"shell-quote": "1.7.3",
-		"socket.io": "4.7.5",
+		"socket.io": "4.8.0",
 		"socket.io-client": "4.7.5",
 		"uglify-js": "3.14.3",
 		"uncatch": "^1.0.0",
