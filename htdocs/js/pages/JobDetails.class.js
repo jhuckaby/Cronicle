@@ -257,9 +257,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				html += '</div>';
 			html += '</div>';
 			
+			var nice_source = (job.source || 'Scheduler');
+			if (nice_source.match(/Chain Reaction/) && job.source_job) {
+				nice_source = '<a href="#JobDetails?id=' + job.source_job + '">' + nice_source + '</a>';
+			}
+			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB SOURCE</div>';
-				html += '<div class="info_value"><div class="ellip" style="max-width:'+col_width+'px;">' + (job.source || 'Scheduler') + '</div></div>';
+				html += '<div class="info_value"><div class="" style="">' + nice_source + '</div></div>';
 				
 				html += '<div class="info_label">SERVER HOSTNAME</div>';
 				html += '<div class="info_value">' + this.getNiceGroup( null, job.hostname, col_width ) + '</div>';
@@ -800,9 +805,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 				html += '<div class="info_value">' + this.getNiceGroup(group, event.target, col_width) + '</div>';
 			html += '</div>';
 			
+			var nice_source = (job.source || 'Scheduler');
+			if (nice_source.match(/Chain Reaction/) && job.source_job) {
+				nice_source = '<a href="#JobDetails?id=' + job.source_job + '">' + nice_source + '</a>';
+			}
+			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB SOURCE</div>';
-				html += '<div class="info_value"><div class="ellip" style="max-width:'+col_width+'px;">' + (job.source || 'Scheduler') + '</div></div>';
+				html += '<div class="info_value"><div class="" style="">' + nice_source + '</div></div>';
 				
 				html += '<div class="info_label">SERVER HOSTNAME</div>';
 				html += '<div class="info_value">' + this.getNiceGroup( null, job.hostname, col_width ) + '</div>';

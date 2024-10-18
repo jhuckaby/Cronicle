@@ -775,7 +775,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		var event = this.event;
 		
 		// event title
-		html += get_form_table_row( 'Event Name', '<input type="text" id="fe_ee_title" size="35" value="'+escape_text_field_value(event.title)+'" spellcheck="false"/>' );
+		html += get_form_table_row( 'Event Name', '<input type="text" id="fe_ee_title" style="width:90%" value="'+escape_text_field_value(event.title)+'" spellcheck="false"/>' );
 		html += get_form_table_caption( "Enter a title for the event, which will be displayed on the main schedule." );
 		html += get_form_table_spacer();
 		
@@ -1001,10 +1001,10 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			'<div style="font-size:13px;'+(chain_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Chain Options</span></div>' + 
 			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(chain_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Chain Options</legend>' + 
 				'<div class="plugin_params_label">Run Event on Success:</div>' + 
-				'<div class="plugin_params_content"><select id="fe_ee_chain" style="margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain, false ) + '</select></div>' + 
+				'<div class="plugin_params_content"><select id="fe_ee_chain" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain, false ) + '</select></div>' + 
 				
 				'<div class="plugin_params_label">Run Event on Failure:</div>' + 
-				'<div class="plugin_params_content"><select id="fe_ee_chain_error" style="margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain_error, false ) + '</select></div>' + 
+				'<div class="plugin_params_content"><select id="fe_ee_chain_error" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain_error, false ) + '</select></div>' + 
 				
 			'</fieldset>'
 		);
