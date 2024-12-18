@@ -13,10 +13,10 @@ var os = require('os');
 var cp = require('child_process');
 
 var async = require('async');
-var glob = require('glob');
 var UglifyJS = require("uglify-js");
 var Tools = require('pixl-tools');
 var mkdirp = Tools.mkdirp;
+var glob = Tools.glob;
 
 var fileStatSync = function(file) {
 	// no-throw version of fs.statSync

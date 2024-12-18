@@ -65,7 +65,6 @@ We stand on the shoulders of giants.  Cronicle was built using these awesome Nod
 | [font-awesome](https://www.npmjs.com/package/font-awesome) | The iconic font and CSS framework. | OFL-1.1 and MIT |
 | [form-data](https://www.npmjs.com/package/form-data) | A library to create readable "multipart/form-data" streams. Can be used to submit forms and file uploads to other web applications. | MIT |
 | [formidable](https://www.npmjs.com/package/formidable) | A Node.js module for parsing form data, especially file uploads. | MIT |
-| [glob](https://www.npmjs.com/package/glob) | Filesystem globber (`*.js`). | ISC |
 | [jstimezonedetect](https://www.npmjs.com/package/jstimezonedetect) | Automatically detects the client or server timezone. | MIT |
 | [jquery](https://www.npmjs.com/package/jquery) | JavaScript library for DOM operations. | MIT |
 | [mdi](https://www.npmjs.com/package/mdi) | Material Design Webfont. This includes the Stock and Community icons in a single webfont collection. | OFL-1.1 and MIT |

@@ -35,6 +35,7 @@ fs.chmodSync( 'logs', "755" );
 console.log = function(msg, data) {
 	if (data) msg += ' ' + JSON.stringify(data);
 	fs.appendFile( 'logs/install.log', msg + "\n", function() {} );
+	if (mode == 'dev') process.stdout.write( msg + "\n" );
 };
 
 console.log("\nBuilding project ("+mode+")...\n");
