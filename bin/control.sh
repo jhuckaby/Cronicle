@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Control script designed to allow an easy command line interface
 # to controlling any binary.  Written by Marc Slemko, 1997/08/23
@@ -36,6 +36,9 @@ PIDFILE=$HOMEDIR/logs/cronicled.pid
 #
 # --------------------                              --------------------
 # ||||||||||||||||||||   END CONFIGURATION SECTION  ||||||||||||||||||||
+
+# Support for nvm and it's bizarre path system
+[ ! -x "$(which node)" ] && [ -s ~/.nvm/nvm.sh ] && \. ~/.nvm/nvm.sh
 
 ERROR=0
 ARGV="$@"
