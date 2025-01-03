@@ -218,10 +218,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<fieldset style="margin-top:8px; margin-right:0px; padding-top:10px; position:relative;"><legend>Job Details</legend>';
 			
 			// if (event.id && !event.multiplex) html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().run_again()">Run Again</div>';
+			var nice_id = job.id;
+			if (job.label) nice_id = job.label + ' (' + job.id + ')';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';
-				html += '<div class="info_value">' + job.id + '</div>';
+				html += '<div class="info_value">' + nice_id + '</div>';
 				
 				html += '<div class="info_label">EVENT NAME</div>';
 				html += '<div class="info_value">';
@@ -782,10 +784,12 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<fieldset style="margin-top:0px; margin-right:0px; padding-top:10px; position:relative"><legend>Job Details</legend>';
 			
 			// html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().abort_job()">Abort Job...</div>';
+			var nice_id = job.id;
+			if (job.label) nice_id = job.label + ' (' + job.id + ')';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';
-				html += '<div class="info_value">' + job.id + '</div>';
+				html += '<div class="info_value">' + nice_id + '</div>';
 				
 				html += '<div class="info_label">EVENT NAME</div>';
 				html += '<div class="info_value"><a href="#Schedule?sub=edit_event&id='+job.event+'">' + this.getNiceEvent(job.event_title, col_width) + '</a></div>';

@@ -17,6 +17,7 @@
 			- [Custom Data Tables](#custom-data-tables)
 			- [Custom HTML Content](#custom-html-content)
 			- [Updating The Event](#updating-the-event)
+			- [Custom Job Labels](#custom-job-labels)
 		+ [Job Environment Variables](#job-environment-variables)
 	* [Sample Node Plugin](#sample-node-plugin)
 	* [Sample Perl Plugin](#sample-perl-plugin)
@@ -47,7 +48,7 @@ The location of the `node` binary may vary on your servers.
 
 As soon as your Plugin is launched as a sub-process, a JSON document is piped to its STDIN stream, describing the job.  This will be compacted onto a single line followed by an EOL, so you can simply read a line, and not have to worry about locating the start and end of the JSON.  Here is an example JSON document (pretty-printed here for display purposes):
 
-```js
+```json
 {
 	"id": "jihuxvagi01",
 	"hostname": "joeretina.local",
@@ -84,13 +85,13 @@ The `params` object will contain all the custom parameter keys defined when you 
 
 Your Plugin is expected to write JSON to STDOUT in order to report status back to the Cronicle daemon.  At the very least, you need to notify Cronicle that the job was completed, and the result of the job (i.e. success or fail).  This is done by printing a JSON object with a `complete` property set to `1`, and a `code` property set to `0` indicating success.  You need to make sure the JSON is compacted onto a single line, and ends with a single EOL character (`\n` on Unix).  Example:
 
-```js
+```json
 { "complete": 1, "code": 0 }
 ```
 
 This tells Cronicle that the job was completed successfully, and your process is about to exit.  However, if the job failed and you need to report an error, you need to set the `code` property set to any non-zero error code you want, and add a `description` property set to a custom error string.  Include these along with the `complete` property in the JSON.  Example:
 
-```js
+```json
 { "complete": 1, "code": 999, "description": "Failed to connect to database." }
 ```
 
@@ -104,7 +105,7 @@ Please note that the once you send a JSON line containing the `complete` flag, C
 
 In addition to reporting success or failure at the end of a job, you can also optionally report progress at custom intervals while your job is running.  This is how Cronicle can display its visual progress meter in the UI, as well as calculate the estimated time remaining.  To update the progress of a job, simply print a JSON document with a `progress` property, set to a number between `0.0` and `1.0`.  Example:
 
-```js
+```json
 { "progress": 0.5 }
 ```
 
@@ -114,7 +115,7 @@ This would show progress at 50% completion, and automatically calculate the esti
 
 You can optionally include performance metrics at the end of a job, which are displayed as a pie chart on the [Job Details Tab](WebUI.md#job-details-tab).  These metrics can consist of any categories you like, and the JSON format is a simple `perf` object where the values represent the amount of time spent in seconds.  Example:
 
-```js
+```json
 { "perf": { "db": 18.51, "http": 3.22, "gzip": 0.84 } }
 ```
 
@@ -122,7 +123,7 @@ The perf keys can be anything you want.  They are just arbitrary categories you 
 
 Cronicle accepts a number of different formats for the perf metrics, to accommodate various performance tracking libraries.  For example, you can provide the metrics in query string format, like this:
 
-```js
+```json
 { "perf": "db=18.51&http=3.22&gzip=0.84" }
 ```
 
@@ -130,7 +131,7 @@ If your metrics include a `total` (or `t`) in addition to other metrics, this is
 
 If you track metrics in units other than seconds, you can provide the `scale`.  For example, if your metrics are all in milliseconds, just set the `scale` property to `1000`.  Example:
 
-```js
+```json
 { "perf": { "scale": 1000, "db": 1851, "http": 3220, "gzip": 840 } }
 ```
 
@@ -140,7 +141,7 @@ The slightly more complex format produced by our own [pixl-perf](https://www.npm
 
 In order for the pie chart to be accurate, your perf metrics must not overlap each other.  Each metric should represent a separate period of time.  Put another way, if all the metrics were added together, they should equal the total time.  To illustrate this point, consider the following "bad" example:
 
-```js
+```json
 { "perf": { "database": 18.51, "run_sql_query": 3.22, "connect_to_db": 0.84 } }
 ```
 
@@ -148,7 +149,7 @@ In this case the Plugin is tracking three different metrics, but the `database` 
 
 However, if you want to track nested metrics as well as a parent metric, just make sure you prefix your perf keys properly.  In the above example, all you would need to do is rename the keys like this:
 
-```js
+```json
 { "perf": { "db": 18.51, "db_run_sql": 3.22, "db_connect": 0.84 } }
 ```
 
@@ -162,25 +163,25 @@ Notification settings for the job are configured in the UI at the event level, a
 
 For example, if you only want to send a successful e-mail in certain cases, and want to disable it based on some outcome from inside the Plugin, just print some JSON to STDOUT like this:
 
-```js
+```json
 { "notify_success": "" }
 ```
 
 This will disable the e-mail that is normally sent upon success.  Similarly, if you want to disable the failure e-mail, print this to STDOUT:
 
-```js
+```json
 { "notify_fail": "" }
 ```
 
 Another potential use of this feature is to change who gets e-mailed, based on a decision made inside your Plugin.  For example, you may have multiple error severity levels, and want to e-mail a different set of people for the really severe ones.  To do that, just specify a new set of e-mail addresses in the `notify_fail` property:
 
-```js
+```json
 { "notify_fail": "emergency-ops-pager@mycompany.com" }
 ```
 
 These JSON updates can be sent as standalone records as shown here, at any time during your job run, or you can batch everything together at the very end:
 
-```js
+```json
 { "complete": 1, "code": 999, "description": "Failed to connect to database.", "perf": { "db": 18.51, "db_run_sql": 3.22, "db_connect": 0.84 }, "notify_fail": "emergency-ops-pager@mycompany.com" }
 ```
 
@@ -190,13 +191,13 @@ You can enable or disable [Chain Reaction](WebUI.md#chain-reaction) mode on the 
 
 To enable a chain reaction, you need to know the Event ID of the event you want to trigger.  You can determine this by editing the event in the UI and copy the Event ID from the top of the form, just above the title.  Then you can specify the ID in your jobs by printing some JSON to STDOUT like this:
 
-```js
+```json
 { "chain": "e29bf12db" }
 ```
 
 Remember that your job must complete successfully in order to trigger the chain reaction, and fire off the next event.  However, if you want to run a event only on job failure, set the `chain_error` property instead:
 
-```js
+```json
 { "chain_error": "e29bf12db" }
 ```
 
@@ -204,7 +205,7 @@ You set both the `chain` and `chain_error` properties, to run different events o
 
 To disable chain reaction mode, set the `chain` and `chain_error` properties to false or empty strings:
 
-```js
+```json
 { "chain": "", "chain_error": "" }
 ```
 
@@ -221,7 +222,7 @@ When a chained event runs, some additional information is included in the initia
 
 You can pass custom JSON data to the next event in the chain, when using a [Chain Reaction](WebUI.md#chain-reaction) event.  Simply specify a JSON property called `chain_data` in your JSON output, and pass in anything you want (can be a complex object / array tree), and the next event will receive it.  Example:
 
-```js
+```json
 { "chain": "e29bf12db", "chain_data": { "custom_key": "foobar", "value": 42 } }
 ```
 
@@ -231,7 +232,7 @@ So in this case when the event `e29bf12db` runs, it will be passed your `chain_d
 
 In addition to passing `chain_data` to chained events (see above), you can also override some or all the *parameters* of the chained event (the key/value pairs normally populated by the Plugin).  To do this, specify a JSON property called `chain_params` in your JSON output, and pass in an object containing param keys.  This will be merged with the default event Plugin parameters when the chained job is executed.  Example:
 
-```js
+```json
 { "chain": "e29bf12db", "chain_params": { "custom_key": "foobar", "value": 42 } }
 ```
 
@@ -250,7 +251,7 @@ If your Plugin produces statistics or other tabular data at the end of a run, yo
 
 Here is an example data table.  Note that this has been expanded for documentation purposes, but in practice your JSON needs to be compacted onto a single line when printed to STDOUT.
 
-```js
+```json
 {
 	"table": {
 		"title": "Sample Job Stats",
@@ -290,12 +291,12 @@ If you would prefer to generate your own HTML content from your Plugin code, and
 
 Here is an example HTML report.  Note that this has been expanded for documentation purposes, but in practice your JSON needs to be compacted onto a single line when printed to STDOUT.
 
-```js
+```json
 {
 	"html": {
-		title: "Sample Job Report",
-		content: "This is <b>HTML</b> so you can use <i>styling</i> and such.",
-		caption: "This is a caption displayed under your HTML content."
+		"title": "Sample Job Report",
+		"content": "This is <b>HTML</b> so you can use <i>styling</i> and such.",
+		"caption": "This is a caption displayed under your HTML content."
 	}
 }
 ```
@@ -308,7 +309,7 @@ Your job can optionally trigger an event update when it completes.  This can be 
 
 To update the event for a job, simply include an `update_event` object in your Plugin's JSON output, containing any properties from the [Event Data Format](APIReference.md#event-data-format).  Example:
 
-```js
+```json
 {
 	"update_event": {
 		"enabled": 0
@@ -316,7 +317,23 @@ To update the event for a job, simply include an `update_event` object in your P
 }
 ```
 
-This would cause the event to be disabled, so the schedule would no longer launch it.  Note that you can only update the event once, and it happens at the completion of your job.
+This would cause the event to be disabled, so the schedule would no longer launch it.  Note that you can only update the event once, and it happens at the completion of your job.  Remember, the JSON must be compacted on one line like this:
+
+```json
+{ "update_event": { "enabled": 0 } }
+```
+
+#### Custom Job Labels
+
+Your can optionally add custom labels to your jobs, which will be displayed on the completed job history pages alongside the Job IDs.  This is useful if you launch jobs with custom parameters, and need to differentiate them in the completed list.
+
+To set the label for a job, simply include a `label` property in your Plugin's JSON output, set to any string you want.  Example:
+
+```json
+{ "label": "Reindex Database" }
+```
+
+This would cause the "Reindex Database" label to be displayed alongside the Job ID.
 
 ### Job Environment Variables
 

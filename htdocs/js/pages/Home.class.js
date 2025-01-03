@@ -349,7 +349,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			if (job.pending && job.log_file) {
 				// job in retry delay
 				tds = [
-					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job.id) + '</span></div>',
+					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job) + '</span></div>',
 					self.getNiceEvent( job.event_title, col_width ),
 					self.getNiceCategory( cat, col_width ),
 					// self.getNicePlugin( plugin ),
@@ -363,7 +363,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			else if (job.pending) {
 				// multiplex stagger delay
 				tds = [
-					'<div class="td_big">' + self.getNiceJob(job.id) + '</div>',
+					'<div class="td_big">' + self.getNiceJob(job) + '</div>',
 					self.getNiceEvent( job.event_title, col_width ),
 					self.getNiceCategory( cat, col_width ),
 					// self.getNicePlugin( plugin ),
@@ -377,7 +377,7 @@ Class.subclass( Page.Base, "Page.Home", {
 			else {
 				// active job
 				tds = [
-					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job.id) + '</span></div>',
+					'<div class="td_big"><span class="link" onMouseUp="$P().go_job_details('+idx+')">' + self.getNiceJob(job) + '</span></div>',
 					self.getNiceEvent( job.event_title, col_width ),
 					self.getNiceCategory( cat, col_width ),
 					// self.getNicePlugin( plugin ),

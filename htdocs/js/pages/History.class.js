@@ -105,7 +105,7 @@ Class.subclass( Page.Base, "Page.History", {
 			if (!plugin && job.plugin_title) plugin = { id: job.plugin, title: job.plugin_title };
 			
 			var job_link = '<div class="td_big">--</div>';
-			if (job.id) job_link = '<div class="td_big"><a href="#JobDetails?id='+job.id+'">' + self.getNiceJob('<b>' + job.id + '</b>') + '</a></div>';
+			if (job.id) job_link = '<div class="td_big"><a href="#JobDetails?id='+job.id+'"><b>' + self.getNiceJob(job) + '</b></a></div>';
 			
 			var tds = [
 				job_link,
@@ -708,7 +708,7 @@ Class.subclass( Page.Base, "Page.History", {
 			if (job.mem) mem_avg = short_float( (job.mem.total || 0) / (job.mem.count || 1) );
 			
 			var tds = [
-				'<div class="td_big" style="white-space:nowrap;"><a href="#JobDetails?id='+job.id+'"><i class="fa fa-pie-chart">&nbsp;</i><b>' + job.id.substring(0, 11) + '</b></span></div>',
+				'<div class="td_big"><a href="#JobDetails?id=' + job.id + '"><b>' + self.getNiceJob(job) + '</b></a></div>',
 				self.getNiceGroup( null, job.hostname, col_width ),
 				(job.code == 0) ? '<span class="color_label green"><i class="fa fa-check">&nbsp;</i>Success</span>' : '<span class="color_label red"><i class="fa fa-warning">&nbsp;</i>Error</span>',
 				get_nice_date_time( job.time_start, false, true ),

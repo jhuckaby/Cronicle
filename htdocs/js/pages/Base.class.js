@@ -54,10 +54,11 @@ Class.subclass( Page, "Page.Base", {
 		return( app.user && app.user.privileges && app.user.privileges.admin );
 	},
 	
-	getNiceJob: function(id) {
-		if (!id) return '(None)';
-		if (typeof(id) == 'object') id = id.id;
-		return '<div style="white-space:nowrap;"><i class="fa fa-pie-chart">&nbsp;</i>' + id + '</div>';
+	getNiceJob: function(job) {
+		if (!job) return '(None)';
+		var nice_id = job.id;
+		if (job.label) nice_id = job.label + ' (' + job.id + ')';
+		return '<div style="white-space:nowrap;"><i class="fa fa-pie-chart">&nbsp;</i>' + nice_id + '</div>';
 	},
 	
 	getNiceEvent: function(title, width) {
