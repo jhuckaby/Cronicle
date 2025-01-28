@@ -188,6 +188,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		// receive job details from server, render them
 		var html = '';
 		var job = this.job = resp.job;
+		var token = this.token = resp.token;
 		this.div.removeClass('loading');
 		
 		var size = get_inner_window_size();
@@ -380,8 +381,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Job Event Log';
 			if (job.log_file_size) html += ' (' + get_text_from_bytes(job.log_file_size, 1) + ')';
-			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="/api/app/get_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
-			html += '<div class="subtitle_widget"><a href="/api/app/get_job_log?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
+			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="/api/app/get_job_log?id=' + job.id + '&t=' + token + '" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
+			html += '<div class="subtitle_widget"><a href="/api/app/get_job_log?id=' + job.id + '&t=' + token + '&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
 			html += '<div class="clear"></div>';
 		html += '</div>';
 		
@@ -400,7 +401,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		else {
 			var size = get_inner_window_size();
 			var iheight = size.height - 100;
-			html += '<iframe id="i_arch_job_log" style="width:100%; height:'+iheight+'px; border:none;" frameborder="0" src="'+app.base_api_url+'/app/get_job_log?id='+job.id+'"></iframe>';
+			html += '<iframe id="i_arch_job_log" style="width:100%; height:' + iheight + 'px; border:none;" frameborder="0" src="' + app.base_api_url + '/app/get_job_log?id=' + job.id + '&t=' + token + '"></iframe>';
 		}
 		
 		this.div.html( html );
@@ -654,7 +655,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 	do_download_log: function() {
 		// download job log file
 		var job = this.job;
-		window.location = '/api/app/get_job_log?id=' + job.id + '&download=1';
+		window.location = '/api/app/get_job_log?id=' + job.id + '&t=' + this.token + '&download=1';
 	},
 	
 	do_view_inline_log: function() {
@@ -664,7 +665,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		var size = get_inner_window_size();
 		var iheight = size.height - 100;
-		html += '<iframe id="i_arch_job_log" style="width:100%; height:'+iheight+'px; border:none;" frameborder="0" src="/api/app/get_job_log?id='+job.id+'"></iframe>';
+		html += '<iframe id="i_arch_job_log" style="width:100%; height:' + iheight + 'px; border:none;" frameborder="0" src="/api/app/get_job_log?id=' + job.id + '&t=' + this.token + '"></iframe>';
 		
 		$('#d_job_log_warning').html( html );
 	},
@@ -878,22 +879,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 		html += '</div>';
 		
-		// live job log tail
-		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
-		if (config.custom_live_log_socket_url) {
-			// custom websocket URL for single-master systems behind an LB
-			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
-		}
-		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
-			// use ip if available, may work better in some setups
-			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
-		}
-		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
-			html += '<div class="subtitle_widget" style="margin-left:2px;"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a></div>';
-			html += '<div class="subtitle_widget"><a href="'+remote_api_url+'/app/get_live_job_log?id='+job.id+'&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a></div>';
-			html += '<div class="clear"></div>';
 		html += '</div>';
 		
 		var size = get_inner_window_size();

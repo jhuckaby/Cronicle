@@ -19,9 +19,6 @@ Avg. CPU Usage: [/nice_cpu]
 Job Details:
 [/job_details_url]
 
-Job Debug Log ([/nice_log_size]):
-[/job_log_url]
-
 Edit Event:
 [/edit_event_url]
 
