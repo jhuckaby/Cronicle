@@ -881,6 +881,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		
 		html += '<div class="subtitle" style="margin-top:15px;">';
 			html += 'Live Job Event Log';
+			html += '<div class="subtitle_widget" id="d_live_job_view_link" style="margin-left:2px;"></div>';
+			html += '<div class="subtitle_widget" id="d_live_job_download_link"></div>';
+			html += '<div class="clear"></div>';
 		html += '</div>';
 		
 		var size = get_inner_window_size();
@@ -1086,6 +1089,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 					token: resp.token,
 					id: job.id
 				} );
+				
+				self.setup_live_log_links(job, resp.token);
 			}); // api.post
 		} );
 		this.socket.on('connect_error', function(err) {
@@ -1250,6 +1255,26 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		html += '<div class="info_value">' + get_text_from_bytes(job.mem.max || 0, 1) + '</div>';
 		
 		$('#d_live_mem_legend').html( html );
+	},
+	
+	setup_live_log_links: function(job, token) {
+		// now that we have the token, we can add the live log view / downlaod links
+		var remote_api_url = app.proto + job.hostname + ':' + app.port + config.base_api_uri;
+		if (config.custom_live_log_socket_url) {
+			// custom websocket URL for single-master systems behind an LB
+			remote_api_url = config.custom_live_log_socket_url + config.base_api_uri;
+		}
+		else if (!config.web_socket_use_hostnames && app.servers && app.servers[job.hostname] && app.servers[job.hostname].ip) {
+			// use ip if available, may work better in some setups
+			remote_api_url = app.proto + app.servers[job.hostname].ip + ':' + app.port + config.base_api_uri;
+		}
+		
+		$('#d_live_job_view_link').html( 
+			'<a href="' + remote_api_url + '/app/get_live_job_log?id=' + job.id + '&t=' + token + '" target="_blank"><i class="fa fa-external-link">&nbsp;</i><b>View Full Log</b></a>' 
+		);
+		$('#d_live_job_download_link').html( 
+			'<a href="' + remote_api_url + '/app/get_live_job_log?id=' + job.id + '&t=' + token + '&download=1"><i class="fa fa-download">&nbsp;</i><b>Download Log</b></a>' 
+		);
 	},
 	
 	jump_to_archive_when_ready: function() {
