@@ -1,0 +1,33 @@
+name: Feature Request
+description: File a new feature request.
+title: "[Feature Request]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to try Cronicle, and send a feature request!
+  - type: checkboxes
+    attributes:
+      label: Is there an existing feature request for this?
+      description: Please search to see if an issue already exists for the feature you want added.
+    options:
+    - label: I have searched the existing issues
+      required: true
+  - type: textarea
+    id: feature
+    attributes:
+      label: What is your feature request?
+      description: Please include as many details as you can.
+      placeholder: Tell us what you would like to see!
+      value: ""
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this feature request, you agree to follow our [Code of Conduct](https://github.com/jhuckaby/Cronicle/blob/master/CODE_OF_CONDUCT.md). 
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

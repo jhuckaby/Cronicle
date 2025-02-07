@@ -1,0 +1,81 @@
+name: Bug Report
+description: File a new bug report.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to try Cronicle, and fill out this bug report!  If you need help with something, please start a discussion thread instead.
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+    options:
+    - label: I have searched the existing issues
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: input
+    id: node-ver
+    attributes:
+      label: Node.js Version
+      description: Which Node.js version do you have installed?
+      placeholder: ex. v18.20.4
+    validations:
+      required: true
+  - type: input
+    id: cronicle-ver
+    attributes:
+      label: Cronicle Version
+      description: Which Cronicle version do you have installed?
+      placeholder: ex. v0.9.72
+    validations:
+      required: true
+  - type: dropdown
+    id: server-setup
+    attributes:
+      label: Server Setup
+      description: What kind of server setup do you have?
+      options:
+        - Single Server
+        - Single Primary with Workers
+        - Multi-Primary with Workers
+      default: Single Server
+    validations:
+      required: true
+  - type: dropdown
+    id: storage-setup
+    attributes:
+      label: Storage Setup
+      description: What kind of storage setup are you running?
+      options:
+        - Local Filesystem
+        - NFS Filesystem
+        - S3
+        - Couchbase
+        - Other
+      default: Local Filesystem
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/jhuckaby/Cronicle/blob/master/CODE_OF_CONDUCT.md). 
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
