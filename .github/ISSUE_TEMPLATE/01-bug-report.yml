@@ -11,9 +11,9 @@ body:
     attributes:
       label: Is there an existing issue for this?
       description: Please search to see if an issue already exists for the bug you encountered.
-    options:
-    - label: I have searched the existing issues
-      required: true
+      options:
+      - label: I have searched the existing issues
+        required: true
   - type: textarea
     id: what-happened
     attributes:
@@ -48,7 +48,7 @@ body:
         - Single Server
         - Single Primary with Workers
         - Multi-Primary with Workers
-      default: Single Server
+      default: 0
     validations:
       required: true
   - type: dropdown
@@ -62,7 +62,7 @@ body:
         - S3
         - Couchbase
         - Other
-      default: Local Filesystem
+      default: 0
     validations:
       required: true
   - type: textarea

@@ -11,9 +11,9 @@ body:
     attributes:
       label: Is there an existing feature request for this?
       description: Please search to see if an issue already exists for the feature you want added.
-    options:
-    - label: I have searched the existing issues
-      required: true
+      options:
+      - label: I have searched the existing issues
+        required: true
   - type: textarea
     id: feature
     attributes:
