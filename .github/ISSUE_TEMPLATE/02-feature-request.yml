@@ -20,7 +20,7 @@ body:
       label: What is your feature request?
       description: Please include as many details as you can.
       placeholder: Tell us what you would like to see!
-      value: ""
+      value: "A unicorn!"
     validations:
       required: true
   - type: checkboxes
