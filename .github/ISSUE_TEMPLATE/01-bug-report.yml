@@ -24,6 +24,14 @@ body:
     validations:
       required: true
   - type: input
+    id: os-ver
+    attributes:
+      label: Operating System
+      description: Which OS and version do you have installed?
+      placeholder: ex. Linux Ubuntu 24
+    validations:
+      required: true
+  - type: input
     id: node-ver
     attributes:
       label: Node.js Version
