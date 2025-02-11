@@ -35,6 +35,13 @@ if ((os.totalmem() < 64 * 1024 * 1024) && !process.env['CRONICLE_DANGER']) {
 	process.exit(1);
 }
 
+// make sure we have NPM available
+try { cp.execSync('which npm'); }
+catch (err) {
+	console.error("\nERROR: NPM cannot be found.  Cronicle requires both Node.js and NPM to be preinstalled.  Instructions: https://nodejs.org/en/download/\n");
+	process.exit(1);
+}
+
 var restore_packages = function() {
 	// restore packages that npm killed during upgrade
 	var cmd = "npm install";
