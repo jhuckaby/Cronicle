@@ -13,7 +13,7 @@
 	"copy_job_logs_to": "",
 	"queue_dir": "queue",
 	"pid_file": "logs/cronicled.pid",
-	"debug_level": 9,
+	"debug_level": 5,
 	"maintenance": "04:00",
 	"list_row_max": 10000,
 	"job_data_expire_days": 180,
