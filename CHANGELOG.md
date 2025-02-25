@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.75](https://github.com/jhuckaby/Cronicle/compare/v0.9.74...v0.9.75)
+
+> 25 February 2025
+
+- Add CHANGELOG [`72519f8`](https://github.com/jhuckaby/Cronicle/commit/72519f8be4a41daab486322c72ae48645cb338a9)
+- Bump pixl-server to 1.0.45 for log filtering feature. [`aa989ac`](https://github.com/jhuckaby/Cronicle/commit/aa989acdc99e1ac1f8a050f32acb582c7904cb63)
+- Version 0.9.75 [`8f10917`](https://github.com/jhuckaby/Cronicle/commit/8f10917589e71af811183417405dad08bedff9d8)
+- Set debug_level to 9 for debug mode. [`6e01b73`](https://github.com/jhuckaby/Cronicle/commit/6e01b73303260b91a863c173f9f0dbf7f49739c2)
+- Drop default debug_level to 5. [`5230017`](https://github.com/jhuckaby/Cronicle/commit/5230017cb51d3f3a1096ec7f908757b50616f2c2)
+
 #### [v0.9.74](https://github.com/jhuckaby/Cronicle/compare/v0.9.73...v0.9.74)
 
 > 19 February 2025
