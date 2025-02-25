@@ -7,4 +7,4 @@
 HOMEDIR="$(dirname "$(cd -- "$(dirname "$0")" && (pwd -P 2>/dev/null || pwd))")"
 
 cd $HOMEDIR
-node --trace-warnings $HOMEDIR/lib/main.js --debug --echo "$@"
+node --trace-warnings $HOMEDIR/lib/main.js --debug --debug_level 9 --echo "$@"
