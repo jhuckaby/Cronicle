@@ -12,7 +12,8 @@
 		"postinstall": "pixl-boot install",
 		"preuninstall": "pixl-boot uninstall",
 		"boot": "pixl-boot install",
-		"unboot": "pixl-boot uninstall"
+		"unboot": "pixl-boot uninstall",
+		"changelog": "auto-changelog --commit-limit false --release-summary --issue-pattern DO_NOT_USE --hide-credit"
 	},
 	"repository": {
 		"type": "git",
@@ -62,6 +63,7 @@
 		"zxcvbn": "3.5.0"
 	},
 	"devDependencies": {
+		"auto-changelog": "2.5.0",
 		"pixl-unit": "^1.0.12"
 	}
 }
