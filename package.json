@@ -48,7 +48,7 @@
 		"pixl-mail": "^1.1.3",
 		"pixl-perf": "^1.0.5",
 		"pixl-request": "^2.0.1",
-		"pixl-server": "^1.0.44",
+		"pixl-server": "^1.0.45",
 		"pixl-server-api": "^1.0.2",
 		"pixl-server-storage": "^3.1.18",
 		"pixl-server-user": "^1.0.25",
