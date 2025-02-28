@@ -373,6 +373,16 @@ You can optionally set a global maximum number of concurrent jobs to allow.  Thi
 "max_jobs": 256
 ```
 
+### max_emails_per_day
+
+You can optionally set a limit on the number of emails Cronicle will send per day.  This is a simple "anti-flood" system, to prevent a repeating failing job from flooding your InBox, if you are not around to address it.  Example:
+
+```js
+"max_emails_per_day": 100
+```
+
+If the limit is exceeded, Cronicle will log an error for each subsequent send attempt.  The counter resets at midnight server time.
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).

@@ -3,6 +3,7 @@
 	"email_from": "admin@localhost",
 	"smtp_hostname": "localhost",
 	"smtp_port": 25,
+	"max_emails_per_day": 0,
 	"secret_key": "CHANGE_ME",
 	
 	"log_dir": "logs",
