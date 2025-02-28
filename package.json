@@ -13,7 +13,7 @@
 		"preuninstall": "pixl-boot uninstall",
 		"boot": "pixl-boot install",
 		"unboot": "pixl-boot uninstall",
-		"changelog": "auto-changelog --commit-limit false --release-summary --issue-pattern DO_NOT_USE --hide-credit"
+		"changelog": "auto-changelog --commit-limit false --release-summary --issue-pattern DO_NOT_USE --hide-credit --ignore-commit-pattern CHANGELOG"
 	},
 	"repository": {
 		"type": "git",

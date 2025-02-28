@@ -2,11 +2,18 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.76](https://github.com/jhuckaby/Cronicle/compare/v0.9.75...v0.9.76)
+
+> 27 February 2025
+
+- Implement max_emails_per_day [`ca88c72`](https://github.com/jhuckaby/Cronicle/commit/ca88c72c9233184b8f6d7c41986720a522c91a0a)
+- Version 0.9.76 [`5f7b3a5`](https://github.com/jhuckaby/Cronicle/commit/5f7b3a5dd80f9bb9bf48de03362ea0aba9027e02)
+- Update TOC [`89ba6b2`](https://github.com/jhuckaby/Cronicle/commit/89ba6b22fcf468fed4d6d17a9135e0d442f1a2a8)
+
 #### [v0.9.75](https://github.com/jhuckaby/Cronicle/compare/v0.9.74...v0.9.75)
 
 > 25 February 2025
 
-- Add CHANGELOG [`72519f8`](https://github.com/jhuckaby/Cronicle/commit/72519f8be4a41daab486322c72ae48645cb338a9)
 - Bump pixl-server to 1.0.45 for log filtering feature. [`aa989ac`](https://github.com/jhuckaby/Cronicle/commit/aa989acdc99e1ac1f8a050f32acb582c7904cb63)
 - Version 0.9.75 [`8f10917`](https://github.com/jhuckaby/Cronicle/commit/8f10917589e71af811183417405dad08bedff9d8)
 - Set debug_level to 9 for debug mode. [`6e01b73`](https://github.com/jhuckaby/Cronicle/commit/6e01b73303260b91a863c173f9f0dbf7f49739c2)
