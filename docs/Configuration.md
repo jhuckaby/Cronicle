@@ -44,6 +44,7 @@
 		+ [socket_io_transports](#socket_io_transports)
 		+ [remote_server_port](#remote_server_port)
 		+ [max_jobs](#max_jobs)
+		+ [max_emails_per_day](#max_emails_per_day)
 	* [Storage Configuration](#storage-configuration)
 		+ [Filesystem](#filesystem)
 		+ [Couchbase](#couchbase)
