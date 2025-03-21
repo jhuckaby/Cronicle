@@ -162,7 +162,7 @@ Class.subclass( Page, "Page.Base", {
 		if (username.match(/^[\w\-\.]+$/)) {
 			// check with server
 			// $elem.css('color','#444').html('<span class="fa fa-spinner fa-spin fa-lg">&nbsp;</span>');
-			app.api.get('app/check_user_exists', { username: username }, function(resp) {
+			app.api.post('app/check_user_exists', { username: username }, function(resp) {
 				if (resp.user_exists) {
 					// username taken
 					$elem.css('color','red').html('<span class="fa fa-exclamation-triangle fa-lg">&nbsp;</span>Username Taken');
