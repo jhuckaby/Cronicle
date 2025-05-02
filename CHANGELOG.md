@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.80](https://github.com/jhuckaby/Cronicle/compare/v0.9.79...v0.9.80)
+
+> 2 May 2025
+
+- Allow standard auth for get_job_log API.  Fixes #896.
+
+- Version 0.9.80 [`31cd4a9`](https://github.com/jhuckaby/Cronicle/commit/31cd4a91cfcbd3a0f86ebc54418b2cce7ab83ef1)
+
+#### [v0.9.79](https://github.com/jhuckaby/Cronicle/compare/v0.9.78...v0.9.79)
+
+> 24 April 2025
+
+- FIxed issue with timeout error message precision after 1 hour
+- Fixes #895
+
+- Version 0.9.79 [`b391707`](https://github.com/jhuckaby/Cronicle/commit/b391707f5260e2cb4c42c02270c1dbaddf0b0f6c)
+
+#### [v0.9.78](https://github.com/jhuckaby/Cronicle/compare/v0.9.77...v0.9.78)
+
+> 22 April 2025
+
+- Now firing chain reaction for scheduler failures, if configured
+- Fixes #885
+
+- Version 0.9.78 [`9580980`](https://github.com/jhuckaby/Cronicle/commit/958098043ceb107411877ae0429af46244cb3f12)
+
+#### [v0.9.77](https://github.com/jhuckaby/Cronicle/compare/v0.9.76...v0.9.77)
+
+> 20 March 2025
+
+- Fixed issue where check_user_exists API didn't require auth when free_accounts was false.
+- See Discussion: https://github.com/jhuckaby/Cronicle/discussions/882
+
+- Version 0.9.77 [`96a8c9f`](https://github.com/jhuckaby/Cronicle/commit/96a8c9f9c011be4fb261ece9f8a9dd7524bf4d17)
+
 #### [v0.9.76](https://github.com/jhuckaby/Cronicle/compare/v0.9.75...v0.9.76)
 
 > 27 February 2025
