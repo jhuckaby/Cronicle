@@ -493,7 +493,7 @@ To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 sec
 			"keyPrefix": "",
 			"fileExtensions": true,
 			"params": {
-				"Bucket": "MY_S3_BUCKET_ID"
+				"Bucket": "YOUR_S3_BUCKET_ID"
 			},
 			"cache": {
 				"enabled": true,
@@ -516,6 +516,60 @@ After configuring S3, you'll need to run the Cronicle setup script manually, to 
 ```
 
 Regarding S3 costs, with a typical setup running ~30 events per hour (about ~25,000 events per month), this translates to approximately 350,000 S3 PUTs plus 250,000 S3 GETs, or about $2 USD per month.  Add in 100GB of data storage and it's another $3.
+
+### S3 Compatible Services
+
+To use an S3 compatible service such as [MinIO](https://github.com/minio/minio), you'll need to add a few extra parameters to the `AWS` section:
+
+```js
+{
+	"endpoint": "http://minio:9000",
+	"endpointPrefix": false,
+	"forcePathStyle": true,
+	"hostPrefixEnabled": false
+}
+```
+
+Replace `minio:9000` with your MinIO hostname or IP address, and port number (9000 is the default).
+
+Here is a complete example with the new parameters added:
+
+```js
+{
+	"Storage": {
+		"transactions": true,
+		"trans_auto_recover": true,
+		
+		"engine": "S3",
+		"AWS": {
+			"endpoint": "http://minio:9000",
+			"endpointPrefix": false,
+			"forcePathStyle": true,
+			"hostPrefixEnabled": false,
+			"region": "us-west-1",
+			"credentials": {
+				"accessKeyId": "YOUR_MINIO_ACCESS_KEY", 
+				"secretAccessKey": "YOUR_MINIO_SECRET_KEY"
+			}
+		},
+		"S3": {
+			"connectTimeout": 5000,
+			"socketTimeout": 5000,
+			"maxAttempts": 50,
+			"keyPrefix": "",
+			"fileExtensions": true,
+			"params": {
+				"Bucket": "YOUR_MINIO_BUCKET_ID"
+			},
+			"cache": {
+				"enabled": true,
+				"maxItems": 1000,
+				"maxBytes": 10485760
+			}
+		}
+	}
+}
+```
 
 ## Web Server Configuration
 
