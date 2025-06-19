@@ -49,6 +49,7 @@
 		+ [Filesystem](#filesystem)
 		+ [Couchbase](#couchbase)
 		+ [Amazon S3](#amazon-s3)
+		+ [S3 Compatible Services](#s3-compatible-services)
 	* [Web Server Configuration](#web-server-configuration)
 	* [User Configuration](#user-configuration)
 	* [Email Configuration](#email-configuration)
