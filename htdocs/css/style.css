@@ -353,6 +353,16 @@ pre.log_chunk {
 
 /* Misc */
 
+span.color_label.checkbox {
+	background: #c8c8c8;
+}
+span.color_label.checkbox:hover {
+	background: #d8d8d8;
+}
+span.color_label.checkbox.checked:hover {
+	background: rgb(120, 174, 249);
+}
+
 span.color_label.clicky {
 	cursor: pointer;
 }
