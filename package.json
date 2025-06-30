@@ -52,7 +52,7 @@
 		"pixl-server-api": "^1.0.2",
 		"pixl-server-storage": "^3.1.18",
 		"pixl-server-user": "^1.0.25",
-		"pixl-server-web": "^2.0.7",
+		"pixl-server-web": "^2.0.12",
 		"pixl-tools": "^1.1.1",
 		"pixl-webapp": "^2.0.2",
 		"shell-quote": "1.7.3",
