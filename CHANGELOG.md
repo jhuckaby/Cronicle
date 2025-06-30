@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.81](https://github.com/jhuckaby/Cronicle/compare/v0.9.80...v0.9.81)
+
+> 30 June 2025
+
+- Fixes #903 - some ordinal day of month suffixes are incorrect
+- Adjust color label checkbox colors for better visibility
+
+- Added section on S3 compatible services (MinIO) [`d76f6bd`](https://github.com/jhuckaby/Cronicle/commit/d76f6bdb332d1120ff1092114d2504a7736c504f)
+- Version 0.9.81 [`a12eacb`](https://github.com/jhuckaby/Cronicle/commit/a12eacbe5192788485f82035d32c9cd9880df83c)
+- Updated TOC. [`7f0b06c`](https://github.com/jhuckaby/Cronicle/commit/7f0b06ca2c81e3193cb0a2bfb00b8cd5ac0191e1)
+
 #### [v0.9.80](https://github.com/jhuckaby/Cronicle/compare/v0.9.79...v0.9.80)
 
 > 2 May 2025
