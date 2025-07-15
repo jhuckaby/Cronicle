@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.82](https://github.com/jhuckaby/Cronicle/compare/v0.9.81...v0.9.82)
+
+> 14 July 2025
+
+- Add support for proxies (for web hooks and the HTTP Plugin)
+- See: https://github.com/jhuckaby/Cronicle/wiki/Proxy-Servers
+- Fixes #908
+
+- Version 0.9.82 [`03bc094`](https://github.com/jhuckaby/Cronicle/commit/03bc0942e801fc75841315e6d025adc21197ac4f)
+
 #### [v0.9.81](https://github.com/jhuckaby/Cronicle/compare/v0.9.80...v0.9.81)
 
 > 30 June 2025
