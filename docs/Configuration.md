@@ -239,16 +239,7 @@ In this example `my_custom_key1` and `my_custom_key2` will be merged in with the
 
 ### web_hook_custom_opts
 
-If you need to customize the low-level properties sent to the Node.js [http.request](https://nodejs.org/api/http.html#http_http_request_options_callback) method for making outbound web hook requests, use the `web_hook_custom_opts` property.  Using this you can set things like a proxy host and port.  Example use:
-
-```js
-"web_hook_custom_opts": {
-	"host": "my-corp-proxy.com",
-	"port": 8080
-}
-```
-
-You can also use this to enable [retries](https://github.com/jhuckaby/pixl-request#automatic-retries) and [redirect following](https://github.com/jhuckaby/pixl-request#automatic-redirects).  Example of enabling both:
+If you need to customize the low-level properties sent to the Node.js [http.request](https://nodejs.org/api/http.html#http_http_request_options_callback) method for making outbound web hook requests, use the `web_hook_custom_opts` property.  Using this you can enable [retries](https://github.com/jhuckaby/pixl-request#automatic-retries) and [redirect following](https://github.com/jhuckaby/pixl-request#automatic-redirects).  Example of enabling both:
 
  ```js
 "web_hook_custom_opts": {
@@ -257,15 +248,15 @@ You can also use this to enable [retries](https://github.com/jhuckaby/pixl-reque
 }
 ```
 
-If you are having trouble getting HTTPS (SSL) web hooks to work, you might need to set `rejectUnauthorized` to true here.  This causes Node.js to blindly accept the web hook SSL connection, even when it cannot validate the SSL certificate.  Example:
+If you are having trouble getting HTTPS (SSL) web hooks to work, you might need to set `rejectUnauthorized` to `false` here.  This causes Node.js to blindly accept the web hook SSL connection, even when it cannot validate the SSL certificate.  Example:
 
 ```js
 "web_hook_custom_opts": {
-	"rejectUnauthorized": true
+	"rejectUnauthorized": false
 }
 ```
 
-Please only do this if you understand the security ramifications, and *completely trust* the host(s) you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers with a self-signed cert.
+Please only do this if you understand the security ramifications, and *completely trust* the host(s) you are connecting to, and the network you are on.  Skipping the certificate validation step should really only be done in special circumstances, such as trying to hit one of your own internal servers, or a proxy with a self-signed cert.
 
 See the [http.request](https://nodejs.org/api/http.html#http_http_request_options_callback) docs for all the possible properties you can set here.
 
