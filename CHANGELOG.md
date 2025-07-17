@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.83](https://github.com/jhuckaby/Cronicle/compare/v0.9.82...v0.9.83)
+
+> 17 July 2025
+
+- Add support for pushover.net for web hooks
+- Special thanks to @Maxzhao1999 for the feature request!
+
+- Version 0.9.83 [`c9cc1a1`](https://github.com/jhuckaby/Cronicle/commit/c9cc1a1a33cd8af42249e8e66f87fc86a209347c)
+
 #### [v0.9.82](https://github.com/jhuckaby/Cronicle/compare/v0.9.81...v0.9.82)
 
 > 14 July 2025
