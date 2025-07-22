@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.85](https://github.com/jhuckaby/Cronicle/compare/v0.9.84...v0.9.85)
+
+> 22 July 2025
+
+- Another fix for same form-data vulnerability (via pixl-server-user module, which I missed the first time around)
+
+- Version 0.9.85 [`34aa85c`](https://github.com/jhuckaby/Cronicle/commit/34aa85c7e782e63f1e4a6d7d9cedc8da7b4d12d1)
+
 #### [v0.9.84](https://github.com/jhuckaby/Cronicle/compare/v0.9.83...v0.9.84)
 
 > 22 July 2025
