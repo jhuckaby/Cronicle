@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.84](https://github.com/jhuckaby/Cronicle/compare/v0.9.83...v0.9.84)
+
+> 22 July 2025
+
+- Bump pixl-request to v2.3.1 for upstream vuln fix in form-data
+- See: https://github.com/jhuckaby/pixl-request/security/dependabot/1
+
+- Version 0.9.84 [`e46fa1e`](https://github.com/jhuckaby/Cronicle/commit/e46fa1ed305ba320e5806e43fef41cdbe288d82a)
+
 #### [v0.9.83](https://github.com/jhuckaby/Cronicle/compare/v0.9.82...v0.9.83)
 
 > 17 July 2025
