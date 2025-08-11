@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.86](https://github.com/jhuckaby/Cronicle/compare/v0.9.85...v0.9.86)
+
+> 11 August 2025
+
+- Bump pixl-webapp to v2.0.3 for a XSS vuln fix, found by @matthewjhands.  Thank you Matthew!
+- Bump pixl-server-web to latest, for new features (and to bump formidable to v3.5.4, to squelch a loud NPM warning).
+
+- Version 0.9.86 [`c109a78`](https://github.com/jhuckaby/Cronicle/commit/c109a78a793b87e7adfd2f5cd60435d758ad0406)
+
 #### [v0.9.85](https://github.com/jhuckaby/Cronicle/compare/v0.9.84...v0.9.85)
 
 > 22 July 2025
