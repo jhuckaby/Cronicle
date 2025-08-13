@@ -373,16 +373,16 @@ Class.subclass( Page.Base, "Page.Schedule", {
 			if (resp.ids.length > 1) {
 				// multiple jobs (multiplex)
 				var num = resp.ids.length;
-				msg = 'Event "'+event.title+'" has been started ('+num+' jobs).  View their progress on the <a href="#Home">Home Tab</a>.';
+				msg = 'Event "'+event.title+'" has been started ('+num+' jobs).  View their progress on the Home Tab.';
 			}
 			else if (resp.ids.length == 1) {
 				// single job
 				var id = resp.ids[0];
-				msg = 'Event "'+event.title+'" has been started.  <a href="#JobDetails?id='+id+'">Click here</a> to view its progress.';
+				msg = 'Event "'+event.title+'" has been started.  View its progress on the Home Tab.';
 			}
 			else {
 				// queued
-				msg = 'Event "'+event.title+'" could not run right away, but was queued up.  View the queue progress on the <a href="#Home">Home Tab</a>.';
+				msg = 'Event "'+event.title+'" could not run right away, but was queued up.  View the queue progress on the Home Tab.';
 			}
 			app.showMessage('success', msg);
 		} );
