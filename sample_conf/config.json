@@ -96,6 +96,14 @@
 		"http_timeout": 30,
 		"http_regex_json": "(text|javascript|js|json)",
 		"http_response_headers": {},
+		"http_uri_response_headers": {
+			"(\/|\\.html)$": {
+				"X-Frame-Options": "DENY",
+				"X-Content-Type-Options": "nosniff",
+				"Referrer-Policy": "strict-origin-when-cross-origin",
+				"Permissions-Policy": "camera=(), microphone=(), geolocation=(), fullscreen=()"
+			}
+		},
 		
 		"https": false,
 		"https_port": 3013,
