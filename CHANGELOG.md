@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.89](https://github.com/jhuckaby/Cronicle/compare/v0.9.88...v0.9.89)
+
+> 13 August 2025
+
+- Merge PR #796
+
+- Add EOL error message [`#796`](https://github.com/jhuckaby/Cronicle/pull/796)
+- Version 0.9.89 [`99ca050`](https://github.com/jhuckaby/Cronicle/commit/99ca0502cb81a931468a9b26ee639fb16cbd44a5)
+
 #### [v0.9.88](https://github.com/jhuckaby/Cronicle/compare/v0.9.87...v0.9.88)
 
 > 13 August 2025
