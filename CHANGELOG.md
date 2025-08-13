@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.87](https://github.com/jhuckaby/Cronicle/compare/v0.9.86...v0.9.87)
+
+> 13 August 2025
+
+- Bump pixl-server-user to v1.0.28 for vuln fux in password reset email URLs.
+- Add doc blurb on http_allow_hosts, and recommended use for production
+- Thanks to @matthewjhands for reporting the vuln.
+- Fixes #916
+
+- Version 0.9.87 [`78ccf62`](https://github.com/jhuckaby/Cronicle/commit/78ccf62447e55ac05ec5984ff456fd5fb79e8f21)
+
 #### [v0.9.86](https://github.com/jhuckaby/Cronicle/compare/v0.9.85...v0.9.86)
 
 > 11 August 2025
