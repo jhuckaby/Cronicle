@@ -92,7 +92,7 @@ The port number to use when communicating with the SMTP server.  The default is 
 
 ### mail_options
 
-Set specific mailer options, such as SMTP SSL and authentication, passed directly to [pixl-mail](https://www.npmjs.com/package/pixl-mail#options) (and then to [nodemailer](https://nodemailer.com/)).  Example:
+Set specific mailer options, such as SMTP SSL and authentication, passed directly to [pixl-mail](https://github.com/jhuckaby/pixl-mail#options) (and then to [nodemailer](https://nodemailer.com/)).  Example:
 
 ```js
 "mail_options": {
@@ -378,7 +378,7 @@ If the limit is exceeded, Cronicle will log an error for each subsequent send at
 
 ## Storage Configuration
 
-The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://www.npmjs.com/package/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
+The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://github.com/jhuckaby/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
 
 It is highly recommended that you enable transactions in the storage system.  This will protect against database corruption in the event of a crash or sudden power loss:
 
@@ -416,13 +416,13 @@ The default storage method is to use local disk (can also be an NFS mount, for m
 
 The `base_dir` is the base directory to store everything under.  It can be a fully-qualified filesystem path, or a relative path to the Cronicle base directory (e.g. `/opt/cronicle`).  In this case it will be `/opt/cronicle/data`.
 
-For more details on using the Filesystem as a backing store, please read the [Local Filesystem section in the pixl-server-storage docs](https://www.npmjs.com/package/pixl-server-storage#local-filesystem).
+For more details on using the Filesystem as a backing store, please read the [Local Filesystem section in the pixl-server-storage docs](https://github.com/jhuckaby/pixl-server-storage#local-filesystem).
 
 ### Couchbase
 
 Please note that as of this writing, Cronicle only supports Couchbase Client v2, so you need to force install version `2.6.12` (see instructions below).  Work is underway to support the v3 API, which has many breaking changes.
 
-To use Couchbase as a backing store for Cronicle, please read the [Couchbase section in the pixl-server-storage docs](https://www.npmjs.com/package/pixl-server-storage#couchbase).  It has complete details for how to setup the storage object.  Example configuration:
+To use Couchbase as a backing store for Cronicle, please read the [Couchbase section in the pixl-server-storage docs](https://github.com/jhuckaby/pixl-server-storage#couchbase).  It has complete details for how to setup the storage object.  Example configuration:
 
 ```js
 {
@@ -462,7 +462,7 @@ After configuring Couchbase, you'll need to run the Cronicle setup script manual
 
 ### Amazon S3
 
-To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 section in the pixl-server-storage docs](https://www.npmjs.com/package/pixl-server-storage#amazon-s3).  It has complete details for how to setup the storage object.  Example configuration:
+To use Amazon S3 as a backing store for Cronicle, please read the [Amazon S3 section in the pixl-server-storage docs](https://github.com/jhuckaby/pixl-server-storage#amazon-s3).  It has complete details for how to setup the storage object.  Example configuration:
 
 ```js
 {
@@ -584,11 +584,21 @@ Changing the `http_port` is probably the most common thing you will want to cust
 
 This is also where you can enable HTTPS, if you want the UI to be SSL encrypted.  Set the `https` property to `1` to enable, and configure the `https_port` as you see fit (the standard HTTPS port is `443`).  You will have to supply your own SSL certificate files (sample self-signed certs are provided for testing, but they will generate browser warnings).
 
-For more details on the web server component, please see the [pixl-server-web](https://www.npmjs.com/package/pixl-server-web#configuration) module documentation.
+For running Cronicle on a live production environment, it is highly recommended that you include a [http_allow_hosts](https://github.com/jhuckaby/pixl-server-web#http_allow_hosts) property, and set it to the domain you are using for Cronicle.  This will reject all incoming HTTP requests unless the `Host` header matches an entry in the list.  Example use:
+
+```js
+{
+	"WebServer": {
+		"http_allow_hosts": ["my-cronicle-domain.com"]
+	}
+}
+```
+
+For more details on the web server component, please see the [pixl-server-web](https://github.com/jhuckaby/pixl-server-web#configuration) module documentation.
 
 ## User Configuration
 
-Cronicle has a simple user login and management system, which is built on the [pixl-server-user](https://www.npmjs.com/package/pixl-server-user) module.  It handles creating new users, assigning permissions, and login / session management.  It is configured in the `User` object, and there are only a couple of parameters you should ever need to configure:
+Cronicle has a simple user login and management system, which is built on the [pixl-server-user](https://github.com/jhuckaby/pixl-server-user) module.  It handles creating new users, assigning permissions, and login / session management.  It is configured in the `User` object, and there are only a couple of parameters you should ever need to configure:
 
 ```js
 {
@@ -624,7 +634,7 @@ The `default_privileges` object specifies which privileges new accounts will rec
 
 By default new users have the `create_events`, `edit_events` and `delete_events` privileges, and nothing else.  Note that when an administrator creates new accounts via the UI, (s)he can customize the privileges at that point.  The configuration only sets the defaults.
 
-For more details on the user manager component, please see the [pixl-server-user](https://www.npmjs.com/package/pixl-server-user#configuration) module documentation.
+For more details on the user manager component, please see the [pixl-server-user](https://github.com/jhuckaby/pixl-server-user#configuration) module documentation.
 
 ## Email Configuration
 
