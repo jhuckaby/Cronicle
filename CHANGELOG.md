@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.88](https://github.com/jhuckaby/Cronicle/compare/v0.9.87...v0.9.88)
+
+> 13 August 2025
+
+- Add security options to web server headers for HTML pages. [`de45621`](https://github.com/jhuckaby/Cronicle/commit/de45621d343450bf315734d192b522455ed58086)
+- Remove all HTML from notification messages, as it is now escaped as of the latest pixl-webapp. [`6f40fdd`](https://github.com/jhuckaby/Cronicle/commit/6f40fdd32c39adc68f20461636ad613ebeff0756)
+- Remove Access-Control-Alllow-Origin header (legacy) [`a553491`](https://github.com/jhuckaby/Cronicle/commit/a5534917e0b47f01b8012c6d39988ce78739e6f7)
+- Version 0.9.88 [`6e3ebae`](https://github.com/jhuckaby/Cronicle/commit/6e3ebaee204e2fe86db05e8ac04241406cf74e67)
+
 #### [v0.9.87](https://github.com/jhuckaby/Cronicle/compare/v0.9.86...v0.9.87)
 
 > 13 August 2025
