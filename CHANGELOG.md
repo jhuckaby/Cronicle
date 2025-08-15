@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.90](https://github.com/jhuckaby/Cronicle/compare/v0.9.89...v0.9.90)
+
+> 15 August 2025
+
+- Bump pixl-server-web to v2.0.16 for cookie parsing bug.
+- FIxes #917
+
+- Version 0.9.90 [`012e88d`](https://github.com/jhuckaby/Cronicle/commit/012e88db8b83cb976a8dc7438799a5642f91f2f8)
+
 #### [v0.9.89](https://github.com/jhuckaby/Cronicle/compare/v0.9.88...v0.9.89)
 
 > 13 August 2025
