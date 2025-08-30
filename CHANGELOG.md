@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.91](https://github.com/jhuckaby/Cronicle/compare/v0.9.90...v0.9.91)
+
+> 30 August 2025
+
+- Revert this commit: https://github.com/jhuckaby/Cronicle/commit/a5534917e0b47f01b8012c6d39988ce78739e6f7
+- Fixes #922
+- Thanks to @seanfulton for catching this!
+
+- Version 0.9.91 [`b58244c`](https://github.com/jhuckaby/Cronicle/commit/b58244c1dc78934dbf27744c78a13607aeb47f68)
+
 #### [v0.9.90](https://github.com/jhuckaby/Cronicle/compare/v0.9.89...v0.9.90)
 
 > 15 August 2025
