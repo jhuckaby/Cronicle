@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.92](https://github.com/jhuckaby/Cronicle/compare/v0.9.91...v0.9.92)
+
+> 15 September 2025
+
+- Add protection against rare "EBADF: bad file descriptor" error when live log filehandle is closed.
+- Fixes #924
+
+- Version 0.9.92 [`9f99565`](https://github.com/jhuckaby/Cronicle/commit/9f99565ca818fa3d101e0845282cdaac083a68ce)
+
 #### [v0.9.91](https://github.com/jhuckaby/Cronicle/compare/v0.9.90...v0.9.91)
 
 > 30 August 2025
