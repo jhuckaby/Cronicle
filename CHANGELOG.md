@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.93](https://github.com/jhuckaby/Cronicle/compare/v0.9.92...v0.9.93)
+
+> 29 September 2025
+
+- Fixed another case of the number suffixes being wrong in the teens.  Thanks again to @sa-dbilling for catching this.
+
+- Version 0.9.93 [`b0cbdc7`](https://github.com/jhuckaby/Cronicle/commit/b0cbdc7351bb49ccb77b097daa4d2c65330cb9d6)
+
 #### [v0.9.92](https://github.com/jhuckaby/Cronicle/compare/v0.9.91...v0.9.92)
 
 > 15 September 2025
