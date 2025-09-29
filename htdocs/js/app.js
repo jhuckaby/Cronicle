@@ -791,8 +791,9 @@ function summarize_event_timing(timing, timezone) {
 	// days
 	var mday_str = '';
 	if (timing.days && timing.days.length) {
-		mday_str = get_pretty_int_list(timing.days, true).replace(/(\d+)/g, function(m_all, m_g1) {
-			return m_g1 + _number_suffixes[ parseInt( m_g1.substring(m_g1.length - 1) ) ];
+		mday_str = get_pretty_int_list(timing.days, true).replace(/(\d+)/g, function(m_all, num_label) {
+			if (num_label.match(/^1[1-9]$/)) return num_label + 'th'; // teens break the rule (11th, 12th, 13th, etc.)
+			else return num_label + _number_suffixes[ parseInt( num_label.substring(num_label.length - 1) ) ];
 		});
 	}
 	
