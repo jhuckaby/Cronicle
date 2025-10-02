@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.95](https://github.com/jhuckaby/Cronicle/compare/v0.9.94...v0.9.95)
+
+> 2 October 2025
+
+- Version 0.9.95 [`ea50387`](https://github.com/jhuckaby/Cronicle/commit/ea5038740ea070b6c10d343a4072ef2ecacc1395)
+- Add note about reporting security vulns [`93f2a5a`](https://github.com/jhuckaby/Cronicle/commit/93f2a5ae0439f2a6088a20b28440714d867eee04)
+- Fix XSS vuln in password reset form. [`7d95df5`](https://github.com/jhuckaby/Cronicle/commit/7d95df522b53100be2a2d0fdbd0b134051def614)
+
+#### [v0.9.94](https://github.com/jhuckaby/Cronicle/compare/v0.9.93...v0.9.94)
+
+> 1 October 2025
+
+- Version 0.9.94 [`33a0ada`](https://github.com/jhuckaby/Cronicle/commit/33a0ada500c2bcc896c76014f343cb10668da6da)
+- Fix issue where single IPv6 isn't logged in transaction log in certain cases.  Changed to log all IPs from args.ip. [`474a145`](https://github.com/jhuckaby/Cronicle/commit/474a1458bb43aa0459c8f7127c9deca3ac7bd4c2)
+
 #### [v0.9.93](https://github.com/jhuckaby/Cronicle/compare/v0.9.92...v0.9.93)
 
 > 29 September 2025
