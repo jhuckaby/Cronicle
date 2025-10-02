@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to try Cronicle, and fill out this bug report!  If you need help with something, please start a discussion thread instead.
+        Thanks for taking the time to try Cronicle, and fill out this bug report!  If you need help with something, please start a discussion thread instead.  If you are reporting a **security vulnerability**, please do **not** file a public GitHub issue.  Instead, email us directly at [security@pixlcore.com](mailto:security@pixlcore.com).
   - type: checkboxes
     attributes:
       label: Is there an existing issue for this?
