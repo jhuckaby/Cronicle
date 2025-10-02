@@ -339,7 +339,7 @@ Class.subclass( Page.Base, "Page.Login", {
 				html += '<center><table style="margin:0px;">';
 					html += '<tr>';
 						html += '<td align="right" class="table_label">Username:</td>';
-						html += '<td align="left" class="table_value"><div><input type="text" name="username" id="fe_reset_username" size="30" spellcheck="false" value="'+args.u+'" disabled="disabled"/></div></td>';
+						html += '<td align="left" class="table_value"><div><input type="text" name="username" id="fe_reset_username" size="30" spellcheck="false" value="' + encode_attrib_entities(args.u) + '" disabled="disabled"/></div></td>';
 					html += '</tr>';
 					html += '<tr><td colspan="2"><div class="table_spacer"></div></td></tr>';
 					html += '<tr>';
