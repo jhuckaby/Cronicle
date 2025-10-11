@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.96](https://github.com/jhuckaby/Cronicle/compare/v0.9.95...v0.9.96)
+
+> 11 October 2025
+
+- Vulnerability fixes across various APIs. [`4124a86`](https://github.com/jhuckaby/Cronicle/commit/4124a86edd5e26ccafa4415183208f52c9c2cebe)
+- Added a new checkbox regarding vuln reporting [`405de16`](https://github.com/jhuckaby/Cronicle/commit/405de1611716112e14fb083e131fba9a62abb9d3)
+- Version 0.9.96 [`c5e3363`](https://github.com/jhuckaby/Cronicle/commit/c5e3363c31cafe09c358d4edeaa33657f711a833)
+
 #### [v0.9.95](https://github.com/jhuckaby/Cronicle/compare/v0.9.94...v0.9.95)
 
 > 2 October 2025
