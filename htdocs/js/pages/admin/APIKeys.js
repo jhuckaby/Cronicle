@@ -316,7 +316,7 @@ Class.add( Page.Admin, {
 		var api_key = this.api_key;
 		
 		api_key.key = $('#fe_ak_key').val();
-		api_key.active = $('#fe_ak_status').val();
+		api_key.active = parseInt( $('#fe_ak_status').val() );
 		api_key.title = $('#fe_ak_title').val();
 		api_key.description = $('#fe_ak_desc').val();
 		
