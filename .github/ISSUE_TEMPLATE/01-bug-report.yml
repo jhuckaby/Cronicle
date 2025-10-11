@@ -1,13 +1,22 @@
 name: Bug Report
-description: File a new bug report.
+description: File a new bug report.  DO NOT REPORT VULNERABILITIES HERE!
 title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to try Cronicle, and fill out this bug report!  If you need help with something, please start a discussion thread instead.  If you are reporting a **security vulnerability**, please do **not** file a public GitHub issue.  Instead, email us directly at [security@pixlcore.com](mailto:security@pixlcore.com).
+        **DO NOT REPORT SECURITY ISSUES / VULNERABILITIES HERE!** Thanks for taking the time to try Cronicle, and fill out this bug report.  If you need help with something, please start a discussion thread instead.  If you are reporting a **security vulnerability**, please do **not** file a public GitHub issue.  Instead, email us directly at [security@pixlcore.com](mailto:security@pixlcore.com).
   - type: checkboxes
+    id: vuln
+    attributes:
+      label: DO NOT REPORT VULNERABILITIES HERE!
+      description: Please confirm that you are **NOT** reporting a security vulnerability here.  If you are, then please close this form, and email us directly at [security@pixlcore.com](mailto:security@pixlcore.com).
+      options:
+      - label: By checking this box I am confirming this issue is NOT a vulnerability.
+        required: true
+  - type: checkboxes
+    id: existing
     attributes:
       label: Is there an existing issue for this?
       description: Please search to see if an issue already exists for the bug you encountered.
