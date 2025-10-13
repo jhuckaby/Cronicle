@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.97](https://github.com/jhuckaby/Cronicle/compare/v0.9.96...v0.9.97)
+
+> 13 October 2025
+
+- Bump pixl-mail to v1.1.4 for upstream vuln patch in nodemailer.
+- Bump pixl-server-user to v1.0.34 for a fix in session expiration handling.
+
+- Version 0.9.97 [`1509773`](https://github.com/jhuckaby/Cronicle/commit/150977352350710e1da1b599b2f62d697641ba32)
+
 #### [v0.9.96](https://github.com/jhuckaby/Cronicle/compare/v0.9.95...v0.9.96)
 
 > 11 October 2025
