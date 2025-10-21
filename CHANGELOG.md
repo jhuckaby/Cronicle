@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.98](https://github.com/jhuckaby/Cronicle/compare/v0.9.97...v0.9.98)
+
+> 21 October 2025
+
+- Fix issue where limit-based job aborts (timeout, cpu, mem, log size) do not trigger a chain reaction error.   Fixes #936.
+
+- Version 0.9.98 [`5f0ad36`](https://github.com/jhuckaby/Cronicle/commit/5f0ad36313a950ffe2d87acf4248febf7822c48a)
+
 #### [v0.9.97](https://github.com/jhuckaby/Cronicle/compare/v0.9.96...v0.9.97)
 
 > 13 October 2025
