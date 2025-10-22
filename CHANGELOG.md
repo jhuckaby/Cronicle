@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.99](https://github.com/jhuckaby/Cronicle/compare/v0.9.98...v0.9.99)
+
+> 22 October 2025
+
+- Fixes #938
+
+- Version 0.9.99 [`326660e`](https://github.com/jhuckaby/Cronicle/commit/326660ec5aa8f2b4453a6c014b7de7de4785dd42)
+
 #### [v0.9.98](https://github.com/jhuckaby/Cronicle/compare/v0.9.97...v0.9.98)
 
 > 21 October 2025
