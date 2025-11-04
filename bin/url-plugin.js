@@ -70,6 +70,9 @@ stream.on('json', function(job) {
 	
 	// post data
 	if (opts.method == 'POST') {
+		// SPECIAL CASE: create json-string-escaped version of chain_description, for GH Issue #942
+		if (job.chain_description) job.escape_chain_description = JSON.stringify(job.chain_description).replace(/^\"/, '').replace(/\"$/, '');
+		
 		// allow POST data to be substituted using [placeholders]
 		params.data = Tools.sub( params.data, job );
 		
