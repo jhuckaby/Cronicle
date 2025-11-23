@@ -3,13 +3,13 @@
 # Control script designed to allow an easy command line interface
 # to controlling any binary.  Written by Marc Slemko, 1997/08/23
 # Modified for Cronicle, Joe Huckaby, 2015/08/11
-# 
+#
 # The exit codes returned are:
-#	0 - operation completed successfully
-#	2 - usage error
-#	3 - binary could not be started
-#	4 - binary could not be stopped
-#	8 - configuration syntax error
+#       0 - operation completed successfully
+#       2 - usage error
+#       3 - binary could not be started
+#       4 - binary could not be stopped
+#       8 - configuration syntax error
 #
 # When multiple arguments are given, only the error from the _last_
 # one is reported.  Run "*ctl help" for usage info
@@ -17,7 +17,7 @@
 #
 # |||||||||||||||||||| START CONFIGURATION SECTION  ||||||||||||||||||||
 # --------------------                              --------------------
-# 
+#
 # add some common paths
 PATH=$PATH:/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/usr/local/sbin
 #
@@ -26,13 +26,13 @@ NAME="Cronicle Server"
 #
 # home directory
 HOMEDIR="$(dirname "$(cd -- "$(dirname "$0")" && (pwd -P 2>/dev/null || pwd))")"
-cd $HOMEDIR
+cd "$HOMEDIR"
 #
 # the path to your binary, including options if necessary
 BINARY="node $HOMEDIR/lib/main.js"
 #
 # the path to your PID file
-PIDFILE=$HOMEDIR/logs/cronicled.pid
+PIDFILE="$HOMEDIR/logs/cronicled.pid"
 #
 # --------------------                              --------------------
 # ||||||||||||||||||||   END CONFIGURATION SECTION  ||||||||||||||||||||
@@ -42,113 +42,104 @@ PIDFILE=$HOMEDIR/logs/cronicled.pid
 
 ERROR=0
 ARGV="$@"
-if [ "x$ARGV" = "x" ] ; then 
-	ARGS="help"
+if [ "x$ARGV" = "x" ] ; then
+        ARGS="help"
 fi
 
 for ARG in $@ $ARGS
 do
-	# check for pidfile
-	if [ -f $PIDFILE ] ; then
-		PID=`cat $PIDFILE`
-		if [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; then
-			# make sure process is actually ours
-			PS=`ps -p $PID -o args= | sed 's/[ \t]*$//'`
-			
-			if [ "$PS" = "$NAME" ] ; then
-				STATUS="$NAME running (pid $PID)"
-				RUNNING=1
-			else
-				STATUS="$NAME not running (pid $PID?)"
-				RUNNING=0
-			fi
-			
-		else
-			STATUS="$NAME not running (pid $PID?)"
-			RUNNING=0
-		fi
-	else
-		STATUS="$NAME not running (no pid file)"
-		RUNNING=0
-	fi
+        # check for pidfile
+        if [ -f "$PIDFILE" ] ; then
+                PID="$(cat "$PIDFILE")"
+                if [ "x$PID" != "x" ] && kill -0 "$PID" 2>/dev/null ; then
+                        STATUS="$NAME running (pid $PID)"
+                        RUNNING=1
+                else
+                        STATUS="$NAME not running (pid $PID?)"
+                        RUNNING=0
+                fi
+        else
+                STATUS="$NAME not running (no pid file)"
+                RUNNING=0
+        fi
 
-	case $ARG in
-	start)
-		if [ $RUNNING -eq 1 ]; then
-			echo "$ARG: $NAME already running (pid $PID)"
-			continue
-		fi
-		echo "$0 $ARG: Starting up $NAME..."
-		if $BINARY ; then
-			echo "$0 $ARG: $NAME started"
-		else
-			echo "$0 $ARG: $NAME could not be started"
-			ERROR=3
-		fi
-	;;
-	stop)
-		if [ $RUNNING -eq 0 ]; then
-			echo "$ARG: $STATUS"
-			continue
-		fi
-		if kill $PID ; then
-			while [ "x$PID" != "x" ] && kill -0 $PID 2>/dev/null ; do
-				sleep 1;
-			done
-			echo "$0 $ARG: $NAME stopped"
-		else
-			echo "$0 $ARG: $NAME could not be stopped"
-			ERROR=4
-		fi
-	;;
-	restart)
-		$0 stop start
-	;;
-	cycle)
-		$0 stop start
-	;;
-	status)
-		echo "$ARG: $STATUS"
-	;;
-	setup)
-		node $HOMEDIR/bin/storage-cli.js setup
-		exit
-	;;
-	maint)
-		node $HOMEDIR/bin/storage-cli.js maint $2
-		exit
-	;;
-	admin)
-		node $HOMEDIR/bin/storage-cli.js admin $2 $3
-		exit
-	;;
-	export)
-		node $HOMEDIR/bin/storage-cli.js export $2 $3 $4
-		exit
-	;;
-	import)
-		if [ $RUNNING -eq 1 ]; then
-			$0 stop
-		fi
-		node $HOMEDIR/bin/storage-cli.js import $2 $3 $4
-		exit
-	;;
-	upgrade)
-		node $HOMEDIR/bin/install.js $2 || exit 1
-		exit
-	;;
-	migrate)
-		node $HOMEDIR/bin/storage-migrate.js $2 $3 $4
-		exit
-	;;
-	version)
-		PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
-		echo "$PACKAGE_VERSION"
-		exit
-	;;
-	*)
-	echo "usage: $0 (start|stop|cycle|status|setup|maint|admin|export|import|upgrade|help)"
-	cat <<EOF
+        case $ARG in
+        start)
+                if [ $RUNNING -eq 1 ]; then
+                        echo "$ARG: $NAME already running (pid $PID)"
+                        continue
+                fi
+                echo "$0 $ARG: Starting up $NAME..."
+                if $BINARY ; then
+                        echo "$0 $ARG: $NAME started"
+                else
+                        echo "$0 $ARG: $NAME could not be started"
+                        ERROR=3
+                fi
+        ;;
+        stop)
+                if [ $RUNNING -eq 0 ]; then
+                        echo "$ARG: $STATUS"
+                        continue
+                fi
+                if kill "$PID" ; then
+                        while [ "x$PID" != "x" ] && kill -0 "$PID" 2>/dev/null ; do
+                                sleep 1
+                        done
+                        echo "$0 $ARG: $NAME stopped"
+                else
+                        echo "$0 $ARG: $NAME could not be stopped"
+                        ERROR=4
+                fi
+        ;;
+        restart)
+                $0 stop start
+        ;;
+        cycle)
+                $0 stop start
+        ;;
+        status)
+                echo "$ARG: $STATUS"
+        ;;
+        setup)
+                node "$HOMEDIR/bin/storage-cli.js" setup
+                exit
+        ;;
+        maint)
+                node "$HOMEDIR/bin/storage-cli.js" maint "$2"
+                exit
+        ;;
+        admin)
+                node "$HOMEDIR/bin/storage-cli.js" admin "$2" "$3"
+                exit
+        ;;
+        export)
+                node "$HOMEDIR/bin/storage-cli.js" export "$2" "$3" "$4"
+                exit
+        ;;
+        import)
+                if [ $RUNNING -eq 1 ]; then
+                        $0 stop
+                fi
+                node "$HOMEDIR/bin/storage-cli.js" import "$2" "$3" "$4"
+                exit
+        ;;
+        upgrade)
+                node "$HOMEDIR/bin/install.js" "$2" || exit 1
+                exit
+        ;;
+        migrate)
+                node "$HOMEDIR/bin/storage-migrate.js" "$2" "$3" "$4"
+                exit
+        ;;
+        version)
+                PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+                echo "$PACKAGE_VERSION"
+                exit
+        ;;
+        *)
+        echo "usage: $0 (start|stop|cycle|status|setup|maint|admin|export|import|upgrade|help)"
+        cat <<EOF
 
 start      - Starts $NAME.
 stop       - Stops $NAME and wait until it actually exits.
@@ -165,7 +156,7 @@ version    - Outputs the current $NAME package version.
 help       - Displays this screen.
 
 EOF
-	ERROR=2
+        ERROR=2
     ;;
 
     esac
@@ -231,4 +222,3 @@ exit $ERROR
 ## originally written at the National Center for Supercomputing Applications,
 ## University of Illinois, Urbana-Champaign.
 ##
-# 
