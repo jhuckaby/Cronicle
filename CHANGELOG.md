@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.101](https://github.com/jhuckaby/Cronicle/compare/v0.9.100...v0.9.101)
+
+> 26 November 2025
+
+- Fix crasher in code block that handles max emails per day
+- Fixes #949 -- thanks to @frankii91 for reporting this!
+
+- Version 0.9.101 [`9ea8467`](https://github.com/jhuckaby/Cronicle/commit/9ea846767434baec06f802c5d826cf37a990ba9c)
+
+#### [v0.9.100](https://github.com/jhuckaby/Cronicle/compare/v0.9.99...v0.9.100)
+
+> 4 November 2025
+
+- SPECIAL CASE: create json-string-escaped version of chain_description, for GH Issue #942 [`5929a79`](https://github.com/jhuckaby/Cronicle/commit/5929a79044f93e5837d5db845a88411d83fefb36)
+- Version 0.9.100 [`9c6aea8`](https://github.com/jhuckaby/Cronicle/commit/9c6aea89c3afa37c18655bf5f97115b6c3f5255f)
+
 #### [v0.9.99](https://github.com/jhuckaby/Cronicle/compare/v0.9.98...v0.9.99)
 
 > 22 October 2025
