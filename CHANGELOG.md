@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.102](https://github.com/jhuckaby/Cronicle/compare/v0.9.101...v0.9.102)
+
+> 18 December 2025
+
+- Bump nodemailer and pixl-mail [`#954`](https://github.com/jhuckaby/Cronicle/pull/954)
+- Version 0.9.102 [`4948d70`](https://github.com/jhuckaby/Cronicle/commit/4948d70f96e8c849248509a21956cd778ff2ab4c)
+- Add private flag to prevent accidental publishing to npm [`6fba859`](https://github.com/jhuckaby/Cronicle/commit/6fba8596e76ee39e8c145257b842d5c79d57c631)
+
 #### [v0.9.101](https://github.com/jhuckaby/Cronicle/compare/v0.9.100...v0.9.101)
 
 > 26 November 2025
