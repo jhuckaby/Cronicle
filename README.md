@@ -1,3 +1,15 @@
+# xyOps
+
+![xyOps Screenshot](https://pixlcore.com/images/blog/xyops/workflow-edit.webp)
+
+Announcing **xyOps™**, the spiritual successor to Cronicle!  Beta v0.9 is now available for testing:
+
+https://github.com/pixlcore/xyops
+
+Let me know what you think!
+
+Cronicle will still be supported and maintained going forward (mainly bug fixes and security issues will be patched).
+
 # Overview
 
 **Cronicle** is a multi-server task scheduler and runner, with a web based front-end UI.  It handles both scheduled, repeating and on-demand jobs, targeting any number of worker servers, with real-time stats and live log viewer.  It's basically a fancy [Cron](https://en.wikipedia.org/wiki/Cron) replacement written in [Node.js](https://nodejs.org/).  You can give it simple shell commands, or write Plugins in virtually any language.
