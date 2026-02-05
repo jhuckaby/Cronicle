@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.105](https://github.com/jhuckaby/Cronicle/compare/v0.9.104...v0.9.105)
+
+> 5 February 2026
+
+- Restore master_ping_timeout to 60 seconds, as this is also the initial startup delay, so we don't want to double that for all users. [`3e207d0`](https://github.com/jhuckaby/Cronicle/commit/3e207d0b348ed96fcaf4345885422c25b76e6692)
+- Version 0.9.105 [`5ca2577`](https://github.com/jhuckaby/Cronicle/commit/5ca2577d645ae2203abe001706bc1a6181bd7a79)
+
+#### [v0.9.104](https://github.com/jhuckaby/Cronicle/compare/v0.9.103...v0.9.104)
+
+> 5 February 2026
+
+- Add further protection against rare situation where a master conflict forces an existing master primary to demote itself to worker. [`f92dc9f`](https://github.com/jhuckaby/Cronicle/commit/f92dc9f766ffbe2b0d86da9735b7d952a7c2061d)
+- Change default master_ping_freq to 5 seconds, and master_ping_timeout to 120 seconds. [`0c90847`](https://github.com/jhuckaby/Cronicle/commit/0c90847e69fae11b8432cca05304edba6ae15828)
+- Version 0.9.104 [`20e7a34`](https://github.com/jhuckaby/Cronicle/commit/20e7a342ed9f2906141ea19567bb91ee08c89901)
+
 #### [v0.9.103](https://github.com/jhuckaby/Cronicle/compare/v0.9.102...v0.9.103)
 
 > 4 February 2026
