@@ -200,7 +200,7 @@ For multi-server clusters, this specifies how often the primary server should se
 
 ### master_ping_timeout
 
-For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `120` seconds.
+For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `60` seconds.
 
 ### udp_broadcast_port
 

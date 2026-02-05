@@ -21,7 +21,7 @@
 	"child_kill_timeout": 10,
 	"dead_job_timeout": 120,
 	"master_ping_freq": 5,
-	"master_ping_timeout": 120,
+	"master_ping_timeout": 60,
 	"udp_broadcast_port": 3014,
 	"scheduler_startup_grace": 10,
 	"universal_web_hook": "",
