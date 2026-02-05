@@ -196,11 +196,11 @@ The worst case scenario is that a remote server with running jobs goes MIA for l
 
 ### master_ping_freq
 
-For multi-server clusters, this specifies how often the primary server should send out pings to worker servers, to let them know who is the boss.  The default is `20` seconds.
+For multi-server clusters, this specifies how often the primary server should send out pings to worker servers, to let them know who is the boss.  The default is `5` seconds.
 
 ### master_ping_timeout
 
-For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `60` seconds.
+For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `120` seconds.
 
 ### udp_broadcast_port
 
