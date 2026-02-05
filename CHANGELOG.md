@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.103](https://github.com/jhuckaby/Cronicle/compare/v0.9.102...v0.9.103)
+
+> 4 February 2026
+
+- Ensure goMaster() function is only ever called once.  Log a fatal error and shut down if it gets double-called. [`d724494`](https://github.com/jhuckaby/Cronicle/commit/d724494ce02d919318c7001ecec88647f7b18815)
+- Add xyOps plug in README [`321a38f`](https://github.com/jhuckaby/Cronicle/commit/321a38f545c91f1051afd762eef3924c1b38ea55)
+- Version 0.9.103 [`f19d500`](https://github.com/jhuckaby/Cronicle/commit/f19d500e7cbfd492ef4c2c22fffe608327f0ee5f)
+- Added trademark [`2b4f5f1`](https://github.com/jhuckaby/Cronicle/commit/2b4f5f1be5ca38a7756c3df773df1f6928439864)
+
 #### [v0.9.102](https://github.com/jhuckaby/Cronicle/compare/v0.9.101...v0.9.102)
 
 > 18 December 2025
