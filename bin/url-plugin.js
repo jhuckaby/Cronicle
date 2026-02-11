@@ -135,17 +135,17 @@ stream.on('json', function(job) {
 					return a[0].localeCompare(b[0]);
 				} )
 			};
-		}
-		
-		// add response headers to chain_data if applicable
-		if (job.chain) {
-			update.chain_data = {
-				headers: resp.headers
-			};
+			
+			// add response headers to chain_data if applicable
+			if (job.chain) {
+				update.chain_data = {
+					headers: resp.headers
+				};
+			}
 		}
 		
 		// add raw response content, if text (and not too long)
-		if (text && resp.headers['content-type'] && resp.headers['content-type'].match(/(text|javascript|json|css|html)/i)) {
+		if (text && resp && resp.headers['content-type'] && resp.headers['content-type'].match(/(text|javascript|json|css|html)/i)) {
 			print("\nRaw Response Content:\n" + text.trim() + "\n");
 			
 			if (text.length < 32768) {
