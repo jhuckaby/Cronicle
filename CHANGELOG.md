@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.106](https://github.com/jhuckaby/Cronicle/compare/v0.9.105...v0.9.106)
+
+> 11 February 2026
+
+- Bug Fix: Crash when a core HTTP error occurs (i.e. "socket hang up") and job is configured with chain reaction.  Fixes #964. [`4248c90`](https://github.com/jhuckaby/Cronicle/commit/4248c9057fcfa6c699bae309c320bd1c8b56e8fd)
+- Version 0.9.106 [`364d394`](https://github.com/jhuckaby/Cronicle/commit/364d394cb93ac8c87255ecde2ef4a348fe032ef6)
+
 #### [v0.9.105](https://github.com/jhuckaby/Cronicle/compare/v0.9.104...v0.9.105)
 
 > 5 February 2026
