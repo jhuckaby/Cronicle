@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.107](https://github.com/jhuckaby/Cronicle/compare/v0.9.106...v0.9.107)
+
+> 23 February 2026
+
+- Bump pixl-server-storage to v4 for latest AWS SDK, for multiple upstream vuln fixes.
+
+- Version 0.9.107 [`0c0babc`](https://github.com/jhuckaby/Cronicle/commit/0c0babcde8582f50a78d4337c3aa80f21b9bae4b)
+
 #### [v0.9.106](https://github.com/jhuckaby/Cronicle/compare/v0.9.105...v0.9.106)
 
 > 11 February 2026
