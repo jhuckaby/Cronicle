@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.108](https://github.com/jhuckaby/Cronicle/compare/v0.9.107...v0.9.108)
+
+> 19 March 2026
+
+- Fix upstream vuln in socket.io -- see #966
+
+- Bump socket.io-parser from 4.2.5 to 4.2.6 [`#966`](https://github.com/jhuckaby/Cronicle/pull/966)
+- Version 0.9.108 [`9c6d965`](https://github.com/jhuckaby/Cronicle/commit/9c6d965d051aab24458b0b9735a97c88f9aced20)
+
 #### [v0.9.107](https://github.com/jhuckaby/Cronicle/compare/v0.9.106...v0.9.107)
 
 > 23 February 2026
