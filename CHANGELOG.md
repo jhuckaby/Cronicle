@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+#### [v0.9.109](https://github.com/jhuckaby/Cronicle/compare/v0.9.108...v0.9.109)
+
+> 19 March 2026
+
+- Fix upstream vulns in fast-xml-parser and @aws-sdk/xml-builder.  See #967
+
+- Bump fast-xml-parser and @aws-sdk/xml-builder [`#967`](https://github.com/jhuckaby/Cronicle/pull/967)
+- Version 1.0.9 [`de49e79`](https://github.com/jhuckaby/Cronicle/commit/de49e793bba2c2b4db8308165ea74c25b2e2aa26)
+
 #### [v0.9.108](https://github.com/jhuckaby/Cronicle/compare/v0.9.107...v0.9.108)
 
 > 19 March 2026
