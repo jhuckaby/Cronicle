@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.109",
+	"version": "0.9.110",
 	"private": true,
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
@@ -14,7 +14,7 @@
 		"preuninstall": "pixl-boot uninstall",
 		"boot": "pixl-boot install",
 		"unboot": "pixl-boot uninstall",
-		"changelog": "auto-changelog --commit-limit false --release-summary --issue-pattern DO_NOT_USE --hide-credit --ignore-commit-pattern CHANGELOG"
+		"changelog": "node bin/changelog.js"
 	},
 	"repository": {
 		"type": "git",
@@ -28,6 +28,9 @@
 		"crontab",
 		"scheduler"
 	],
+	"overrides": {
+		"picomatch": "4.0.4"
+	},
 	"dependencies": {
 		"async": "2.6.4",
 		"bcrypt-node": "0.1.0",
@@ -54,7 +57,7 @@
 		"pixl-server-storage": "^4.0.2",
 		"pixl-server-user": "^1.0.34",
 		"pixl-server-web": "^2.0.16",
-		"pixl-tools": "^1.1.1",
+		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
 		"shell-quote": "1.7.3",
 		"socket.io": "4.8.0",
@@ -64,7 +67,6 @@
 		"zxcvbn": "3.5.0"
 	},
 	"devDependencies": {
-		"auto-changelog": "2.5.0",
-		"pixl-unit": "^1.0.12"
+		"pixl-unit": "^2.0.1"
 	}
 }
