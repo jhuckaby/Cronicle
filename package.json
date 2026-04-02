@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.110",
+	"version": "0.9.111",
 	"private": true,
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
@@ -59,6 +59,7 @@
 		"pixl-server-web": "^2.0.16",
 		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
+		"sanitize-html": "2.13.1",
 		"shell-quote": "1.7.3",
 		"socket.io": "4.8.0",
 		"socket.io-client": "4.7.5",
