@@ -1,5 +1,16 @@
 # Cronicle Changelog
 
+## Version v0.9.111
+
+> April 2, 2026
+
+- [`b7e3072`](https://github.com/jhuckaby/cronicle/commit/b7e3072373b587c1426b8eaeb6f9bf56b5192d54): Version 0.9.111
+	- Add sanitize-html package.
+- [`256d258`](https://github.com/jhuckaby/cronicle/commit/256d258a45f9b97e80f8a27ef4e5e1b91da01bda): Fix broken unit test on latest pixl-server-user.
+- [`f0b6d6f`](https://github.com/jhuckaby/cronicle/commit/f0b6d6fe6779976b65863c872b72741e9ac961c9): Security Hardening: Disallow "update_event" from job output unless specifically enabled in configuration.
+- [`37e21bb`](https://github.com/jhuckaby/cronicle/commit/37e21bb4c0509aae9ab5e67be33fd8a262e0af5d): Security Hardening: Perform HTML sanitization on user content in job outputs.
+- [`e242dc7`](https://github.com/jhuckaby/cronicle/commit/e242dc7c7984562e19ee30116edf3b7fea8ead35): Add securty policy for reporting vulns.
+
 ## Version v0.9.110
 
 > March 29, 2026
