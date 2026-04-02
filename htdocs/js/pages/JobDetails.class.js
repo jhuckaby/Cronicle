@@ -328,13 +328,13 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		// custom data table
 		if (job.table && job.table.rows && job.table.rows.length) {
 			var table = job.table;
-			html += '<div class="subtitle" style="margin-top:15px;">' + (table.title || 'Job Stats') + '</div>';
+			html += '<div class="subtitle" style="margin-top:15px;">' + encode_entities(table.title || 'Job Stats') + '</div>';
 			html += '<table class="data_table" style="width:100%">';
 			
 			if (table.header && table.header.length) {
 				html += '<tr>';
 				for (var idx = 0, len = table.header.length; idx < len; idx++) {
-					html += '<th>' + table.header[idx] + '</th>';
+					html += '<th>' + encode_entities(table.header[idx]) + '</th>';
 				}
 				html += '</tr>';
 			}
@@ -350,14 +350,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 						var col = row[idy];
 						html += '<td>';
 						if (typeof(col) != 'undefined') {
-							if (filters[idy] && window[filters[idy]]) html += window[filters[idy]](col);
+							if (filters[idy] && window[filters[idy]]) html += encode_entities( window[filters[idy]](col) );
 							else if ((typeof(col) == 'string') && col.match(/^filter\:(\w+)\((.+)\)$/)) {
 								var filter = RegExp.$1;
 								var value = RegExp.$2;
-								if (window[filter]) html += window[filter](value);
-								else html += value;
+								if (window[filter]) html += encode_entities( window[filter](value) );
+								else html += encode_entities(value);
 							}
-							else html += col;
+							else html += encode_entities(col);
 						}
 						html += '</td>';
 					} // foreach col
@@ -367,14 +367,14 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			} // foreach row
 			
 			html += '</table>';
-			if (table.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + table.caption + '</div>';
+			if (table.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + encode_entities(table.caption) + '</div>';
 		} // custom data table
 		
 		// custom html table
 		if (job.html) {
-			html += '<div class="subtitle" style="margin-top:15px;">' + (job.html.title || 'Job Report') + '</div>';
-			html += '<div>' + job.html.content + '</div>';
-			if (job.html.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + job.html.caption + '</div>';
+			html += '<div class="subtitle" style="margin-top:15px;">' + encode_entities(job.html.title || 'Job Report') + '</div>';
+			html += '<div>' + job.html.content + '</div>'; // this was pre-sanitized on the server
+			if (job.html.caption) html += '<div class="caption" style="margin-top:4px; text-align:center;">' + encode_entities(job.html.caption) + '</div>';
 		}
 		
 		// job log (IFRAME)
