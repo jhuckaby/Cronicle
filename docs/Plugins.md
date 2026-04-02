@@ -305,6 +305,8 @@ If your Plugin generates plain text instead of HTML, you can just wrap it in a `
 
 #### Updating The Event
 
+**Note:** As of Cronicle v0.9.111, this feature requires a `allow_event_updates_from_jobs` configuration property be added to the `config.json` file, and set to `true`.
+
 Your job can optionally trigger an event update when it completes.  This can be used to do things such as disable the event (remove it from the schedule) in response to a catastrophic error, or change the event's timing, change the server or group target, and more.
 
 To update the event for a job, simply include an `update_event` object in your Plugin's JSON output, containing any properties from the [Event Data Format](APIReference.md#event-data-format).  Example:

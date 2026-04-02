@@ -376,6 +376,16 @@ You can optionally set a limit on the number of emails Cronicle will send per da
 
 If the limit is exceeded, Cronicle will log an error for each subsequent send attempt.  The counter resets at midnight server time.
 
+### allow_event_updates_from_jobs
+
+Set this property to `true` to allow job scripts to update their respective event records upon completion.  Do this with caution, as it enables job output to add potentially "anything" to an event (for e.g. add a new web hook).  Example:
+
+```js
+"allow_event_updates_from_jobs": true
+```
+
+(Added in Cronicle v0.9.111)
+
 ## Storage Configuration
 
 The `Storage` object contains settings for the Cronicle storage system.  This is built on the [pixl-server-storage](https://github.com/jhuckaby/pixl-server-storage) module, which can write everything to local disk (the default), [Couchbase](http://www.couchbase.com/nosql-databases/couchbase-server) or [Amazon S3](https://aws.amazon.com/s3/).
