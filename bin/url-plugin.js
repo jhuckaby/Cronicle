@@ -2,7 +2,7 @@
 
 // URL Plugin for Cronicle
 // Invoked via the 'HTTP Client' Plugin
-// Copyright (c) 2017 Joseph Huckaby
+// Copyright (c) 2017 - 2026 Joseph Huckaby
 // Released under the MIT License
 
 // Job Params: 
@@ -14,7 +14,7 @@ var cp = require('child_process');
 var path = require('path');
 var JSONStream = require('pixl-json-stream');
 var Tools = require('pixl-tools');
-var Request = require('pixl-request');
+var PixlRequest = require('pixl-request');
 
 // setup stdin / stdout streams 
 process.stdin.setEncoding('utf8');
@@ -24,14 +24,16 @@ var stream = new JSONStream( process.stdin, process.stdout );
 stream.on('json', function(job) {
 	// got job from parent
 	var params = job.params;
-	var request = new Request();
+	var request = new PixlRequest();
 	
 	var print = function(text) {
 		fs.appendFileSync( job.log_file, text );
 	};
 	
-	// timeout
-	request.setTimeout( (params.timeout || 0) * 1000 );
+	// timeouts
+	request.setTimeout( parseInt(params.timeout || 0) * 1000 );
+	request.setIdleTimeout( parseInt(params.idle_timeout || params.timeout || 0) * 1000 );
+	request.setConnectTimeout( parseInt(params.connect_timeout || 10) * 1000 );
 	
 	if (!params.url || !params.url.match(/^https?\:\/\/\S+$/i)) {
 		stream.write({ complete: 1, code: 1, description: "Malformed URL: " + (params.url || '(n/a)') });
