@@ -1,5 +1,14 @@
 # Cronicle Changelog
 
+## Version v0.9.112
+
+> April 8, 2026
+
+- [`3f8b269`](https://github.com/jhuckaby/cronicle/commit/3f8b269723daed41e78e5435699034f60a1e0da1): Version 0.9.112
+	- HTTP Plugin: Add support for separate configurable idle timeout and connect timeouts.  Fixes #970.
+	- Bump pixl-mail to v1.1.7 for upstream vuln fix in nodemailer.
+	- Bump pixl-request to latest for upstream vuln fixes.
+
 ## Version v0.9.111
 
 > April 2, 2026
