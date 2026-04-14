@@ -2,9 +2,10 @@
 
 ![xyOps Screenshot](https://pixlcore.com/images/blog/xyops/workflow-edit.webp)
 
-Announcing **xyOps™**, the spiritual successor to Cronicle!  Beta v0.9 is now available for testing:
+Announcing **xyOps™**, the spiritual successor to Cronicle!  Version 1.0 is now live:
 
-https://github.com/pixlcore/xyops
+- Snazzy Marketing Site: https://xyops.io/
+- GitHub Repo: https://github.com/pixlcore/xyops
 
 Let me know what you think!
 
