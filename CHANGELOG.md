@@ -1,5 +1,20 @@
 # Cronicle Changelog
 
+## Version v0.9.114
+
+> April 16, 2026
+
+- [`b79bad7`](https://github.com/jhuckaby/cronicle/commit/b79bad7febd4661b52dda130d2fcd4fda9b858ce): Version 0.9.114
+	- Bump pixl-request to v2.6.5 for upstream vuln fixes in basic-ftp (sub-dep of proxy-agent).  Yup, another one.
+
+## Version v0.9.113
+
+> April 16, 2026
+
+- [`bd780e9`](https://github.com/jhuckaby/cronicle/commit/bd780e96527bb833818bed03fbb871979824d492): Version 0.9.113
+	- Bump pixl-request to v2.6.4 for upstream vuln fixes in basic-ftp (sub-dep of proxy-agent).
+- [`30f4ff5`](https://github.com/jhuckaby/cronicle/commit/30f4ff5e944ebb09d875fd07d1c9e9bfdabc2240): README: Updated links to xyOps, and mention v1.0 launch.
+
 ## Version v0.9.112
 
 > April 8, 2026
