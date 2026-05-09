@@ -1,5 +1,19 @@
 # Cronicle Changelog
 
+## Version v0.9.116
+
+> May 8, 2026
+
+- [`df235a6`](https://github.com/jhuckaby/cronicle/commit/df235a692d54b09431b155fd0b650968089a7d4f): Version 0.9.116
+	- Rebuild package-lock.json to address serveral upstream vulns.
+
+## Version v0.9.115
+
+> April 30, 2026
+
+- [`22ce74a`](https://github.com/jhuckaby/cronicle/commit/22ce74adf5643e8a99849f2ea136043e11a547a0): Version 0.9.115
+- [`773d98c`](https://github.com/jhuckaby/cronicle/commit/773d98ca59d5a9e6d019c8acf051eeeccac99eb9): FIx issue with export/import when file path includes spaces.  Fixes #972.
+
 ## Version v0.9.114
 
 > April 16, 2026
