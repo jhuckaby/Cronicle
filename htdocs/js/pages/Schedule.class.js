@@ -991,6 +991,13 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		);
 		html += get_form_table_spacer( eq_classes, '' );
 		
+		// dependencies
+		html += get_form_table_row( 'Dependencies', 
+			'<input type="text" id="fe_ee_dependencies" style="width:90%" value="'+escape_text_field_value(event.dependencies)+'" placeholder="success(event_id) & success(other_event_id)" spellcheck="false"/>'
+		);
+		html += get_form_table_caption( "Enter Autosys-style dependencies, e.g. success(ev1) & (success(ev2) | failure(ev3)). Use Event IDs." );
+		html += get_form_table_spacer();
+		
 		// chain reaction
 		var sorted_events = app.schedule.sort( function(a, b) {
 			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
@@ -1803,6 +1810,7 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		if (event.queue_max < 0) return quiet ? false : app.badField('fe_ee_queue_max', "Please enter a positive integer for the event queue max.");
 		
 		// chain reaction
+		event.dependencies = $('#fe_ee_dependencies').val();
 		event.chain = $('#fe_ee_chain').val();
 		event.chain_error = $('#fe_ee_chain_error').val();
 		
