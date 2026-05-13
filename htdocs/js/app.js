@@ -15,7 +15,8 @@ app.extend({
 	clock_visible: false,
 	scroll_time_visible: false,
 	default_prefs: {
-		schedule_group_by: 'category'
+		schedule_group_by: 'category',
+		dark_mode: 0
 	},
 	
 	receiveConfig: function(resp) {
@@ -89,6 +90,10 @@ app.extend({
 			}
 		}
 		
+		if (parseInt(window.localStorage.dark_mode)) {
+			$('body').addClass('dark');
+		}
+		
 		// pop version into footer
 		$('#d_footer_version').html( "Version " + this.version || 0 );
 		
@@ -126,6 +131,18 @@ app.extend({
 		html += '<div id="d_header_divider" class="right"></div>';
 		html += '<div id="d_header_user_bar" class="right" style="background-image:url(' + this.getUserAvatarURL( this.retina ? 64 : 32 ) + ')" onMouseUp="app.doMyAccount()">' + (this.user.full_name || app.username).replace(/\s+.+$/, '') + '</div>';
 		$('#d_header_user_container').html( html );
+	},
+	
+	toggleDarkMode: function() {
+		// toggle dark mode
+		if ($('body').hasClass('dark')) {
+			$('body').removeClass('dark');
+			window.localStorage.dark_mode = 0;
+		}
+		else {
+			$('body').addClass('dark');
+			window.localStorage.dark_mode = 1;
+		}
 	},
 	
 	doUserLogin: function(resp) {

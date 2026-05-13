@@ -1,0 +1,112 @@
+
+/* Dark Theme for Cronicle */
+
+body.dark #d_scroll_time {
+	background: #222;
+	border-left: 1px solid #333;
+	border-bottom: 1px solid #333;
+	color: #bbb;
+	text-shadow: none;
+	box-shadow: rgba(0,0,0,0.5) 0px 2px 3px;
+}
+
+body.dark .subtitle_menu {
+	color: #888;
+	background-color: #171717;
+}
+
+body.dark div.timing_details_content, 
+body.dark div.plugin_params_content,
+body.dark .fieldset_params_table label,
+body.dark div.info_value {
+	color: #bbb;
+}
+
+body.dark div.timing_details_label,
+body.dark div.plugin_params_label,
+body.dark div.pie-title,
+body.dark div.graph-title,
+body.dark .table_label,
+body.dark .h1,
+body.dark h1, body.dark h2, body.dark div.h1, body.dark div.h2 {
+	text-shadow: none;
+}
+
+body.dark .data_table tr.plain td, body.dark .swatch.plain { background-color: #2a2a2a; }
+body.dark .data_table tr.red td, body.dark .swatch.red { background-color: #400; }
+body.dark .data_table tr.green td, body.dark .swatch.green { background-color: #040; }
+body.dark .data_table tr.blue td, body.dark .swatch.blue { background-color: #004; }
+body.dark .data_table tr.skyblue td, body.dark .swatch.skyblue { background-color: #044; }
+body.dark .data_table tr.yellow td, body.dark .swatch.yellow { background-color: #440; }
+body.dark .data_table tr.purple td, body.dark .swatch.purple { background-color: #404; }
+body.dark .data_table tr.orange td, body.dark .swatch.orange { background-color: #420; }
+
+body.dark .link.addme { color: #888; }
+
+body.dark .swatch { border-color: #333; }
+
+body.dark div.schedule_group_header { color: #777; }
+
+body.dark div.schedule_group_button_container > i:hover { color: #fff; }
+
+body.dark .psi_container { border-color: #333; }
+
+body.dark .subtitle_widget a, body.dark .subtitle_widget span.link { color: #888; }
+body.dark .subtitle_widget a:hover, body.dark .subtitle_widget span.link:hover { color: #fff; }
+
+body.dark .button {
+	box-shadow: none;
+	text-shadow: none;
+}
+
+body.dark .button:active, body.dark .button.active {
+	background: #333;
+}
+
+body.dark fieldset {
+	box-shadow: none;
+}
+
+body.dark .data_table tr td {
+	border-bottom: 1px solid #333;
+}
+
+body.dark .table_spacer { background: #333; }
+
+body.dark #d_header_logo {
+	filter: invert(0.8);
+}
+
+body.dark #d_header_title {
+	color: #aaa;
+}
+
+body.dark .tab_widget {
+	color: #888;
+}
+
+body.dark .tab.inactive {
+	border-bottom: 1px solid #333;
+}
+
+body.dark .main {
+	box-shadow: none;
+}
+
+body.dark .c3-axis path, body.dark .c3-axis .tick line, body.dark .c3-grid line {
+	stroke: #444 !important;
+}
+
+body.dark .c3-axis text {
+	fill: #888 !important;
+}
+
+body.dark div.pie-overlay-subtitle {
+	color: #666;
+}
+
+/* Adjustments for My Account profile picture fieldset */
+body.dark td[valign="top"] fieldset {
+	background: #242424 !important;
+	border: 1px solid #333 !important;
+}

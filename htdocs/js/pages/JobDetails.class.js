@@ -32,6 +32,9 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		app.setWindowTitle( "Job Details: #" + args.id );
 		app.showTabBar(true);
 		
+		// adjust pie colors for dark mode
+		this.pie_colors.empty = $('body').hasClass('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+		
 		this.tab.show();
 		this.tab[0]._page_id = Nav.currentAnchor();
 		

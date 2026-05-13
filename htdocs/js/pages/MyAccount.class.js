@@ -49,6 +49,12 @@ Class.subclass( Page.Base, "Page.MyAccount", {
 		html += get_form_table_caption( "This is used to generate your profile pic, and to<br/>recover your password if you forget it." );
 		html += get_form_table_spacer();
 		
+		// dark mode
+		var is_dark = $('body').hasClass('dark');
+		html += get_form_table_row( 'Appearance', '<input type="checkbox" id="fe_ma_dark_mode" value="1" ' + (is_dark ? 'checked="checked"' : '') + ' onChange="app.toggleDarkMode()"/> <label for="fe_ma_dark_mode">Dark Mode</label>' );
+		html += get_form_table_caption( "Enable dark mode for the web interface." );
+		html += get_form_table_spacer();
+		
 		// current password
 		html += get_form_table_row( 'Current Password', '<input type="' + app.get_password_type() + '" id="fe_ma_old_password" size="30" value="" spellcheck="false"/>' + app.get_password_toggle_html() );
 		html += get_form_table_caption( "Enter your current account password to make changes." );
