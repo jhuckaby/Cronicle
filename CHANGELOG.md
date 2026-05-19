@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.117
+
+> May 19, 2026
+
+- [`75190ca`](https://github.com/jhuckaby/cronicle/commit/75190ca9aecf5836f98663e90788205a661d07fd): Version 0.9.117
+	- Bump sanitize-html to v2.17.4 for vuln fix
+	- Bump socket.io to v4.8.3 for vuln fix
+
 ## Version v0.9.116
 
 > May 8, 2026
