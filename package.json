@@ -61,7 +61,7 @@
 		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
 		"sanitize-html": "2.17.4",
-		"shell-quote": "1.7.3",
+		"shell-quote": "1.8.4",
 		"socket.io": "4.8.3",
 		"socket.io-client": "4.8.3",
 		"uglify-js": "3.14.3",
