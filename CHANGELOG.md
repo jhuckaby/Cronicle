@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.118
+
+> June 9, 2026
+
+- [`fa6ca1a`](https://github.com/jhuckaby/cronicle/commit/fa6ca1ad49ca4236ff92f2ca941959cce69b3529): Version 0.9.118
+	- Bump shell-quote to v1.8.4 for vuln fixes.
+
 ## Version v0.9.117
 
 > May 19, 2026
