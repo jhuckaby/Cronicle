@@ -1,5 +1,22 @@
 # Cronicle Changelog
 
+## Version v0.9.120
+
+> June 14, 2026
+
+- [`53fa258`](https://github.com/jhuckaby/cronicle/commit/53fa258a08f08378581a25379c1a55a94e91f347): Bump sanitize-html to v2.17.5 for vuln fix.
+- [`97aefe8`](https://github.com/jhuckaby/cronicle/commit/97aefe8fc6ff6ef305104fc41e5aba4d4871acf1): Version 0.9.120
+- [`857fd27`](https://github.com/jhuckaby/cronicle/commit/857fd272bc2c0fa9fe04c256bd5f7f08252a8e8a): job.js: Fix pending queue and log watcher edge cases.  Fixes #982.
+
+## Version v0.9.119
+
+> June 13, 2026
+
+- [`e070642`](https://github.com/jhuckaby/cronicle/commit/e070642fc78749c2641a62ef445f45ea0293d1aa): Version 0.9.119
+	- Bump pixl-request to v2.6.6 for potential stream write leak fixes.
+- [`8b60eb5`](https://github.com/jhuckaby/cronicle/commit/8b60eb5b041614ab661df50e58e612f5e42a7d30): Enhance security by encoding user-provided text in activity log descriptions
+- [`2174376`](https://github.com/jhuckaby/cronicle/commit/21743766a6a45ec1ef48b63cfa70513186f7644e): Bug fix: Job retry code was leaking an old process handle object.
+
 ## Version v0.9.118
 
 > June 9, 2026
