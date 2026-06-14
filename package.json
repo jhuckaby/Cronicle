@@ -60,7 +60,7 @@
 		"pixl-server-web": "^2.0.16",
 		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
-		"sanitize-html": "2.17.4",
+		"sanitize-html": "2.17.5",
 		"shell-quote": "1.8.4",
 		"socket.io": "4.8.3",
 		"socket.io-client": "4.8.3",
