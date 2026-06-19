@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.120",
+	"version": "0.9.121",
 	"private": true,
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
@@ -30,7 +30,7 @@
 	],
 	"overrides": {
 		"picomatch": "4.0.4",
-		"ws": "8.20.1"
+		"ws": "8.21.0"
 	},
 	"dependencies": {
 		"async": "2.6.4",
