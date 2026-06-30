@@ -1,5 +1,19 @@
 # Cronicle Changelog
 
+## Version v0.9.122
+
+> June 30, 2026
+
+- [`85fe18f`](https://github.com/jhuckaby/cronicle/commit/85fe18f79d492c9aade9eb2f8f38ebbe83f9e1f6): Version 0.9.122
+	- Bump shell-quote to v1.9.0 for vuln fixes.
+
+## Version v0.9.121
+
+> June 19, 2026
+
+- [`1aa7bd5`](https://github.com/jhuckaby/cronicle/commit/1aa7bd5a9fde659e34305846e5de8fca99279315): Version 0.9.121
+- [`f3d3550`](https://github.com/jhuckaby/cronicle/commit/f3d3550d0f3fe89bab52d3788f0db1dd10860df2): Tighten event launch option handling
+
 ## Version v0.9.120
 
 > June 14, 2026
