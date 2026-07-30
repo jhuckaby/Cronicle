@@ -26,6 +26,7 @@
 		+ [dead_job_timeout](#dead_job_timeout)
 		+ [master_ping_freq](#master_ping_freq)
 		+ [master_ping_timeout](#master_ping_timeout)
+		+ [remote_server_auth_window](#remote_server_auth_window)
 		+ [udp_broadcast_port](#udp_broadcast_port)
 		+ [scheduler_startup_grace](#scheduler_startup_grace)
 		+ [universal_web_hook](#universal_web_hook)
@@ -201,6 +202,12 @@ For multi-server clusters, this specifies how often the primary server should se
 ### master_ping_timeout
 
 For multi-server clusters, this specifies how long to wait after receiving a ping, before a backup server considers the primary server to be dead.  At this point a new primary server will be chosen.  The default value is `60` seconds.
+
+### remote_server_auth_window
+
+For multi-server clusters, this specifies the maximum clock difference allowed when one Cronicle server authenticates with another.  The default value is `60` seconds.  All servers in the cluster should use clocks synchronized by NTP or a similar service.
+
+If your environment has unavoidable clock skew, you can increase this value to allow servers to authenticate across a wider time difference.  Keep the value as small as your environment permits, because a larger window also increases the time during which a captured authentication packet may be accepted.
 
 ### udp_broadcast_port
 
