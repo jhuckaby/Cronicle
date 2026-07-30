@@ -1,5 +1,23 @@
 # Cronicle Changelog
 
+## Version v0.9.125
+
+> July 30, 2026
+
+- [`f99c4f5`](https://github.com/jhuckaby/cronicle/commit/f99c4f57f658c6e0a7aa5c07b18e1ab6870fa281): Version 0.9.125
+- [`7650fdc`](https://github.com/jhuckaby/cronicle/commit/7650fdc4748276bdfabec7b24accfcac1800271c): Restore cluster authentication clock validation
+- [`87aa4b8`](https://github.com/jhuckaby/cronicle/commit/87aa4b8e28e8f4146d3e70cd28e7541ece1dd566): Align job log access checks with job details
+- [`061b0c8`](https://github.com/jhuckaby/cronicle/commit/061b0c88ad93e8faccf6a68ef65512d148642172): Apply server-side filtering to event data
+- [`0900e13`](https://github.com/jhuckaby/cronicle/commit/0900e13ae9aec93b6ece96e84a9cb0ae8f29337a): Harden authorization for updated event placement
+- [`1c81d85`](https://github.com/jhuckaby/cronicle/commit/1c81d8517df7b535636816da522f62e2819398f4): Harden effective target authorization for manual runs
+
+## Version v0.9.124
+
+> July 17, 2026
+
+- [`1715cef`](https://github.com/jhuckaby/cronicle/commit/1715cef46ebe820ae14d631d633a150c66559b20): Version 0.9.124
+- [`da0228f`](https://github.com/jhuckaby/cronicle/commit/da0228fdea9bc57c09876c00ea0feda70a0ef110): Harden event parameter validation and plugin handling, so only plugin-defined params may be included in events and jobs.
+
 ## Version v0.9.123
 
 > July 9, 2026
