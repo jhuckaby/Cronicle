@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.126
+
+> August 5, 2026
+
+- [`2f00acd`](https://github.com/jhuckaby/cronicle/commit/2f00acd0cd9e43047e2d5bb26c244fd713a5f1e6): Version 0.9.126
+- [`66bb98b`](https://github.com/jhuckaby/cronicle/commit/66bb98baabd351216284f8eaf038da783e8ac259): Update ps_monitor_cmd handling for FreeBSD compatibility.  Fixes #985.
+
 ## Version v0.9.125
 
 > July 30, 2026
