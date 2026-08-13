@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.127
+
+> August 12, 2026
+
+- [`09f6d30`](https://github.com/jhuckaby/cronicle/commit/09f6d30684a2a9d576ce636cf4d71e9f82b34029): Version 0.9.127
+	- Dep: Bump sanitize-html to v2.17.6 for multiple vuln fixes.
+	- Dep: Override nanoid (sub-dependency of sanitize-html) to v3.3.17 for vuln fix.
+
 ## Version v0.9.126
 
 > August 5, 2026
