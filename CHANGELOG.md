@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.128
+
+> August 13, 2026
+
+- [`cf640f2`](https://github.com/jhuckaby/cronicle/commit/cf640f21ed313b21be95d7a3d1b26c21b89620ec): Version 0.9.128
+- [`e5a5f07`](https://github.com/jhuckaby/cronicle/commit/e5a5f07ce50bcbd80cf68e9e8b37cb8445059c86): Dep: Bump nanoid to v3.3.18 for vuln fix.
+- [`250cc42`](https://github.com/jhuckaby/cronicle/commit/250cc4261935e9543eb0f35a69763517dc5198a6): Bump pixl-server-user to v2.  Fixes #989.
+
 ## Version v0.9.127
 
 > August 12, 2026
