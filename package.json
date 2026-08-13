@@ -57,7 +57,7 @@
 		"pixl-server": "^1.0.45",
 		"pixl-server-api": "^1.0.2",
 		"pixl-server-storage": "^4.0.2",
-		"pixl-server-user": "^1.0.34",
+		"pixl-server-user": "^2.0.3",
 		"pixl-server-web": "^2.0.16",
 		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
