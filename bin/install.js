@@ -23,9 +23,16 @@ var gh_head_tarball_url = 'https://github.com/jhuckaby/Cronicle/archive/master.t
 var packages_to_check = ['couchbase', 'redis', 'ioredis', 'ioredis-timeout', 'sqlite3'];
 var packages_to_rescue = {};
 
-// Error out if Node.js version is old
-if (process.version.match(/^v?(\d+)/) && (parseInt(RegExp.$1) < 16) && !process.env['CRONICLE_OLD']) {
-	console.error("\nERROR: You are using an incompatible version of Node.js (" + process.version + ").  Please upgrade to v16 or later.  Instructions: https://nodejs.org/en/download/package-manager\n\nTo ignore this error and run unsafely, set a CRONICLE_OLD environment variable.  Do this at your own risk.\n");
+// sanitize-html v2.17.6+ depends on the ESM-only htmlparser2 v12 package.
+// Node.js v22.12.0 is the first supported release that can require it from CommonJS without a flag.
+var node_version = process.version.match(/^v?(\d+)\.(\d+)/);
+var node_major = node_version ? parseInt(node_version[1], 10) : 0;
+var node_minor = node_version ? parseInt(node_version[2], 10) : 0;
+var node_too_old = node_version && ((node_major < 22) || ((node_major === 22) && (node_minor < 12)));
+
+// Fail before downloading or installing anything when the runtime cannot start Cronicle.
+if (node_too_old) {
+	console.error("\nERROR: You are using an incompatible version of Node.js (" + process.version + ").  Cronicle requires v22.12.0 or later.  Instructions: https://nodejs.org/en/download/package-manager\n");
 	process.exit(1);
 }
 
