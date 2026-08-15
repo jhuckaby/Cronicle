@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.129
+
+> August 15, 2026
+
+- [`6c364ac`](https://github.com/jhuckaby/cronicle/commit/6c364acd8f3ce9706afa3c1af11bcf319e52d481): Version 0.9.129
+- [`b23cc8b`](https://github.com/jhuckaby/cronicle/commit/b23cc8be7c93bb99ee4539c3c88baa438a45ed20): Add new official Node.js v22 requirement, in docs and installer scripts.
+
 ## Version v0.9.128
 
 > August 13, 2026
