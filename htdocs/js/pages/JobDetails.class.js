@@ -220,7 +220,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 			// if (event.id && !event.multiplex) html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().run_again()">Run Again</div>';
 			var nice_id = job.id;
-			if (job.label) nice_id = job.label + ' (' + job.id + ')';
+			// Job labels originate in plugin output and must be treated as plain text.
+			if (job.label) nice_id = encode_entities(job.label) + ' (' + job.id + ')';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';
@@ -786,7 +787,8 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 			
 			// html += '<div class="button mini" style="position:absolute; top:15px; left:100%; margin-left:-110px;" onMouseUp="$P().abort_job()">Abort Job...</div>';
 			var nice_id = job.id;
-			if (job.label) nice_id = job.label + ' (' + job.id + ')';
+			// Job labels originate in plugin output and must be treated as plain text.
+			if (job.label) nice_id = encode_entities(job.label) + ' (' + job.id + ')';
 			
 			html += '<div style="float:left; width:25%;">';
 				html += '<div class="info_label">JOB ID</div>';

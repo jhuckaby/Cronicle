@@ -57,7 +57,9 @@ Class.subclass( Page, "Page.Base", {
 	getNiceJob: function(job) {
 		if (!job) return '(None)';
 		var nice_id = job.id;
-		if (job.label) nice_id = job.label + ' (' + job.id + ')';
+		// Job labels originate in plugin output, so always encode them before
+		// composing HTML for the Home and History pages.
+		if (job.label) nice_id = encode_entities(job.label) + ' (' + job.id + ')';
 		return '<div style="white-space:nowrap;"><i class="fa fa-pie-chart">&nbsp;</i>' + nice_id + '</div>';
 	},
 	
