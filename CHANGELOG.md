@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.130
+
+> August 27, 2026
+
+- [`606fd58`](https://github.com/jhuckaby/cronicle/commit/606fd5804633703d53f79c37d3c350b5c5c0dd11): Version 0.9.130
+- [`15e37f8`](https://github.com/jhuckaby/cronicle/commit/15e37f8e453f7da33bc3c39eb8d097a7f773ad8e): Bug Fix: Update job label handling to ensure proper HTML encoding
+
 ## Version v0.9.129
 
 > August 15, 2026
