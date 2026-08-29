@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.131
+
+> August 28, 2026
+
+- [`3f5f838`](https://github.com/jhuckaby/cronicle/commit/3f5f8383c64c846cd6c0deeb27453894b4135499): Version 0.9.131
+- [`361f685`](https://github.com/jhuckaby/cronicle/commit/361f685a8c2cb81ce3552f1b6a2ae03beadb4421): Filter active jobs by user privileges
+
 ## Version v0.9.130
 
 > August 27, 2026
