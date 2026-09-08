@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.132
+
+> September 7, 2026
+
+- [`9616f9c`](https://github.com/jhuckaby/cronicle/commit/9616f9c83f0f6af187d7382932319447832b84dd): Version 0.9.132
+- [`7dbdbfd`](https://github.com/jhuckaby/cronicle/commit/7dbdbfd902011323458adb996c833ba04bc94115): Dep: Bump pixl-request to v2.6.11 for warning emitted on Node.js v24.  Ref jhuckaby/pixl-request#6
+- [`79deb5c`](https://github.com/jhuckaby/cronicle/commit/79deb5cea1ad64b3cfff0de44d65eff0f4d26149): Feature: HTTP Client: Preserve HTTP status code in job result when response matching fails.  Fixes #992
+
 ## Version v0.9.131
 
 > August 28, 2026
