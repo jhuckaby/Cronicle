@@ -98,10 +98,10 @@ stream.on('json', function(job) {
 		var text = data ? data.toString() : '';
 		if (!err) {
 			if (text.match(error_match)) {
-				err = new Error("Response contains error match: " + params.error_match);
+				err = new Error("HTTP " + resp.statusCode + " " + resp.statusMessage + ": Response contains error match: " + params.error_match);
 			}
 			else if (!text.match(success_match)) {
-				err = new Error("Response missing success match: " + params.success_match);
+				err = new Error("HTTP " + resp.statusCode + " " + resp.statusMessage + ": Response missing success match: " + params.success_match);
 			}
 		}
 		
