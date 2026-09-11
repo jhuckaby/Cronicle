@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.133
+
+> September 10, 2026
+
+- [`18a787e`](https://github.com/jhuckaby/cronicle/commit/18a787e9126b4dd9932a7656158d76dddbef2b04): Version 0.9.133
+- [`1682ff5`](https://github.com/jhuckaby/cronicle/commit/1682ff583244ca0535a950bfcb8d9e0d99287a9d): Dep: Bump pixl-mail to v1.1.10 for upstream vuln fixes in nodemailer.
+
 ## Version v0.9.132
 
 > September 7, 2026
