@@ -1,6 +1,6 @@
 {
 	"name": "Cronicle",
-	"version": "0.9.134",
+	"version": "0.9.135",
 	"private": true,
 	"description": "A simple, distributed task scheduler and runner with a web based UI.",
 	"author": "Joseph Huckaby <jhuckaby@gmail.com>",
@@ -34,6 +34,7 @@
 	"overrides": {
 		"nanoid": "3.3.18",
 		"picomatch": "4.0.4",
+		"basic-ftp": "6.2.1",
 		"ws": "8.21.0"
 	},
 	"dependencies": {
@@ -44,7 +45,7 @@
 		"jquery": "3.5.0",
 		"jstimezonedetect": "1.0.6",
 		"mdi": "1.9.33",
-		"moment": "2.29.4",
+		"moment": "2.31.0",
 		"moment-timezone": "0.5.35",
 		"netmask": "2.0.1",
 		"pixl-args": "^1.0.3",
@@ -54,7 +55,7 @@
 		"pixl-config": "^1.0.5",
 		"pixl-json-stream": "^1.0.6",
 		"pixl-logger": "^2.0.2",
-		"pixl-mail": "^1.1.10",
+		"pixl-mail": "^1.1.11",
 		"pixl-perf": "^1.0.5",
 		"pixl-request": "^2.6.11",
 		"pixl-server": "^1.0.45",
