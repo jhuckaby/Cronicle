@@ -1,5 +1,14 @@
 # Cronicle Changelog
 
+## Version v0.9.135
+
+> October 1, 2026
+
+- [`5bab1c5`](https://github.com/jhuckaby/cronicle/commit/5bab1c5db68a4b75f77c0861aba6ae69379229c2): Version 0.9.135
+	- Dep: Bump basic-ftp override to v6.2.1 for vuln fixes
+	- Dep: Bump moment to v2.31.0 for vuln fix.
+	- Dep: Bump pixl-mail to v1.1.11 for upstream vuln fixes in nodemailer.
+
 ## Version v0.9.134
 
 > September 16, 2026
