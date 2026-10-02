@@ -15,7 +15,8 @@ app.extend({
 	clock_visible: false,
 	scroll_time_visible: false,
 	default_prefs: {
-		schedule_group_by: 'category'
+		schedule_group_by: 'category',
+		theme: 'auto'
 	},
 	
 	receiveConfig: function(resp) {
@@ -92,6 +93,9 @@ app.extend({
 		// pop version into footer
 		$('#d_footer_version').html( "Version " + this.version || 0 );
 		
+		// initialize dark mode
+		this.initDarkMode();
+
 		// some css classing for browser-specific adjustments
 		var ua = navigator.userAgent;
 		if (ua.match(/Safari/) && !ua.match(/(Chrome|Opera)/)) {
@@ -719,6 +723,48 @@ app.extend({
 		return '<span id="'+id+'" class="color_label checkbox ' + checked + '" onMouseUp="app.toggle_color_checkbox(this)"><i class="fa '+(checked.match(/\bchecked\b/) ? 'fa-check-square-o' : 'fa-square-o')+'">&nbsp;</i>'+label+'</span>';
 	},
 	
+	initDarkMode: function() {
+		// initialize dark mode based on saved preference or system setting
+		var theme = this.getPref('theme') || 'auto';
+		this.applyTheme(theme);
+		this.updateThemeIcon();
+
+		// listen for system theme changes when in auto mode
+		if (window.matchMedia) {
+			var self = this;
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+				if (self.getPref('theme') === 'auto') {
+					self.applyTheme('auto');
+					self.updateThemeIcon();
+				}
+			});
+		}
+	},
+
+	toggleDarkMode: function() {
+		// simple two-state toggle: dark on/off. Auto only used as initial default.
+		var isDark = document.body.classList.contains('dark-theme');
+		var theme = isDark ? 'light' : 'dark';
+		this.setPref('theme', theme);
+		this.applyTheme(theme);
+		this.updateThemeIcon();
+	},
+
+	applyTheme: function(theme) {
+		var isDark = false;
+		if (theme === 'dark') isDark = true;
+		else if (theme === 'auto') isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+		if (isDark) document.body.classList.add('dark-theme');
+		else document.body.classList.remove('dark-theme');
+	},
+
+	updateThemeIcon: function() {
+		var isDark = document.body.classList.contains('dark-theme');
+		$('#d_theme_toggle').html('<i class="mdi ' + (isDark ? 'mdi-weather-sunny' : 'mdi-weather-night') + '"></i>')
+			.attr('title', isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+	},
+
 	toggle_color_checkbox: function(elem) {
 		// toggle color checkbox state
 		var $elem = $(elem);
