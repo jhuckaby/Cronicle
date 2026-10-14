@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.136
+
+> October 14, 2026
+
+- [`1a13fe6`](https://github.com/jhuckaby/cronicle/commit/1a13fe6a39b98495a4775ef6e8401613aa268a2f): Version 0.9.136
+- [`749261d`](https://github.com/jhuckaby/cronicle/commit/749261d530ccc423c688a2fcda29850c496dc022): Dep: Bump shell-quote to v1.12.0 for vuln fixes.
+- [`24689fa`](https://github.com/jhuckaby/cronicle/commit/24689fad0dbba776e14c9412dcee4667aae99ba8): Fix chained event failure email title, link, and notes. Fixes #994
+
 ## Version v0.9.135
 
 > October 1, 2026
