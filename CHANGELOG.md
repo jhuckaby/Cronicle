@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.137
+
+> October 16, 2026
+
+- [`34fbd63`](https://github.com/jhuckaby/cronicle/commit/34fbd63058ac9f121e76527fded7211b366b996d): Version 0.9.137
+- [`74c9984`](https://github.com/jhuckaby/cronicle/commit/74c998429eeca63f84956ff09f4da07ae690ba15): Dep: Bump pixl-server-web to v3.0.6 for latest features and also fixes #995
+
 ## Version v0.9.136
 
 > October 14, 2026
