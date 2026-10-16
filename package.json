@@ -62,7 +62,7 @@
 		"pixl-server-api": "^1.0.2",
 		"pixl-server-storage": "^4.0.2",
 		"pixl-server-user": "^2.0.3",
-		"pixl-server-web": "^2.0.16",
+		"pixl-server-web": "^3.0.6",
 		"pixl-tools": "^2.0.2",
 		"pixl-webapp": "^2.0.3",
 		"sanitize-html": "2.17.7",
