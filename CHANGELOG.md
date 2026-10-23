@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.138
+
+> October 23, 2026
+
+- [`6b21b0e`](https://github.com/jhuckaby/cronicle/commit/6b21b0ec51f5a2dc13fa10be8356fb3ae219ee72): Version 0.9.138
+- [`a626ab8`](https://github.com/jhuckaby/cronicle/commit/a626ab8665c76d2dfa8f92c74323b26cfeb5dcf8): Dep: Bump sanitize-html to v2.18.1 for vuln fixes.
+
 ## Version v0.9.137
 
 > October 16, 2026
