@@ -55,7 +55,7 @@
 		"pixl-config": "^1.0.5",
 		"pixl-json-stream": "^1.0.6",
 		"pixl-logger": "^2.0.2",
-		"pixl-mail": "^1.1.11",
+		"pixl-mail": "^1.1.12",
 		"pixl-perf": "^1.0.5",
 		"pixl-request": "^2.6.11",
 		"pixl-server": "^1.0.45",
