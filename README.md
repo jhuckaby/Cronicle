@@ -1,15 +1,41 @@
-# xyOps™
+# xyOps™: The Future of Cronicle
 
-![xyOps Screenshot](https://pixlcore.com/images/blog/xyops/workflow-edit.webp)
+**Meet [xyOps](https://xyops.io/), the next generation of Cronicle, built by the same creator.**  It carries Cronicle's scheduling and plugin philosophy forward into a complete, self-hosted platform for job scheduling, visual workflows, server monitoring, alerting, and incident response.
 
-Announcing **xyOps™**, the spiritual successor to Cronicle!  Version 1.0 is now live:
+[Explore xyOps](https://xyops.io/) | [Migration Guide](https://docs.xyops.io/cronicle) | [Install](https://docs.xyops.io/hosting) | [GitHub](https://github.com/pixlcore/xyops)
 
-- Snazzy Marketing Site: https://xyops.io/
-- GitHub Repo: https://github.com/pixlcore/xyops
+[![xyOps visual workflow editor](https://pixlcore.com/images/blog/xyops/workflow-edit.webp)](https://xyops.io/)
 
-Let me know what you think!
+**Fully open source. Self-hosted. No telemetry. No feature gates.**  Every xyOps application feature is free, including SSO.  Paid plans provide optional human support and hands-on assistance.
 
-Cronicle will still be supported and maintained going forward (mainly bug fixes and security issues will be patched).
+## Why move to xyOps?
+
+Keep the scheduling concepts you know, and give your automation room to grow:
+
+- **Build visual workflows:** Connect jobs with branching, parallel execution, human approval, and reusable sub-workflows.
+- **Watch jobs and servers together:** See live metrics, processes, network connections, and historical performance in one place.
+- **Investigate failures with context:** Capture server snapshots when alerts fire, open tickets, and launch automated remediation.
+- **Simplify your workers:** Run jobs through lightweight xySat agents without installing Node.js on every worker server.
+- **Bring your existing automation:** Import Cronicle schedules and configuration, keep compatible plugins, and automatically convert multiplexed events into workflows.
+
+## Bring your Cronicle schedules forward
+
+You don't have to rebuild your schedule from scratch.  xyOps includes a Cronicle data importer and a plugin compatibility mode to help you get started:
+
+1. **Set up xyOps** using the [Self-Hosting Guide](https://docs.xyops.io/hosting), then add your worker servers before importing so event targets can be matched correctly.
+2. **Export your Cronicle data** using the built-in [export command](https://github.com/jhuckaby/Cronicle/blob/master/docs/CommandLine.md#data-import-and-export).  This includes events, categories, plugins, users, API keys, and server groups.  Job history and logs are not included.
+3. **Import through the xyOps interface:** Sign in as an administrator, open **System**, click **Import Data...**, and select **Cronicle Data Format** to upload your export.
+4. **Review and test your setup:** Check the import report, event settings, and user privileges.  Enable [Cronicle plugin compatibility mode](https://docs.xyops.io/cronicle#plugin-compatibility-mode) for existing plugins that need it.  When you're ready to switch, pause Cronicle's scheduler before enabling scheduling in xyOps to avoid duplicate runs.
+
+Start with a fresh xyOps installation for your migration trial.  Importing replaces conflicting data in xyOps, aborts its running jobs, clears its queues, and pauses its scheduler.  xyOps is a separate application, so plan to test your imported jobs before switching production over.
+
+Prefer a familiar look?  You can even restore the Cronicle name and logo in the xyOps interface.
+
+**[Read the full Cronicle migration guide](https://docs.xyops.io/cronicle)** for compatibility details and step-by-step instructions, or **[try xyOps in one Docker command](https://github.com/pixlcore/xyops#try-xyops-in-one-command)** to explore it first.
+
+## What about Cronicle?
+
+Cronicle will continue to receive maintenance, primarily bug fixes and security patches.  **xyOps is the path forward for new features and capabilities.**  The Cronicle documentation and project details continue below.
 
 # Overview
 
