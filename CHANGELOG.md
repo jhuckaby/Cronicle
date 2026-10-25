@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.139
+
+> October 25, 2026
+
+- [`102c997`](https://github.com/jhuckaby/cronicle/commit/102c997fb1a8eace1ca196bf0cd839cb107a961c): Version 0.9.139
+- [`f997e63`](https://github.com/jhuckaby/cronicle/commit/f997e63715e3255e0c368eb0dfd95a97db80aff2): Dep: Bump pixl-mail to v1.1.12 for vuln fixes in nodemailer.
+- [`7af91ab`](https://github.com/jhuckaby/cronicle/commit/7af91ab16ffe37f89800c5f2494bb8eadc4faf88): Enhance README.md to promote xyOps as the future of Cronicle, detailing migration steps and new features.
+
 ## Version v0.9.138
 
 > October 23, 2026
