@@ -33,7 +33,6 @@
 	],
 	"overrides": {
 		"nanoid": "3.3.18",
-		"picomatch": "4.0.4",
 		"basic-ftp": "6.2.1",
 		"ws": "8.21.0"
 	},
@@ -63,7 +62,7 @@
 		"pixl-server-storage": "^4.0.2",
 		"pixl-server-user": "^2.0.3",
 		"pixl-server-web": "^3.0.6",
-		"pixl-tools": "^2.0.2",
+		"pixl-tools": "^2.0.6",
 		"pixl-webapp": "^2.0.3",
 		"sanitize-html": "2.18.1",
 		"shell-quote": "1.12.0",
