@@ -1,5 +1,19 @@
 # Cronicle Changelog
 
+## Version v0.9.141
+
+> November 1, 2026
+
+- [`74fdb3f`](https://github.com/jhuckaby/cronicle/commit/74fdb3f9ac14f762010b4f6a806843336c23f757): Version 0.9.141
+- [`389bbac`](https://github.com/jhuckaby/cronicle/commit/389bbacc1eedfa91eedafcaf727feb3036570b74): Fix: Restrict run_event overrides to prevent plugin substitution
+
+## Version v0.9.140
+
+> October 28, 2026
+
+- [`710e135`](https://github.com/jhuckaby/cronicle/commit/710e135f7a98c6649575efca8ef87e383881e66c): Version 0.9.140
+- [`5ea7eab`](https://github.com/jhuckaby/cronicle/commit/5ea7eab3eb428c71b2124d3ebdc389e2033bc9d8): Dep: Bump pixl-tools to v2.0.6 for removal of picomatch module.
+
 ## Version v0.9.139
 
 > October 25, 2026
