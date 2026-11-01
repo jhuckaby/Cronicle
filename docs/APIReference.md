@@ -497,7 +497,9 @@ This immediately starts an on-demand job for an event, regardless of the schedul
 | `id` | The ID of the event you wish to run a job for. |
 | `title` | The exact title of the event you wish to run a job for (case-sensitive). |
 
-You can also include almost anything from the [Event Data Object](APIReference.md#event-data-format) to customize the settings for the job.  Anything omitted is pulled from the event object.  Example request:
+You can customize the job using these per-run overrides from the [Event Data Object](APIReference.md#event-data-format): `algo`, `cpu_limit`, `cpu_sustain`, `log_max_size`, `memory_limit`, `memory_sustain`, `notify_fail`, `notify_success`, `notes`, `params`, `retries`, `retry_delay`, `target`, `timeout`, `timezone`, and `web_hook`.  You can also pass `now` to override the job's event time (Unix epoch seconds), or `post_data` to provide custom job data.  Anything omitted is pulled from the saved event.  A `target` override must be accessible to the calling user or API Key.
+
+Other top-level fields are ignored as overrides, including `plugin`, `command`, `category`, `chain`, `chain_error`, and `update_event`.  The job always uses the saved event's Plugin.  Users with the `job_read_only` privilege cannot customize runs.  Example request:
 
 ```js
 {
@@ -505,20 +507,16 @@ You can also include almost anything from the [Event Data Object](APIReference.m
 }
 ```
 
-Example request with everything customized:
+Example request with customized job settings:
 
 ```js
 {
 	"id": "3c182051",
-	"category": "43f8c57e",
 	"cpu_limit": 100,
 	"cpu_sustain": 0,
-	"detached": 0,
 	"log_max_size": 0,
-	"max_children": 1,
 	"memory_limit": 0,
 	"memory_sustain": 0,
-	"multiplex": 0,
 	"notify_fail": "",
 	"notify_success": "",
 	"params": {
@@ -526,18 +524,15 @@ Example request with everything customized:
 		"verbose": 1,
 		"cust": "Marketing"
 	},
-	"plugin": "test",
 	"retries": 0,
 	"retry_delay": 30,
 	"target": "db1.internal.myserver.com",
 	"timeout": 3600,
-	"title": "DB Reindex",
-	"username": "admin",
 	"web_hook": "http://myserver.com/notify-chronos.php"
 }
 ```
 
-Note that the `params` object can be omitted entirely, or sparsely populated, and any missing properties that are defined in the event are automatically merged in.  This allows your API client to only specify the `params` it needs to (including arbitrary new ones).
+Note that the `params` object can be omitted entirely, or sparsely populated, and any missing properties that are defined in the event are automatically merged in.  This allows your API client to only specify the `params` it needs to.  Only parameters declared by the saved event's Plugin are passed to the job, and hidden parameters always use the Plugin defaults.  Query strings also support `params/name=value`; slash notation is only supported for Plugin parameters.
 
 Example response:
 
