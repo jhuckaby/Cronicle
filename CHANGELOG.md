@@ -1,5 +1,13 @@
 # Cronicle Changelog
 
+## Version v0.9.142
+
+> November 2, 2026
+
+- [`f1b91ba`](https://github.com/jhuckaby/cronicle/commit/f1b91bae9fdcdf204e7bb6097f534e52703d6630): Version 0.9.142
+- [`75d77b5`](https://github.com/jhuckaby/cronicle/commit/75d77b549ae0515effe5c09b5fbb1a4642959d2e): Fix: Prevent restricted accounts from using chain reactions
+- [`f929455`](https://github.com/jhuckaby/cronicle/commit/f92945534d6ffca33ee3176da969e21060764e29): Fix: Prevent API key disclosure in objects and audit metadata
+
 ## Version v0.9.141
 
 > November 1, 2026
