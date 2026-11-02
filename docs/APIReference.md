@@ -836,7 +836,8 @@ Here are descriptions of all the properties in the event object, which is common
 | Event Property | Format | Description |
 |----------------|--------|-------------|
 | `algo` | String | Specifies the algorithm to use for picking a server from the target group. See [Algorithm](WebUI.md#algorithm). |
-| `api_key` | String | The API Key of the application that originally created the event (if created via API). |
+| `api_key_id` | String | The non-secret ID of the API Key that originally created the event (if created via API). |
+| `api_title` | String | The title of the API Key that originally created the event (if created via API). |
 | `catch_up` | Boolean | Specifies whether the event has [Run All Mode](WebUI.md#run-all-mode) enabled or not. |
 | `category` | String | The Category ID to which the event is assigned.  See [Categories Tab](WebUI.md#categories-tab). |
 | `chain` | String | The chain reaction event ID to launch when jobs complete successfully.  See [Chain Reaction](WebUI.md#chain-reaction). |

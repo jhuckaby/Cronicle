@@ -4,6 +4,14 @@
 
 The Cronicle team takes security very seriously. Due to the nature of how Cronicle is installed on large server fleets a lot of decisions are made with security being the priority, and we always aim to implement security by design.
 
+## API key attribution and older records
+
+Cronicle uses the non-secret API key ID and title for object and audit attribution. Authentication keys supplied in request headers, query strings, or JSON bodies are removed from request data before authenticated API operations proceed.
+
+Older releases stored raw API keys in categories, events, and audit records. Category and event responses, login data, browser updates, and job detail responses now omit the legacy `api_key` attribution field. This response filtering does not erase historical storage, logs, backups, or copies already retrieved by a user.
+
+When upgrading an affected installation, revoke and replace keys that were used to create categories or events, or otherwise exposed in historical records. Update the integrations that use those keys, and review retained records and logs for cleanup. Upgrading alone does not invalidate an exposed key.
+
 ## Coordinated vulnerability disclosure
 
 Cronicle follows the [coordinated vulnerability disclosure](https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure) model when dealing with security vulnerabilities. This was previously known as responsible disclosure. We strongly urge anyone reporting vulnerabilities to Cronicle or any other project to follow this model as it is considered as a best practice by many in the security industry.
