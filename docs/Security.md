@@ -12,6 +12,39 @@ Older releases stored raw API keys in categories, events, and audit records. Cat
 
 When upgrading an affected installation, revoke and replace keys that were used to create categories or events, or otherwise exposed in historical records. Update the integrations that use those keys, and review retained records and logs for cleanup. Upgrading alone does not invalidate an exposed key.
 
+## Chain reactions and restricted accounts
+
+Chain reactions are unavailable to non-administrator users and API Keys with either category restrictions (`cat_limit`) or server group restrictions (`grp_limit`) enabled. This applies even if the allowlist currently includes every category or server group. Administrators are exempt from the account restriction, but cannot remove an event or job's permanent restriction.
+
+Cronicle enforces this policy with a server-owned Boolean field named `chain_disabled`:
+
+| Action | Result |
+|--------|--------|
+| A restricted account creates an event | The saved event receives `chain_disabled: true`. |
+| A restricted account edits an existing event | A successful edit permanently flags that event, even if only its title or timing changed. |
+| Anyone later edits a flagged event | The flag remains set, including administrator edits and changes to the original account's privileges. |
+| A flagged event runs automatically or manually | Its jobs inherit the flag. |
+| A restricted account manually runs an unflagged event without saved chains | Only that job is flagged. The saved event is unchanged by the run request. |
+| A restricted account tries to run an event with a saved success or failure chain | The run request is rejected, including for read-only runners. |
+| A restricted account edits a running job | A successful update permanently flags that job. |
+| A flagged job updates its source event | If job-driven event updates are enabled, the event also receives the permanent flag. |
+
+The UI, APIs, and plugin responses cannot clear `chain_disabled`. Supplying `false`, `null`, zero, or omitting the field does not remove an existing flag. The field is not a user-configurable switch. Creating another event with an existing event ID is rejected.
+
+Restricted accounts cannot configure nonempty `chain`, `chain_error`, or `chain_params` values. Nobody, including an administrator, can add these settings to a flagged event or job. Empty values may clear old settings. An API edit that omits old chain settings may leave them stored, but the permanent flag prevents their execution. The event editor explains the restriction and clears those settings when saving.
+
+The restriction applies to success chains, failure chains, scheduler launch-failure chains, and chains requested dynamically through plugin output. Blocked runtime attempts are logged. Normal job execution and non-chain updates continue. The flag survives queues, delayed retries, detached execution, and shutdown reruns. Queued launches also check the current event's flag, and chain execution checks the current source event in case it was flagged after a job started.
+
+A flagged event can still be the target of a chain started by an unrestricted event and job. It runs with its restriction intact and cannot start another chain. Unrestricted accounts retain chain reactions for unflagged events and jobs.
+
+### Upgrading existing installations
+
+There is no automatic migration or retrospective scan of event ownership, edit history, or current account privileges. Existing events without `chain_disabled` remain unflagged until a restricted account successfully edits them. Changing an account's privileges alone does not flag its saved events or already-running jobs. Existing scheduled events may therefore continue to initiate chains after upgrading, including chains requested by their plugins.
+
+Please review existing events and scripts that restricted accounts could previously edit. Remove unwanted chains and dynamic chain directives, or save the event through a restricted account to apply the permanent restriction. Disabling an event does not stop an already-running job; review and abort those jobs separately when needed.
+
+There is no UI or API operation to re-enable chaining on a flagged event. If chaining is needed again, an administrator or unrestricted account must review the event and its plugin parameters, then create a new event with a new ID. Review incoming chain references and integrations when replacing an event. Keep events that need chaining under unrestricted-account management, since any later successful restricted-account edit permanently disables their outgoing chains.
+
 ## Coordinated vulnerability disclosure
 
 Cronicle follows the [coordinated vulnerability disclosure](https://en.wikipedia.org/wiki/Coordinated_vulnerability_disclosure) model when dealing with security vulnerabilities. This was previously known as responsible disclosure. We strongly urge anyone reporting vulnerabilities to Cronicle or any other project to follow this model as it is considered as a best practice by many in the security industry.

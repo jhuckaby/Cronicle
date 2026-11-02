@@ -187,6 +187,10 @@ These JSON updates can be sent as standalone records as shown here, at any time 
 
 #### Chain Reaction Control
 
+These controls are available only when chaining is permitted for the job and its source event. Jobs with `chain_disabled: true` cannot initiate success or failure chains or pass `chain_params` to another event. Attempts are ignored and logged, and plugin output cannot clear the flag. The same rule applies to detached jobs. Other plugin responses, such as progress and completion, continue to work.
+
+If job-driven event updates are enabled, a flagged job's `update_event` changes also permanently flag its source event and clear outgoing chain settings. No plugin-driven update can clear an existing event flag or change the event's ID. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts), including the limitations for existing installations.
+
 You can enable or disable [Chain Reaction](WebUI.md#chain-reaction) mode on the fly, by setting the `chain` property in your JSON output.  This allows you to designate another event to launch as soon as the current job completes, or to clear the property (set it to false or a blank string) to disable Chain Reaction mode if it was enabled in the UI.
 
 To enable a chain reaction, you need to know the Event ID of the event you want to trigger.  You can determine this by editing the event in the UI and copy the Event ID from the top of the form, just above the title.  Then you can specify the ID in your jobs by printing some JSON to STDOUT like this:

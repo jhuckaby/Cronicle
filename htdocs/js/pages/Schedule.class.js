@@ -991,24 +991,34 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		);
 		html += get_form_table_spacer( eq_classes, '' );
 		
-		// chain reaction
-		var sorted_events = app.schedule.sort( function(a, b) {
-			return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
-		} );
-		
-		var chain_expanded = !!(event.chain || event.chain_error);
-		html += get_form_table_row( 'Chain Reaction', 
-			'<div style="font-size:13px;'+(chain_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Chain Options</span></div>' + 
-			'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(chain_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Chain Options</legend>' + 
-				'<div class="plugin_params_label">Run Event on Success:</div>' + 
-				'<div class="plugin_params_content"><select id="fe_ee_chain" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain, false ) + '</select></div>' + 
-				
-				'<div class="plugin_params_label">Run Event on Failure:</div>' + 
-				'<div class="plugin_params_content"><select id="fe_ee_chain_error" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain_error, false ) + '</select></div>' + 
-				
-			'</fieldset>'
-		);
-		html += get_form_table_caption( "Select events to run automatically after this event completes." );
+		// Explain the permanent policy instead of offering unavailable controls.
+		if (event.chain_disabled || app.isCategoryLimited() || app.isGroupLimited()) {
+			html += get_form_table_row('Chain Reaction', 'Disabled');
+			html += get_form_table_caption(event.chain_disabled ?
+				"Chain reactions are permanently disabled for this event, including chains requested by plugins." :
+				"Your account has category or server group restrictions. Saving this event permanently disables chain reactions and clears existing chain settings."
+			);
+		}
+		else {
+			// chain reaction
+			var sorted_events = app.schedule.sort( function(a, b) {
+				return a.title.toLowerCase().localeCompare( b.title.toLowerCase() );
+			} );
+			
+			var chain_expanded = !!(event.chain || event.chain_error);
+			html += get_form_table_row( 'Chain Reaction', 
+				'<div style="font-size:13px;'+(chain_expanded ? 'display:none;' : '')+'"><span class="link addme" onMouseUp="$P().expand_fieldset($(this))"><i class="fa fa-plus-square-o">&nbsp;</i>Chain Options</span></div>' + 
+				'<fieldset style="padding:10px 10px 0 10px; margin-bottom:5px;'+(chain_expanded ? '' : 'display:none;')+'"><legend class="link addme" onMouseUp="$P().collapse_fieldset($(this))"><i class="fa fa-minus-square-o">&nbsp;</i>Chain Options</legend>' + 
+					'<div class="plugin_params_label">Run Event on Success:</div>' + 
+					'<div class="plugin_params_content"><select id="fe_ee_chain" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain, false ) + '</select></div>' + 
+					
+					'<div class="plugin_params_label">Run Event on Failure:</div>' + 
+					'<div class="plugin_params_content"><select id="fe_ee_chain_error" style="width:90%; margin-left:10px; font-size:12px;"><option value="">(None)</option>' + render_menu_options( sorted_events, event.chain_error, false ) + '</select></div>' + 
+					
+				'</fieldset>'
+			);
+			html += get_form_table_caption( "Select events to run automatically after this event completes." );
+		}
 		html += get_form_table_spacer();
 		
 		// notification
@@ -1803,8 +1813,12 @@ Class.subclass( Page.Base, "Page.Schedule", {
 		if (event.queue_max < 0) return quiet ? false : app.badField('fe_ee_queue_max', "Please enter a positive integer for the event queue max.");
 		
 		// chain reaction
-		event.chain = $('#fe_ee_chain').val();
-		event.chain_error = $('#fe_ee_chain_error').val();
+		event.chain = $('#fe_ee_chain').val() || '';
+		event.chain_error = $('#fe_ee_chain_error').val() || '';
+		if (event.chain_disabled || app.isCategoryLimited() || app.isGroupLimited()) {
+			// The server owns the flag.  Only clear obsolete chain settings here.
+			event.chain_params = {};
+		}
 		
 		// cursor reset
 		if (event.id && event.catch_up && $('#fe_ee_rc_enabled').is(':checked')) {

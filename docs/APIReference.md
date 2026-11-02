@@ -253,7 +253,9 @@ This creates a new event and adds it to the schedule.  API Keys require the `cre
 | `plugin` | **(Required)** The ID of the Plugin which will run jobs for the event. See [Plugins Tab](WebUI.md#plugins-tab). |
 | `target` | **(Required)** Events can target a [Server Group](WebUI.md#server-groups) (Group ID), or an individual server (hostname). |
 
-In addition to the required parameters, almost anything in the [Event Data Object](APIReference.md#event-data-format) can also be included here.  Example request:
+In addition to the required parameters, almost anything in the [Event Data Object](APIReference.md#event-data-format) can also be included here. The `chain_disabled` field is server-owned: a restricted caller always creates a permanently flagged event. Nonempty `chain`, `chain_error`, or `chain_params` settings are rejected for such callers. Custom IDs must not match an existing event. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
+
+Example request:
 
 ```js
 {
@@ -319,7 +321,9 @@ This updates an existing event given its ID, replacing any properties you specif
 | `reset_cursor` | (Optional) Reset the event clock to the given Epoch timestamp (see [Event Time Machine](WebUI.md#event-time-machine)). |
 | `abort_jobs` | (Optional) If you are disabling the event by setting `enabled` to 0, you may also abort any running jobs if you want. |
 
-Include anything from the [Event Data Object](APIReference.md#event-data-format) to update (i.e. replace) the values.  Anything omitted is preserved.  Example request:
+Include properties from the [Event Data Object](APIReference.md#event-data-format) to update (i.e. replace) their values. Anything omitted is preserved, except that a successful edit by a restricted account always sets `chain_disabled: true`. Client values cannot clear this permanent flag, even for administrators. Restricted callers and flagged events cannot receive nonempty `chain`, `chain_error`, or `chain_params` settings. Clearing these settings is allowed. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
+
+Example request:
 
 ```js
 {
@@ -499,7 +503,9 @@ This immediately starts an on-demand job for an event, regardless of the schedul
 
 You can customize the job using these per-run overrides from the [Event Data Object](APIReference.md#event-data-format): `algo`, `cpu_limit`, `cpu_sustain`, `log_max_size`, `memory_limit`, `memory_sustain`, `notify_fail`, `notify_success`, `notes`, `params`, `retries`, `retry_delay`, `target`, `timeout`, `timezone`, and `web_hook`.  You can also pass `now` to override the job's event time (Unix epoch seconds), or `post_data` to provide custom job data.  Anything omitted is pulled from the saved event.  A `target` override must be accessible to the calling user or API Key.
 
-Other top-level fields are ignored as overrides, including `plugin`, `command`, `category`, `chain`, `chain_error`, and `update_event`.  The job always uses the saved event's Plugin.  Users with the `job_read_only` privilege cannot customize runs.  Example request:
+Restricted callers cannot run events with saved success or failure chains. Otherwise their jobs receive `chain_disabled: true`, even with `job_read_only`, without modifying the saved event. Jobs also inherit a saved event's permanent flag. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
+
+Other top-level fields are ignored as overrides, including `plugin`, `command`, `category`, `chain`, `chain_error`, `chain_disabled`, and `update_event`.  The job always uses the saved event's Plugin.  Users with the `job_read_only` privilege cannot customize runs.  Example request:
 
 ```js
 {
@@ -732,6 +738,8 @@ This updates a job that is already in progress.  Only certain job properties may
 | `memory_sustain` | (Optional) The number of seconds to allow the max memory to be exceeded. |
 | `log_max_size` | (Optional) The maximum allowed job log file size (in bytes) before the job is aborted. |
 
+A successful update by a restricted caller permanently sets the job's `chain_disabled` flag. Restricted callers and flagged jobs cannot receive nonempty `chain`, `chain_error`, or `chain_params` settings, including inside `update_event`. Neither an administrator nor a plugin can clear the flag. Empty chain values are allowed. The same policy applies to `update_jobs`, which validates every matching job before applying any updates. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
+
 As shown above, you can include *some* of the properties from the [Event Data Object](APIReference.md#event-data-format) to customize the job in progress.  Example request:
 
 ```js
@@ -842,6 +850,7 @@ Here are descriptions of all the properties in the event object, which is common
 | `category` | String | The Category ID to which the event is assigned.  See [Categories Tab](WebUI.md#categories-tab). |
 | `chain` | String | The chain reaction event ID to launch when jobs complete successfully.  See [Chain Reaction](WebUI.md#chain-reaction). |
 | `chain_error` | String | The chain reaction event ID to launch when jobs fail.  See [Chain Reaction](WebUI.md#chain-reaction). |
+| `chain_disabled` | Boolean | Read-only, permanent restriction on outgoing chains. Set by the server when a restricted account creates or edits an event; propagated to its jobs. Cannot be cleared through the UI, API, or plugin output. See [Security](Security.md#chain-reactions-and-restricted-accounts). |
 | `cpu_limit` | Number | Limit the CPU to the specified percentage (100 = 1 core), abort if exceeded. See [Event Resource Limits](WebUI.md#event-resource-limits). |
 | `cpu_sustain` | Number | Only abort if the CPU limit is exceeded for this many seconds. See [Event Resource Limits](WebUI.md#event-resource-limits). |
 | `created` | Number | The date/time of the event's initial creation, in Epoch seconds. |

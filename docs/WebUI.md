@@ -268,6 +268,10 @@ You can optionally select different events to run if the current job succeeds or
 
 The target event must be enabled for a chain reaction to run.  Disabling the target event skips both success and failure chains to it, without launching or queuing a job.  You can still run a disabled event manually using **Run Now**.
 
+Chain reactions are unavailable to accounts with category or server group restrictions. Creating or saving an event through a restricted account permanently disables its outgoing chains, including chains requested by plugins. The editor shows an explanation instead of chain controls and clears existing chain settings when saving. Administrators cannot re-enable chains on a flagged event.
+
+Restricted accounts also cannot manually run an event that has a saved success or failure chain. Runs of other events are allowed, but those jobs cannot initiate chains. Existing events are not automatically migrated on upgrade. Please see [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts) for the complete policy and upgrade guidance.
+
 You can have more control over this process by using the JSON API in your Plugins.  See [Chain Reaction Control](Plugins.md#chain-reaction-control) below for details.
 
 #### Event Time Machine
