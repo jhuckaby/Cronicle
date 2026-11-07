@@ -18,7 +18,9 @@ if (!args[1] || !args[1].match(/\.json$/)) {
 }
 
 var job_file = args[1];
-var job = require( job_file );
+var job_data = require( job_file );
+var job = job_data.job;
+var child_opts = job_data.child_opts;
 fs.unlink( job_file, function(err) {;} );
 
 var child_cmd = job.command;
@@ -28,12 +30,13 @@ var child_args = [];
 if (child_cmd.match(/\s+(.+)$/)) {
 	var cargs_raw = RegExp.$1;
 	child_cmd = child_cmd.replace(/\s+(.+)$/, '');
-	child_args = sqparse( cargs_raw, process.env );
+	child_args = sqparse( cargs_raw, child_opts.env );
 }
 
-var child = cp.spawn( child_cmd, child_args, { 
-	stdio: ['pipe', 'pipe', fs.openSync(job.log_file, 'a')] 
-} );
+// The helper owns queue access, while the plugin keeps its configured identity,
+// working directory and environment.  Open stderr's log before dropping identity.
+child_opts.stdio = ['pipe', 'pipe', fs.openSync(job.log_file, 'a')];
+var child = cp.spawn( child_cmd, child_args, child_opts );
 
 var updates = { detached_pid: child.pid };
 var kill_timer = null;

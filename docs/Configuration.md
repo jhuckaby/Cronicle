@@ -155,6 +155,10 @@ The queue directory is used internally for misc. background tasks, such as handl
 
 This can be a partial path, relative to the Cronicle base directory (`/opt/cronicle`) or a full path to a custom location.
 
+Cronicle sets this directory to mode `0700` at startup, owned by the daemon account. Queue files contain trusted internal instructions, so please keep the directory and its parent directories under trusted administrator control. The detached job helper runs as the daemon account to send updates, while the plugin itself uses its configured user, group, working directory, and environment.
+
+When upgrading from a release with a world-writable queue, let existing detached jobs finish before restarting Cronicle. Older detached helpers running as another user cannot send updates after the queue becomes private. Review existing queue files before restarting, since tightening directory permissions does not validate files already placed there.
+
 ### pid_file
 
 The PID file is simply a text file containing the Process ID of the main Cronicle daemon.  It is used by the `control.sh` script to stop the daemon, and detect if it is running.  You should never have to deal with this file directly, and it defaults to living in the `logs` directory which is auto-created.  
