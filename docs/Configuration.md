@@ -607,6 +607,8 @@ Changing the `http_port` is probably the most common thing you will want to cust
 
 This is also where you can enable HTTPS, if you want the UI to be SSL encrypted.  Set the `https` property to `1` to enable, and configure the `https_port` as you see fit (the standard HTTPS port is `443`).  You will have to supply your own SSL certificate files (sample self-signed certs are provided for testing, but they will generate browser warnings).
 
+When both `https` and `https_force` are enabled, outgoing worker API requests and cluster Socket.IO connections also use HTTPS and the `https_port`, unless `remote_server_port` overrides the port.  Enabling `https` alone leaves these connections on HTTP.  Worker certificates must be trusted by the connecting server and valid for the hostname or IP address used to connect.
+
 For running Cronicle on a live production environment, it is highly recommended that you include a [http_allow_hosts](https://github.com/jhuckaby/pixl-server-web#http_allow_hosts) property, and set it to the domain you are using for Cronicle.  This will reject all incoming HTTP requests unless the `Host` header matches an entry in the list.  Example use:
 
 ```js
