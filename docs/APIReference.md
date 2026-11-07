@@ -487,6 +487,8 @@ Example response:
 
 In addition to the [Standard Response Format](APIReference.md#standard-response-format), the `rows` array contains information about the completed jobs, each one following the [Event Data Format](#event-data-format).  The `list.length` property contains the full list of all available items, regardless of your `offset` and `limit` parameters.
 
+For users and API Keys with category restrictions, jobs in unauthorized categories are omitted entirely from `rows`. Filtering happens within the requested page, so a page may contain fewer than `limit` rows or be empty. The `offset` and `list.length` still refer to the global history, including hidden jobs. Advance by the requested `limit` when fetching the next page, even if fewer rows are returned.
+
 This API requires authentication, so please setup an [API Key](#api-keys) and pass it in using any of the methods available.
 
 ### run_event
