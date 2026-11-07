@@ -541,6 +541,8 @@ Example request with customized job settings:
 
 Note that the `params` object can be omitted entirely, or sparsely populated, and any missing properties that are defined in the event are automatically merged in.  This allows your API client to only specify the `params` it needs to.  Only parameters declared by the saved event's Plugin are passed to the job, and hidden parameters always use the Plugin defaults.  Query strings also support `params/name=value`; slash notation is only supported for Plugin parameters.
 
+The `script` Plugin parameter cannot be overridden through `run_event`, including by administrators.  Both JSON `params.script` and legacy `params/script` overrides are silently ignored, and the saved event's script is used instead (or the Plugin default if the event has no saved script).  This applies to any Plugin parameter named exactly `script`.  Save script changes to the event before using **Run Now** in the editor.  **Run Again** also uses the event's current saved script rather than the previous job's script.
+
 Example response:
 
 ```js
