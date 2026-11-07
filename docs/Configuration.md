@@ -619,6 +619,18 @@ For running Cronicle on a live production environment, it is highly recommended 
 }
 ```
 
+The [status API](APIReference.md#status) uses `WebServer.default_acl` to restrict access to runtime information.  The default allows loopback and private network addresses.  To allow public monitoring tools or cluster peers, configure an array of IP addresses or CIDR ranges.  A custom array replaces the defaults, so include all required client and proxy addresses.  For example, to allow loopback, a private cluster subnet and one external monitor:
+
+```json
+{
+	"WebServer": {
+		"default_acl": ["127.0.0.1", "::1/128", "10.0.0.0/24", "203.0.113.10"]
+	}
+}
+```
+
+Replace the example addresses with your own.  Before upgrading from a version with unrestricted status access, make sure every cluster peer can still reach this endpoint on the other servers.  Primary-server election depends on these checks.
+
 For more details on the web server component, please see the [pixl-server-web](https://github.com/jhuckaby/pixl-server-web#configuration) module documentation.
 
 ## User Configuration

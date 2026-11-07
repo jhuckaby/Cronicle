@@ -9,6 +9,7 @@
 	* [API Keys](#api-keys)
 	* [Standard Response Format](#standard-response-format)
 	* [API Calls](#api-calls)
+		+ [status](#status)
 		+ [get_schedule](#get_schedule)
 		+ [get_event](#get_event)
 		+ [create_event](#create_event)
@@ -63,7 +64,7 @@ API Keys are randomly generated hexadecimal strings, and are 32 characters in le
 0095f5b664b93304d5f8b1a61df605fb
 ```
 
-You must include a valid API Key with every API request.  There are three ways to do this: include a `X-API-Key` HTTP request header, an `api_key` query string parameter, or an `api_key` JSON property.
+Except for the IP-restricted [status](#status) endpoint, you must include a valid API Key with every API request documented here.  There are three ways to do this: include a `X-API-Key` HTTP request header, an `api_key` query string parameter, or an `api_key` JSON property.
 
 Here is a raw HTTP request showing all three methods of passing the API Key (only one of these is required):
 
@@ -93,6 +94,18 @@ Example error response:
 ## API Calls
 
 Here is the list of supported API calls:
+
+### status
+
+```
+/api/app/status/v1
+```
+
+This returns runtime information for the server receiving the request, including its Cronicle and Node.js versions, hostname, IP address, process ID, current time, uptime, last tick time, tick age, CPU usage and memory usage.  Both HTTP GET and HTTP POST are supported, and `/api/app/status` also works.  No API key is required.  Successful responses include `code: 0`; `tick_age` is the number of seconds since the last scheduler tick.
+
+Access is restricted by `WebServer.default_acl`, which allows loopback and private network addresses by default.  All client and proxy IP addresses must be allowed, or the endpoint returns HTTP 403 without runtime details.  An API key does not bypass this restriction.  See [Web Server Configuration](Configuration.md#web-server-configuration) to allow external monitoring tools.
+
+**Upgrade note:** This endpoint previously allowed public access.  Before upgrading, add any public monitoring addresses and cluster peer addresses to the ACL on every server they contact.  Cronicle also uses this endpoint during primary-server election, so cluster peers must retain access.
 
 ### get_schedule
 
