@@ -1,5 +1,33 @@
 # Cronicle Changelog
 
+## Version v0.9.145
+
+> November 7, 2026
+
+- [`a5e8e6a`](https://github.com/jhuckaby/cronicle/commit/a5e8e6afef28b9b63a689a7fbe2c536736e9c7a8): Version 0.9.145
+- [`2faf6c2`](https://github.com/jhuckaby/cronicle/commit/2faf6c28379a8d2ae60a9fdc9a11ca33789e5287): Fix: Restrict status API to default ACL and remove echo endpoint
+- [`5bb81e5`](https://github.com/jhuckaby/cronicle/commit/5bb81e5e36d50bbd0ac4d4dac4595352ee3f477d): Fix: Keep job log watch tokens from authorizing cluster broadcasts
+- [`ea1dc69`](https://github.com/jhuckaby/cronicle/commit/ea1dc695701898ba8b5ebee1f319d74cf233dcb8): Dep: Bump pixl-server-user to v2.0.4 for improved username and email sanitization.
+
+## Version v0.9.144
+
+> November 6, 2026
+
+- [`5d24b6e`](https://github.com/jhuckaby/cronicle/commit/5d24b6edfbe9f450d361ffbe475c1991b38f9b52): Version 0.9.144
+- [`1060526`](https://github.com/jhuckaby/cronicle/commit/1060526859234e372ff90d9dba3c814780170722): Fix: Fix cross-category information disclosure in get_history
+- [`aadb619`](https://github.com/jhuckaby/cronicle/commit/aadb619d1c0ecd686df3ab9fa4b311e40c64d183): Fix: Prevent script parameter overrides in run_event
+
+## Version v0.9.143
+
+> November 6, 2026
+
+- [`c37c99f`](https://github.com/jhuckaby/cronicle/commit/c37c99fdc12e2f27a1c71baf03d48c2b499b649e): Version 0.9.143
+- [`0604251`](https://github.com/jhuckaby/cronicle/commit/0604251a5b16714d13e43da58366b04354257f2e): Fix: Restrict job update APIs to a strict property allowlist
+- [`74ea61c`](https://github.com/jhuckaby/cronicle/commit/74ea61cfb6def5e57f7e26b5045567b9d334194d): Honor existing HTTPS settings for cluster sockets
+- [`f694405`](https://github.com/jhuckaby/cronicle/commit/f694405954388545cc1d1babd5e07f0d3fab640e): Fix: Reject reused cluster authentication tokens
+- [`86ae2dc`](https://github.com/jhuckaby/cronicle/commit/86ae2dccfd11f3fdf44e08f56edd0d908d723730): Fix: Restrict queue directory access to the daemon account
+- [`855f14c`](https://github.com/jhuckaby/cronicle/commit/855f14c7b0a4ec84ff20400aa924ec7f8ed02677): Fix: fetch_delete_job_log: Disallow path traversal.
+
 ## Version v0.9.142
 
 > November 2, 2026
