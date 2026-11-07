@@ -20,6 +20,7 @@
 		+ [get_job_status](#get_job_status)
 		+ [get_active_jobs](#get_active_jobs)
 		+ [update_job](#update_job)
+		+ [update_jobs](#update_jobs)
 		+ [abort_job](#abort_job)
 		+ [get_master_state](#get_master_state)
 		+ [update_master_state](#update_master_state)
@@ -724,6 +725,7 @@ This updates a job that is already in progress.  Only certain job properties may
 | Parameter Name | Description |
 |----------------|-------------|
 | `id` | **(Required)** The ID of the job you wish to update. |
+| `title` | (Optional) The job title. Must be nonempty and cannot contain HTML metacharacters (`<` or `>`). |
 | `timeout` | (Optional) The total run time in seconds to allow, before the job is aborted. |
 | `retries` | (Optional) The number of retries before the job is reported a failure. |
 | `retry_delay` | (Optional) The number of seconds between retries. |
@@ -738,7 +740,11 @@ This updates a job that is already in progress.  Only certain job properties may
 | `memory_sustain` | (Optional) The number of seconds to allow the max memory to be exceeded. |
 | `log_max_size` | (Optional) The maximum allowed job log file size (in bytes) before the job is aborted. |
 
-A successful update by a restricted caller permanently sets the job's `chain_disabled` flag. Restricted callers and flagged jobs cannot receive nonempty `chain`, `chain_error`, or `chain_params` settings, including inside `update_event`. Neither an administrator nor a plugin can clear the flag. Empty chain values are allowed. The same policy applies to `update_jobs`, which validates every matching job before applying any updates. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
+Only the properties listed above may be submitted, apart from standard authentication credentials. Unsupported properties are rejected, including for administrators. The job ID only selects the job and cannot be changed. Internal state, file paths, execution settings, plugin parameters, `chain_params`, `chain_disabled`, and `update_event` cannot be supplied. To edit a saved event, please use [update_event](#update_event).
+
+Allowed properties use the same value validation as event updates. The same property restrictions apply to running, pending, and remote jobs.
+
+A successful update by a restricted caller permanently sets the job's `chain_disabled` flag. Restricted callers and flagged jobs cannot receive nonempty `chain` or `chain_error` settings. Neither an administrator nor a plugin can clear the flag. Empty chain values are allowed. The same policy applies to `update_jobs`, which validates every matching job before applying any updates. See [Chain reactions and restricted accounts](Security.md#chain-reactions-and-restricted-accounts).
 
 As shown above, you can include *some* of the properties from the [Event Data Object](APIReference.md#event-data-format) to customize the job in progress.  Example request:
 
@@ -759,6 +765,30 @@ Example response:
 ```
 
 See the [Standard Response Format](APIReference.md#standard-response-format) for details.
+
+### update_jobs
+
+```
+/api/app/update_jobs/v1
+```
+
+This updates multiple active jobs, including pending jobs. It requires the `edit_events` privilege and access to each matching job's category and server group. Only HTTP POST (JSON data) is acceptable.
+
+Top-level job properties select the jobs to update, such as `event`, `category`, `plugin`, or `id`. Put the requested changes inside an `updates` object. This object accepts only the optional properties listed for [update_job](#update_job), with the same value validation. It cannot contain `id` or authentication credentials. All matching jobs are validated before any updates are applied.
+
+Example request:
+
+```js
+{
+	"event": "e3c182051",
+	"updates": {
+		"timeout": 300,
+		"notify_success": "email@server.com"
+	}
+}
+```
+
+A successful response contains `code: 0` and a `count` of the jobs updated. No matches returns `count: 0`; unsupported or malformed updates are rejected even when no jobs match.
 
 ### abort_job
 
