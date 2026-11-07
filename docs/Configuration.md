@@ -213,6 +213,8 @@ For multi-server clusters, this specifies the maximum clock difference allowed w
 
 If your environment has unavoidable clock skew, you can increase this value to allow servers to authenticate across a wider time difference.  Keep the value as small as your environment permits, because a larger window also increases the time during which a captured authentication packet may be accepted.
 
+Each server also rejects reuse of a previously accepted cluster authentication token.  Used tokens are kept in memory until one minute past the token's timestamp plus this window, and expired entries are cleaned up once per minute.  This cache survives socket disconnections but is cleared when the server process restarts.  It only prevents reuse on the server that accepted the token; it does not encrypt cluster traffic or prevent an attacker from using a captured token first.
+
 ### udp_broadcast_port
 
 For auto-discovery of nearby servers, this specifies the UDP port to use for broadcasting.  Do not worry if your network doesn't support UDP broadcast, as this is just an optional feature where nearby servers will show up in the UI.  The default port is `3014`.
