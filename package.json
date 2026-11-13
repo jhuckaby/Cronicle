@@ -60,7 +60,7 @@
 		"pixl-server": "^1.0.45",
 		"pixl-server-api": "^1.0.2",
 		"pixl-server-storage": "^4.0.2",
-		"pixl-server-user": "^2.0.4",
+		"pixl-server-user": "^2.0.5",
 		"pixl-server-web": "^3.0.6",
 		"pixl-tools": "^2.0.6",
 		"pixl-webapp": "^2.0.3",
