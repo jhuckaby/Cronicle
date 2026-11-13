@@ -33,7 +33,7 @@
 	],
 	"overrides": {
 		"nanoid": "3.3.18",
-		"basic-ftp": "6.2.1",
+		"basic-ftp": "6.2.6",
 		"ws": "8.21.0"
 	},
 	"dependencies": {
