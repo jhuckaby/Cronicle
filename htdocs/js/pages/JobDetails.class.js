@@ -510,7 +510,7 @@ Class.subclass( Page.Base, "Page.JobDetails", {
 		var legend_html = '';
 		legend_html += '<div class="pie-legend-container">';
 		for (var idx = 0, len = perf_keys.length; idx < len; idx++) {
-			legend_html += '<div class="pie-legend-item" style="background-color:' + p_colors[idx] + '">' + p_labels[idx] + '</div>';
+			legend_html += '<div class="pie-legend-item" style="background-color:' + p_colors[idx] + '">' + encode_entities(p_labels[idx]) + '</div>';
 		}
 		legend_html += '</div>';
 		
