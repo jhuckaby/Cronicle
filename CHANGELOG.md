@@ -1,5 +1,20 @@
 # Cronicle Changelog
 
+## Version v0.9.147
+
+> November 16, 2026
+
+- [`2d15599`](https://github.com/jhuckaby/cronicle/commit/2d1559910328aab13ea50fcf8becd07cd12290b3): Version 0.9.147
+- [`820839d`](https://github.com/jhuckaby/cronicle/commit/820839d030ac93f91ffb031b2ef55c3fcc307165): Fix: Encode perf key labels to prevent rendering them raw in HTML
+
+## Version v0.9.146
+
+> November 13, 2026
+
+- [`13d1a04`](https://github.com/jhuckaby/cronicle/commit/13d1a042038b148fc3620bc8a9b25495304a3ed2): Version 0.9.146
+- [`c436407`](https://github.com/jhuckaby/cronicle/commit/c4364078328f7d90686e9c55eb67c218f6c17cd4): Dep: Bump basic-ftp override to v6.2.6 for vuln fixes.
+- [`efe5ec1`](https://github.com/jhuckaby/cronicle/commit/efe5ec1818824cc80f7295ff1c63fa0df585e2bb): Dep: Bump pixl-server-user to v2.0.5 for improved email and full name field hardening.
+
 ## Version v0.9.145
 
 > November 7, 2026
