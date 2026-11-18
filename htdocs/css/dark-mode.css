@@ -1,0 +1,542 @@
+/* Dark Mode Theme for Cronicle */
+/* Activated by adding class 'dark-theme' to <body> */
+
+body.dark-theme {
+	--body-background-color: #0d1117;
+	--background-color: #161b22;
+	--border-color: #30363d;
+	--dialog-background-color: #1c2128;
+	--box-background-color: #21262d;
+	--header-text-color: #8b949e;
+	--body-text-color: #c9d1d9;
+	--label-color: #7d8590;
+	--highlight-color: #58a6ff;
+	--success-color: #3fb950;
+	--warning-color: #d29922;
+	--error-color: #f85149;
+}
+
+/* === Base Elements === */
+
+body.dark-theme {
+	background-color: var(--body-background-color);
+	color: var(--body-text-color);
+}
+
+body.dark-theme #d_header_title,
+body.dark-theme .subtitle,
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme div.h1,
+body.dark-theme div.h2 {
+	color: var(--body-text-color);
+	font-weight: 600;
+}
+
+body.dark-theme .subtitle {
+	border-bottom: 2px solid var(--border-color);
+	padding-bottom: 8px;
+}
+
+body.dark-theme a,
+body.dark-theme a:visited,
+body.dark-theme .link {
+	color: var(--highlight-color);
+}
+
+body.dark-theme a:hover,
+body.dark-theme .link:hover {
+	color: #79c0ff;
+}
+
+body.dark-theme label {
+	color: var(--label-color);
+	font-weight: 500;
+}
+
+body.dark-theme label:hover {
+	color: var(--highlight-color);
+}
+
+/* === Header === */
+
+body.dark-theme #d_header {
+	background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+	border-bottom: 1px solid var(--border-color);
+}
+
+/* === Main Content === */
+
+body.dark-theme .main {
+	background: var(--background-color);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* === Tabs === */
+
+body.dark-theme .tab_bar {
+	background: var(--body-background-color);
+}
+
+body.dark-theme .tab.inactive {
+	background: transparent;
+	border-color: transparent;
+	color: var(--label-color);
+}
+
+body.dark-theme .tab.inactive:hover {
+	background: rgba(33, 38, 45, 0.5);
+	color: var(--body-text-color);
+}
+
+body.dark-theme .tab.active {
+	background: var(--background-color);
+	border-color: var(--border-color);
+	border-bottom-color: var(--background-color);
+	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme .tab.active .content {
+	color: var(--highlight-color);
+	font-weight: 600;
+}
+
+body.dark-theme .tab_widget {
+	color: var(--label-color);
+}
+
+/* === Forms === */
+
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+	background-color: var(--box-background-color);
+	color: var(--body-text-color);
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+}
+
+body.dark-theme input:focus,
+body.dark-theme textarea:focus,
+body.dark-theme select:focus {
+	border-color: var(--highlight-color);
+	box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+	outline: none;
+}
+
+body.dark-theme input::placeholder,
+body.dark-theme textarea::placeholder {
+	color: rgba(125, 133, 144, 0.6);
+}
+
+/* === Buttons === */
+
+body.dark-theme .button {
+	background: linear-gradient(180deg, #21262d 0%, #1c2128 100%);
+	color: var(--body-text-color);
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .button:hover {
+	background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
+	border-color: #484f58;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* === Tables === */
+
+body.dark-theme .data_table {
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .data_table tr th {
+	background: linear-gradient(180deg, #21262d 0%, #1c2128 100%);
+	color: var(--label-color);
+	border-bottom: 2px solid var(--border-color);
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 11px;
+	letter-spacing: 0.5px;
+}
+
+body.dark-theme .data_table tr td {
+	background: var(--background-color);
+	border-bottom: 1px solid #21262d;
+	color: var(--body-text-color);
+}
+
+body.dark-theme .data_table tr:hover td {
+	background: #1c2128;
+}
+
+body.dark-theme td.table_label {
+	color: var(--label-color);
+}
+
+/* Data Table Row Colors */
+
+body.dark-theme .data_table tr.plain td,
+body.dark-theme .swatch.plain {
+	background-color: #21262d;
+}
+
+body.dark-theme .data_table tr.red td,
+body.dark-theme .swatch.red {
+	background: linear-gradient(90deg, #461b1b 0%, #2d1212 100%);
+	border-left: 3px solid var(--error-color);
+}
+
+body.dark-theme .data_table tr.green td,
+body.dark-theme .swatch.green {
+	background: linear-gradient(90deg, #1b4620 0%, #12291a 100%);
+	border-left: 3px solid var(--success-color);
+}
+
+body.dark-theme .data_table tr.blue td,
+body.dark-theme .swatch.blue {
+	background: linear-gradient(90deg, #1b2d46 0%, #12202d 100%);
+	border-left: 3px solid var(--highlight-color);
+}
+
+body.dark-theme .data_table tr.yellow td,
+body.dark-theme .swatch.yellow {
+	background: linear-gradient(90deg, #46391b 0%, #2d2512 100%);
+	border-left: 3px solid var(--warning-color);
+}
+
+body.dark-theme .data_table tr.purple td,
+body.dark-theme .swatch.purple {
+	background-color: #2d1b3d;
+}
+
+body.dark-theme .data_table tr.orange td,
+body.dark-theme .swatch.orange {
+	background-color: #3d2d1b;
+}
+
+body.dark-theme .data_table tr.skyblue td,
+body.dark-theme .swatch.skyblue {
+	background-color: #1b2d3d;
+}
+
+/* === Fieldsets === */
+
+body.dark-theme fieldset {
+	background: var(--box-background-color);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme legend {
+	color: var(--highlight-color);
+	font-weight: 600;
+}
+
+/* === Dialogs === */
+
+body.dark-theme .dialog_title {
+	background: linear-gradient(180deg, #21262d 0%, #1c2128 100%);
+	border-color: var(--border-color);
+	color: var(--body-text-color);
+}
+
+body.dark-theme .dialog_content {
+	background: var(--background-color);
+	color: var(--body-text-color);
+}
+
+body.dark-theme .dialog_buttons {
+	background: var(--box-background-color);
+	border-color: var(--border-color);
+}
+
+/* === Messages === */
+
+body.dark-theme div.message {
+	border-radius: 8px;
+	border-left: 4px solid;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme div.message.success {
+	color: #7ee787;
+	background: linear-gradient(135deg, #1b4620 0%, #12291a 100%);
+	border-left-color: var(--success-color);
+}
+
+body.dark-theme div.message.warning {
+	color: #f0b72f;
+	background: linear-gradient(135deg, #46391b 0%, #2d2512 100%);
+	border-left-color: var(--warning-color);
+}
+
+body.dark-theme div.message.error {
+	color: #ff7b72;
+	background: linear-gradient(135deg, #461b1b 0%, #2d1212 100%);
+	border-left-color: var(--error-color);
+}
+
+/* === Color Labels === */
+
+body.dark-theme span.color_label {
+	border-radius: 6px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	font-weight: 600;
+}
+
+body.dark-theme span.color_label.blue {
+	background: linear-gradient(135deg, #1f6feb 0%, #0d419d 100%);
+}
+
+body.dark-theme span.color_label.green {
+	background: linear-gradient(135deg, #3fb950 0%, #2ea043 100%);
+}
+
+body.dark-theme span.color_label.yellow {
+	background: linear-gradient(135deg, #d29922 0%, #9e6a03 100%);
+}
+
+body.dark-theme span.color_label.red {
+	background: linear-gradient(135deg, #f85149 0%, #da3633 100%);
+}
+
+body.dark-theme span.color_label.purple {
+	background: linear-gradient(135deg, #a371f7 0%, #8957e5 100%);
+}
+
+body.dark-theme span.color_label.gray {
+	background: linear-gradient(135deg, #6e7681 0%, #57606a 100%);
+}
+
+body.dark-theme span.color_label.checkbox {
+	background: #30363d;
+}
+
+body.dark-theme span.color_label.checkbox:hover {
+	background: #484f58;
+}
+
+body.dark-theme span.color_label.checkbox.checked:hover {
+	background: rgb(30, 80, 150);
+}
+
+/* === Progress Bars === */
+
+body.dark-theme div.progress_bar_container {
+	background-color: var(--box-background-color);
+	border: 1px solid var(--border-color);
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme div.progress_bar_inner {
+	background: linear-gradient(90deg, #1f6feb 0%, #58a6ff 100%);
+	box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+}
+
+/* === Cronicle-Specific Elements === */
+
+body.dark-theme div.timing_details_label,
+body.dark-theme div.plugin_params_label {
+	color: var(--highlight-color);
+	text-shadow: none;
+}
+
+body.dark-theme div.timing_details_content,
+body.dark-theme div.plugin_params_content {
+	color: var(--body-text-color);
+}
+
+body.dark-theme div.pie-title,
+body.dark-theme div.graph-title {
+	color: var(--highlight-color);
+}
+
+body.dark-theme div.pie-overlay-subtitle {
+	color: var(--label-color);
+}
+
+body.dark-theme div.schedule_group_header {
+	color: var(--label-color);
+}
+
+body.dark-theme .subtitle_menu {
+	background-color: transparent;
+	color: var(--label-color);
+}
+
+body.dark-theme .subtitle_menu:hover {
+	color: var(--highlight-color);
+}
+
+body.dark-theme .subtitle_widget a,
+body.dark-theme .subtitle_widget span.link {
+	color: var(--label-color);
+}
+
+body.dark-theme .subtitle_widget a:hover,
+body.dark-theme .subtitle_widget span.link:hover {
+	color: var(--highlight-color);
+}
+
+body.dark-theme .link.addme {
+	color: var(--label-color);
+}
+
+body.dark-theme #d_scroll_time {
+	background: var(--background-color);
+	border-left: 1px solid var(--border-color);
+	border-bottom: 1px solid var(--border-color);
+	color: var(--label-color);
+	text-shadow: none;
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 3px;
+}
+
+body.dark-theme .psi_container {
+	border-color: var(--border-color);
+}
+
+body.dark-theme .fieldset_params_table label {
+	color: var(--label-color);
+}
+
+/* === Charts === */
+
+body.dark-theme .c3-axis {
+	fill: var(--label-color) !important;
+}
+
+body.dark-theme .c3-axis path,
+body.dark-theme .c3-axis .tick line,
+body.dark-theme .c3-grid line {
+	stroke: var(--border-color) !important;
+}
+
+/* === Footer === */
+
+body.dark-theme #d_footer {
+	color: var(--header-text-color);
+	opacity: 0.7;
+}
+
+body.dark-theme #d_footer a {
+	color: var(--label-color);
+}
+
+body.dark-theme #d_footer a:hover {
+	color: var(--highlight-color);
+}
+
+/* === Scrollbar === */
+
+body.dark-theme ::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+body.dark-theme ::-webkit-scrollbar-track {
+	background: var(--body-background-color);
+	border-radius: 6px;
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb {
+	background: linear-gradient(180deg, #30363d 0%, #21262d 100%);
+	border-radius: 6px;
+	border: 2px solid var(--body-background-color);
+}
+
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+	background: linear-gradient(180deg, #484f58 0%, #30363d 100%);
+}
+
+/* === Slider === */
+
+body.dark-theme input[type=range]::-webkit-slider-runnable-track {
+	background: var(--border-color);
+	background-image: none;
+	box-shadow: none;
+}
+
+body.dark-theme input[type=range]::-webkit-slider-thumb {
+	background: #484f58;
+	background-image: none;
+	box-shadow: none;
+}
+
+body.dark-theme input[type=range]::-moz-range-track {
+	background: var(--border-color);
+	background-image: none;
+	box-shadow: none;
+}
+
+body.dark-theme input[type=range]::-moz-range-thumb {
+	background: #484f58;
+	background-image: none;
+	box-shadow: none;
+}
+
+/* === Invalid Input Pulse === */
+
+@keyframes darkInvalidPulse {
+	0%, 100% {
+		box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.4);
+		border-color: var(--error-color);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba(248, 81, 73, 0);
+		border-color: #da3633;
+	}
+}
+
+body.dark-theme .invalid {
+	animation: darkInvalidPulse 2s ease-in-out;
+	border-color: var(--error-color);
+}
+
+/* === Theme Toggle Button === */
+
+#d_theme_toggle {
+	cursor: pointer;
+	font-size: 16px;
+	padding: 0 8px;
+	color: #ccc;
+	line-height: 45px;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+#d_theme_toggle:hover {
+	color: #fff;
+}
+
+/* === Inline Styles Overrides === */
+
+body.dark-theme fieldset[style*="background:white"],
+body.dark-theme fieldset[style*="background: white"] {
+	background: var(--box-background-color) !important;
+	border-color: var(--border-color) !important;
+}
+
+body.dark-theme div[style*="color:#888"],
+body.dark-theme div[style*="color: #888"] {
+	color: var(--label-color) !important;
+}
+
+/* === Dialog Overlay === */
+
+body.dark-theme .dialog_overlay {
+	background: rgba(0, 0, 0, 0.6);
+}
+
+/* === Log Chunks === */
+
+body.dark-theme pre.log_chunk {
+	color: var(--body-text-color);
+}
