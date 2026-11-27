@@ -131,7 +131,7 @@ if (is_preinstalled) {
 print( "Fetching release list...\n");
 logonly( "Releases URL: " + gh_releases_url + "\n" );
 
-cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
+cp.exec('curl -s "' + gh_releases_url + '"', function (err, stdout, stderr) {
 	if (err) {
 		print( stdout.toString() );
 		warn( stderr.toString() );
@@ -193,10 +193,10 @@ cp.exec('curl -s ' + gh_releases_url, function (err, stdout, stderr) {
 	}
 	
 	// download tarball and expand into current directory
-	var tarball_url = release.tarball_url;
+	var tarball_url = release.tarball_url.replace(/[^\w\:\/\.\-]+/g, '');
 	logonly( "Tarball URL: " + tarball_url + "\n" );
 	
-	cp.exec('curl -L ' + tarball_url + ' | tar zxf - --strip-components 1', function (err, stdout, stderr) {
+	cp.exec('curl -L "' + tarball_url + '" | tar zxf - --strip-components 1', function (err, stdout, stderr) {
 		if (err) {
 			print( stdout.toString() );
 			warn( stderr.toString() );
