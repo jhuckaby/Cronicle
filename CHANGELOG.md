@@ -1,5 +1,12 @@
 # Cronicle Changelog
 
+## Version v0.9.148
+
+> November 27, 2026
+
+- [`2857241`](https://github.com/jhuckaby/cronicle/commit/28572411cbd55eb2df513df253481f2ca0646371): Version 0.9.148
+- [`975abd5`](https://github.com/jhuckaby/cronicle/commit/975abd5d5188bedfd64259907c797d823ea26306): Fix: Ensure release.tarball_url from GitHub doesn't contain any bad characters.
+
 ## Version v0.9.147
 
 > November 16, 2026
